@@ -1,0 +1,345 @@
+# Peterbilt Voice of the Operator — Architecture
+
+## System Overview
+
+```mermaid
+flowchart TB
+    subgraph Sources["📡 Data Sources (Public Web)"]
+        S1[Twitter/X<br/>Trucker mentions]
+        S2[YouTube<br/>Rig reviews]
+        S3[Forums<br/>TruckersReport, Reddit]
+    end
+
+    subgraph Gemini["🤖 Gemini API"]
+        GEM[Content Extraction<br/>& Enrichment]
+    end
+
+    subgraph Backend["☕ Grails API (Render)"]
+        direction TB
+        AUTH[AuthController<br/>JWT Auth]
+        POST[PostController<br/>CRUD]
+        CLUSTER[ClusterController<br/>Cluster data]
+        ANALYSIS[AnalysisController<br/>Trigger ML]
+        GEMINI_SVC[GeminiService<br/>AI insights]
+        ML_SVC[MlEngineService<br/>HTTP client]
+    end
+
+    subgraph MLEngine["🐍 Python ML (Render)"]
+        direction TB
+        FLASK[Flask API<br/>:5000]
+        PREPROCESS[Preprocessing<br/>TF-IDF]
+        KMEANS[K-Means<br/>Clustering]
+        SENTIMENT[VADER<br/>Sentiment]
+    end
+
+    subgraph Database["🗄️ PostgreSQL (Supabase)"]
+        DB[(Posts, Clusters,<br/>Users, Insights)]
+    end
+
+    subgraph Frontend["⚡ Nuxt 3 (Netlify)"]
+        direction TB
+        LOGIN[Login/Register]
+        DASHBOARD[Dashboard]
+        D3[D3.js Graph<br/>Force-directed]
+        DETAIL[Cluster Detail<br/>Panel]
+    end
+
+    %% Data flow
+    Sources --> GEM
+    GEM --> Backend
+    Backend --> DB
+    Backend <--> MLEngine
+    Frontend <--> Backend
+
+    %% Internal flows
+    ANALYSIS --> ML_SVC
+    ML_SVC --> FLASK
+    FLASK --> PREPROCESS
+    PREPROCESS --> KMEANS
+    KMEANS --> SENTIMENT
+
+    CLUSTER --> GEMINI_SVC
+    GEMINI_SVC --> GEM
+
+    %% Styling
+    classDef source fill:#e3f2fd,stroke:#1565c0
+    classDef backend fill:#fff3e0,stroke:#e65100
+    classDef ml fill:#e8f5e9,stroke:#2e7d32
+    classDef frontend fill:#fce4ec,stroke:#c2185b
+    classDef db fill:#f3e5f5,stroke:#7b1fa2
+
+    class S1,S2,S3,S4 source
+    class AUTH,POST,CLUSTER,ANALYSIS,GEMINI_SVC,ML_SVC backend
+    class FLASK,PREPROCESS,KMEANS,SENTIMENT ml
+    class LOGIN,DASHBOARD,D3,DETAIL frontend
+    class DB db
+```
+
+---
+
+## Data Flow: Analysis Pipeline
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Nuxt as Nuxt Frontend
+    participant Grails as Grails API
+    participant Gemini as Gemini API
+    participant ML as Python ML Engine
+    participant DB as PostgreSQL
+
+    User->>Nuxt: Login
+    Nuxt->>Grails: POST /api/auth/login
+    Grails-->>Nuxt: JWT Token
+
+    User->>Nuxt: View Dashboard
+    Nuxt->>Grails: GET /api/clusters (with JWT)
+    Grails->>DB: Fetch clusters
+    DB-->>Grails: Cluster data
+    Grails-->>Nuxt: Clusters + sentiment
+    Nuxt->>Nuxt: Render D3.js graph
+
+    User->>Nuxt: Click cluster bubble
+    Nuxt->>Grails: GET /api/clusters/{id}
+    Grails->>DB: Fetch cluster posts
+    DB-->>Grails: Posts in cluster
+    Grails-->>Nuxt: Cluster detail + insight
+    Nuxt->>Nuxt: Show detail panel
+```
+
+---
+
+## Data Flow: ML Analysis Trigger
+
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant Nuxt as Nuxt Frontend
+    participant Grails as Grails API
+    participant ML as Python ML Engine
+    participant Gemini as Gemini API
+    participant DB as PostgreSQL
+
+    Admin->>Nuxt: Trigger Analysis
+    Nuxt->>Grails: POST /api/analysis/run
+
+    Grails->>DB: Fetch unprocessed posts
+    DB-->>Grails: Raw posts
+
+    Grails->>ML: POST /api/analyze (posts batch)
+    
+    Note over ML: Preprocessing
+    ML->>ML: Tokenize, TF-IDF
+
+    Note over ML: Clustering
+    ML->>ML: K-Means (k=5-7)
+
+    Note over ML: Sentiment
+    ML->>ML: VADER scoring
+
+    ML-->>Grails: Clusters + sentiment scores
+
+    Grails->>DB: Store clusters
+    
+    loop For each cluster
+        Grails->>Gemini: Generate insight
+        Gemini-->>Grails: Business insight text
+        Grails->>DB: Store insight
+    end
+
+    Grails-->>Nuxt: Analysis complete
+    Nuxt-->>Admin: Refresh dashboard
+```
+
+---
+
+## Component Responsibilities
+
+```mermaid
+graph LR
+    subgraph frontend["frontend/"]
+        PAGES[pages/<br/>login, dashboard]
+        COMPONENTS[components/<br/>ClusterGraph, DetailPanel]
+        COMPOSABLES[composables/<br/>useApi, useAuth]
+    end
+
+    subgraph backend["backend/"]
+        CONTROLLERS[controllers/<br/>REST endpoints]
+        SERVICES[services/<br/>Gemini, ML client]
+        DOMAIN[domain/<br/>Post, Cluster, User]
+    end
+
+    subgraph mlengine["ml-engine/"]
+        API[api.py<br/>Flask routes]
+        CLUSTERING[clustering.py<br/>K-Means, LDA]
+        SENTIMENT[sentiment.py<br/>VADER]
+        PREPROCESS[preprocessing.py<br/>TF-IDF]
+    end
+
+    subgraph data["data/"]
+        FIXTURES[fixtures/<br/>Mock JSON]
+    end
+
+    PAGES --> COMPOSABLES
+    COMPONENTS --> COMPOSABLES
+    COMPOSABLES --> CONTROLLERS
+    CONTROLLERS --> SERVICES
+    CONTROLLERS --> DOMAIN
+    SERVICES --> API
+    API --> CLUSTERING
+    API --> SENTIMENT
+    CLUSTERING --> PREPROCESS
+```
+
+---
+
+## D3.js Visualization Structure
+
+```mermaid
+graph TD
+    subgraph Graph["Force-Directed Graph"]
+        subgraph Nodes["Cluster Bubbles"]
+            N1["🟢 Driver Comfort<br/>+0.72 sentiment<br/>45 posts"]
+            N2["🔴 Model Demand<br/>-0.31 sentiment<br/>28 posts"]
+            N3["🟡 EV Adoption<br/>+0.12 sentiment<br/>62 posts"]
+            N4["🟢 Uptime<br/>+0.58 sentiment<br/>33 posts"]
+            N5["🟡 SmartLINQ<br/>+0.05 sentiment<br/>19 posts"]
+        end
+    end
+
+    subgraph Legend["Legend"]
+        GREEN["🟢 Positive (>0.3)"]
+        YELLOW["🟡 Neutral (-0.3 to 0.3)"]
+        RED["🔴 Negative (<-0.3)"]
+        SIZE["Bubble size = post count"]
+    end
+
+    subgraph Interaction["User Interactions"]
+        HOVER["Hover → Tooltip"]
+        CLICK["Click → Detail Panel"]
+        DRAG["Drag → Reposition"]
+        ZOOM["Scroll → Zoom"]
+    end
+```
+
+---
+
+## Authentication Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Nuxt as Nuxt Frontend
+    participant Grails as Grails API
+    participant DB as PostgreSQL
+
+    User->>Nuxt: Enter credentials
+    Nuxt->>Grails: POST /api/auth/login
+    Grails->>DB: Validate user
+    DB-->>Grails: User record
+    Grails->>Grails: Generate JWT
+    Grails-->>Nuxt: { token, refreshToken }
+    Nuxt->>Nuxt: Store in localStorage
+
+    Note over Nuxt: Subsequent requests
+
+    Nuxt->>Grails: GET /api/clusters<br/>Authorization: Bearer {token}
+    Grails->>Grails: Validate JWT
+    Grails-->>Nuxt: Protected data
+
+    Note over Nuxt: Token refresh
+
+    Nuxt->>Grails: POST /api/auth/refresh<br/>{ refreshToken }
+    Grails-->>Nuxt: { newToken }
+```
+
+---
+
+## Deployment Architecture
+
+```mermaid
+flowchart LR
+    subgraph Netlify["Netlify (Frontend)"]
+        NUXT[Nuxt 3 SSR/Static]
+    end
+
+    subgraph Render["Render (Backend)"]
+        GRAILS[Grails Web Service<br/>Java 17]
+        PYTHON[Python Web Service<br/>Flask + Gunicorn]
+        PG[(PostgreSQL<br/>Managed)]
+    end
+
+    subgraph External["External APIs"]
+        GEMINI[Google Gemini<br/>1.5 Flash]
+    end
+
+    NUXT <-->|HTTPS| GRAILS
+    GRAILS <-->|Internal| PYTHON
+    GRAILS <-->|HTTPS| GEMINI
+    GRAILS <--> PG
+    PYTHON <--> PG
+
+    %% Styling
+    classDef netlify fill:#00c7b7,stroke:#004d40,color:#fff
+    classDef render fill:#46e3b7,stroke:#1b5e20
+    classDef external fill:#4285f4,stroke:#1a237e,color:#fff
+
+    class NUXT netlify
+    class GRAILS,PYTHON,PG render
+    class GEMINI external
+```
+
+---
+
+## Data Models
+
+### Post
+```
+Post {
+  id: Long
+  source: String          // twitter, youtube, forum, smartlinq
+  externalId: String      // Original platform ID
+  content: String         // Raw text
+  author: String
+  publishedAt: DateTime
+  url: String
+  sentiment: Float        // -1.0 to 1.0
+  clusterId: Long?        // FK to Cluster
+  createdAt: DateTime
+}
+```
+
+### Cluster
+```
+Cluster {
+  id: Long
+  label: String           // AI-generated label
+  keywords: String[]      // Top keywords
+  sentiment: Float        // Aggregate sentiment
+  postCount: Integer
+  insight: String         // Gemini-generated insight
+  analysisRunId: Long     // FK to AnalysisRun
+  createdAt: DateTime
+}
+```
+
+### User
+```
+User {
+  id: Long
+  email: String
+  passwordHash: String
+  role: String            // admin, viewer
+  createdAt: DateTime
+  lastLoginAt: DateTime
+}
+```
+
+---
+
+## Viewing These Diagrams
+
+These Mermaid diagrams render in:
+- **GitHub** — Automatic rendering in markdown files
+- **VS Code** — Install "Markdown Preview Mermaid Support" extension
+- **Mermaid Live Editor** — [mermaid.live](https://mermaid.live)
