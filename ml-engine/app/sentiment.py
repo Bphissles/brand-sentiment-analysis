@@ -3,11 +3,29 @@ Sentiment analysis module
 Uses NLTK VADER for sentiment scoring
 """
 from typing import List, Dict
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+# Download VADER lexicon if not present
+try:
+    nltk.data.find('sentiment/vader_lexicon.zip')
+except LookupError:
+    nltk.download('vader_lexicon', quiet=True)
+
+# Initialize VADER analyzer (singleton)
+_sia = None
+
+def _get_analyzer() -> SentimentIntensityAnalyzer:
+    """Get or create VADER analyzer singleton"""
+    global _sia
+    if _sia is None:
+        _sia = SentimentIntensityAnalyzer()
+    return _sia
 
 
 def analyze_sentiment(text: str) -> Dict:
     """
-    Analyze sentiment of a single text
+    Analyze sentiment of a single text using VADER
     
     Args:
         text: Text content to analyze
@@ -21,16 +39,22 @@ def analyze_sentiment(text: str) -> Dict:
             'neutral': float (0 to 1)
         }
     """
-    # TODO: Implement with NLTK VADER in Sprint 2
-    # from nltk.sentiment.vader import SentimentIntensityAnalyzer
-    # sia = SentimentIntensityAnalyzer()
-    # return sia.polarity_scores(text)
+    if not text or not text.strip():
+        return {
+            'compound': 0.0,
+            'positive': 0.0,
+            'negative': 0.0,
+            'neutral': 1.0
+        }
+    
+    sia = _get_analyzer()
+    scores = sia.polarity_scores(text)
     
     return {
-        'compound': 0.0,
-        'positive': 0.0,
-        'negative': 0.0,
-        'neutral': 1.0
+        'compound': scores['compound'],
+        'positive': scores['pos'],
+        'negative': scores['neg'],
+        'neutral': scores['neu']
     }
 
 

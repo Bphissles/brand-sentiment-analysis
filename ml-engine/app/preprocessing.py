@@ -4,14 +4,32 @@ Handles tokenization, TF-IDF, and text normalization
 """
 import re
 from typing import List
+import nltk
+from nltk.corpus import stopwords
 
+# Download NLTK stopwords if not present
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('stopwords', quiet=True)
 
 # Trucking/Peterbilt-specific stop words to add
 DOMAIN_STOP_WORDS = {
     'truck', 'trucks', 'trucker', 'truckers', 'trucking',
     'peterbilt', 'pete', 'paccar',
-    'just', 'like', 'got', 'get', 'would', 'could', 'really'
+    'just', 'like', 'got', 'get', 'would', 'could', 'really',
+    'one', 'also', 'even', 'much', 'still', 'way', 'well'
 }
+
+# Combined stop words (NLTK + domain-specific)
+_stop_words = None
+
+def _get_stop_words() -> set:
+    """Get combined stop words set"""
+    global _stop_words
+    if _stop_words is None:
+        _stop_words = set(stopwords.words('english')) | DOMAIN_STOP_WORDS
+    return _stop_words
 
 
 def clean_text(text: str) -> str:
@@ -73,11 +91,10 @@ def remove_stop_words(tokens: List[str], custom_stop_words: set = None) -> List[
     Returns:
         Filtered token list
     """
-    # Will be populated with NLTK stop words in Sprint 2
-    stop_words = DOMAIN_STOP_WORDS.copy()
+    stop_words = _get_stop_words()
     
     if custom_stop_words:
-        stop_words.update(custom_stop_words)
+        stop_words = stop_words | custom_stop_words
     
     return [t for t in tokens if t not in stop_words and len(t) > 2]
 
