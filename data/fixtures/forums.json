@@ -1,0 +1,127 @@
+{
+  "source": "forums",
+  "description": "Mock forum posts from TruckersReport and Reddit trucking communities",
+  "generated": "2024-12-22",
+  "posts": [
+    {
+      "id": "forum-001",
+      "externalId": "ttr-thread-12345",
+      "content": "Been running my 579 with the MX-13 for 3 years now. Just rolled over 400k miles and haven't had a single major issue. Oil changes, filters, and one set of injectors at 350k. That's it. Best truck I've ever owned. The PACCAR powertrain is the real deal.",
+      "author": "RoadDog_Mike",
+      "postUrl": "https://thetruckersreport.com/forums/threads/12345",
+      "publishedAt": "2024-12-18T14:22:00Z"
+    },
+    {
+      "id": "forum-002",
+      "externalId": "ttr-thread-12346",
+      "content": "Thinking about ordering a 589 but the wait times are killing me. Dealer quoted 7-8 months. Is it worth waiting or should I look at what's on the lot? I really want the specific spec I designed but not sure I can wait that long.",
+      "author": "NewOwnerOp2024",
+      "postUrl": "https://thetruckersreport.com/forums/threads/12346",
+      "publishedAt": "2024-12-17T09:45:00Z"
+    },
+    {
+      "id": "forum-003",
+      "externalId": "reddit-abc123",
+      "content": "PSA for 579 owners: If you're getting random derate events, check your DEF quality sensor. It's a known issue on 2022-2023 models. Dealer tried to charge me $800 for diagnosis but it's a $50 sensor you can replace yourself. Saved me a ton of downtime once I figured it out.",
+      "author": "u/diesel_mechanic_tips",
+      "postUrl": "https://reddit.com/r/Truckers/comments/abc123",
+      "publishedAt": "2024-12-16T16:30:00Z"
+    },
+    {
+      "id": "forum-004",
+      "externalId": "ttr-thread-12347",
+      "content": "Just upgraded from a 2018 579 to a 2024 model. The difference in the sleeper is incredible. The new 80-inch UltraLoft has so much more usable space. The old truck felt cramped in comparison. Worth every penny of the upgrade.",
+      "author": "SleepWellTrucker",
+      "postUrl": "https://thetruckersreport.com/forums/threads/12347",
+      "publishedAt": "2024-12-15T20:15:00Z"
+    },
+    {
+      "id": "forum-005",
+      "externalId": "reddit-def456",
+      "content": "Anyone else having issues with Peterbilt dealers in the Midwest? I've been to three different locations and the service has been terrible at all of them. Long wait times, parts on backorder, and they never seem to fix the problem the first time. Starting to regret not going with Kenworth.",
+      "author": "u/frustrated_fleet_mgr",
+      "postUrl": "https://reddit.com/r/Truckers/comments/def456",
+      "publishedAt": "2024-12-14T11:00:00Z"
+    },
+    {
+      "id": "forum-006",
+      "externalId": "ttr-thread-12348",
+      "content": "For those asking about the 579EV - I've been running one for our SoCal port drayage operation for 6 months. It's perfect for short haul work. We charge overnight at the yard and get about 140-150 miles per charge loaded. The drivers love how quiet and smooth it is. ROI looks good with the HVIP rebate.",
+      "author": "PortTruckingPro",
+      "postUrl": "https://thetruckersreport.com/forums/threads/12348",
+      "publishedAt": "2024-12-13T13:45:00Z"
+    },
+    {
+      "id": "forum-007",
+      "externalId": "reddit-ghi789",
+      "content": "Hot take: The 389 is overrated. Yeah it looks cool but the 579 is a better truck in every measurable way. Better fuel economy, better visibility, more comfortable cab. The 389 is for people who care more about looks than running a business.",
+      "author": "u/unpopular_truck_opinions",
+      "postUrl": "https://reddit.com/r/Truckers/comments/ghi789",
+      "publishedAt": "2024-12-12T18:30:00Z"
+    },
+    {
+      "id": "forum-008",
+      "externalId": "ttr-thread-12349",
+      "content": "My 579 just hit 1 million miles. Original MX-13 engine, rebuilt transmission at 750k. This truck has paid for itself three times over. Peterbilt quality is real. Already ordered my next one - another 579 with the same spec.",
+      "author": "MillionMileVet",
+      "postUrl": "https://thetruckersreport.com/forums/threads/12349",
+      "publishedAt": "2024-12-11T07:20:00Z"
+    },
+    {
+      "id": "forum-009",
+      "externalId": "reddit-jkl012",
+      "content": "Question for 579EV owners: How's the range holding up in winter? I'm in Minnesota and worried about battery performance in -20F weather. Considering one for local delivery but range anxiety is real.",
+      "author": "u/minnesota_hauler",
+      "postUrl": "https://reddit.com/r/Truckers/comments/jkl012",
+      "publishedAt": "2024-12-10T15:00:00Z"
+    },
+    {
+      "id": "forum-010",
+      "externalId": "ttr-thread-12350",
+      "content": "The Platinum interior package is absolutely worth it. I spend 300 days a year in this truck and the upgraded seats, better materials, and premium sound system make a huge difference in quality of life. Don't cheap out on the interior - you'll regret it.",
+      "author": "ComfortFirst",
+      "postUrl": "https://thetruckersreport.com/forums/threads/12350",
+      "publishedAt": "2024-12-09T22:45:00Z"
+    },
+    {
+      "id": "forum-011",
+      "externalId": "reddit-mno345",
+      "content": "Dealer just told me my 589 order got pushed back AGAIN. Originally quoted 6 months, now looking at 10+. This is ridiculous. I understand supply chain issues but at some point you have to wonder if they're just taking orders they can't fulfill.",
+      "author": "u/still_waiting_589",
+      "postUrl": "https://reddit.com/r/Truckers/comments/mno345",
+      "publishedAt": "2024-12-08T10:30:00Z"
+    },
+    {
+      "id": "forum-012",
+      "externalId": "ttr-thread-12351",
+      "content": "SmartLINQ remote diagnostics saved my bacon last week. Got an alert about low coolant before it became a problem. Pulled into a dealer, they topped it off and found a small leak. Fixed in 2 hours instead of a roadside breakdown. The technology actually works.",
+      "author": "TechAdopter",
+      "postUrl": "https://thetruckersreport.com/forums/threads/12351",
+      "publishedAt": "2024-12-07T14:15:00Z"
+    },
+    {
+      "id": "forum-013",
+      "externalId": "reddit-pqr678",
+      "content": "Comparing the 579 to the Kenworth T680 - drove both for a week each. The Peterbilt interior feels more premium but the Kenworth has better tech integration. Both are solid trucks. Went with the 579 because of the dealer network in my area.",
+      "author": "u/truck_comparison_guy",
+      "postUrl": "https://reddit.com/r/Truckers/comments/pqr678",
+      "publishedAt": "2024-12-06T19:00:00Z"
+    },
+    {
+      "id": "forum-014",
+      "externalId": "ttr-thread-12352",
+      "content": "Warning to new buyers: Don't let the dealer talk you into unnecessary options. I got sold on a bunch of stuff I never use. The base 579 with a few key upgrades (air ride seat, good mattress, APU) is all you really need. Save your money.",
+      "author": "BuyerBeware",
+      "postUrl": "https://thetruckersreport.com/forums/threads/12352",
+      "publishedAt": "2024-12-05T08:30:00Z"
+    },
+    {
+      "id": "forum-015",
+      "externalId": "reddit-stu901",
+      "content": "The 567 is an underrated workhorse. Running one for concrete delivery and it handles the abuse like a champ. Not as flashy as the highway trucks but built like a tank. Perfect for vocational work.",
+      "author": "u/concrete_cowboy",
+      "postUrl": "https://reddit.com/r/Truckers/comments/stu901",
+      "publishedAt": "2024-12-04T12:45:00Z"
+    }
+  ]
+}

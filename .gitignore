@@ -48,3 +48,7 @@ data/*.json
 # Secrets
 *.pem
 *.key
+
+# Local dev
+.pids/
+logs/

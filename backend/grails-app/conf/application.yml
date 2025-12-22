@@ -50,13 +50,40 @@ grails:
   gorm:
     reactor:
       events: false
+  cors:
+    enabled: true
+    allowedOrigins:
+      - http://localhost:3000
+      - http://localhost:8080
+    allowedMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+    allowedHeaders:
+      - Authorization
+      - Content-Type
+    exposedHeaders:
+      - Authorization
+# Supabase PostgreSQL connection
 dataSource:
-  url: jdbc:postgresql://localhost:5432/postgres
+  url: jdbc:postgresql://db.upahhorrrtxffvurtnyg.supabase.co:5432/postgres
   driverClassName: org.postgresql.Driver
   username: postgres
-  password: ''
+  password: ${SUPABASE_DB_PASSWORD}
   pooled: true
   jmxExport: true
+
+# H2 in-memory database (uncomment for local dev without Supabase)
+# dataSource:
+#   dbCreate: create-drop
+#   url: jdbc:h2:mem:devDb;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+#   driverClassName: org.h2.Driver
+#   username: sa
+#   password: ''
+#   pooled: true
+#   jmxExport: true
 hibernate:
   hbm2ddl:
     auto: update
@@ -64,3 +91,21 @@ hibernate:
     queries: false
     use_second_level_cache: false
     use_query_cache: false
+
+# =============================================================================
+# External Services Configuration
+# =============================================================================
+
+# Gemini API for AI-powered insights
+gemini:
+  apiKey: ${GEMINI_API_KEY:your_gemini_api_key_here}
+
+# Python ML Engine for clustering and sentiment
+mlEngine:
+  url: ${ML_ENGINE_URL:http://localhost:5000}
+
+# JWT Authentication
+jwt:
+  secret: ${JWT_SECRET:your_jwt_secret_here_min_32_chars}
+  expiration: 3600  # 1 hour in seconds
+

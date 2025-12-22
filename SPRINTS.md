@@ -27,7 +27,7 @@
 | Sprint | Focus | Duration | Status |
 |--------|-------|----------|--------|
 | Sprint 0 | Foundation & Setup | 3-4 hours | ✅ Complete |
-| Sprint 1 | Data Pipeline & Mock Data | 4-6 hours | ⬜ Pending |
+| Sprint 1 | Data Pipeline & Mock Data | 4-6 hours | ✅ Complete |
 | Sprint 2 | Python ML Engine | 6-8 hours | ⬜ Pending |
 | Sprint 3 | Grails API Layer | 4-6 hours | ⬜ Pending |
 | Sprint 4 | D3.js Visualization | 6-8 hours | ⬜ Pending |
@@ -93,7 +93,7 @@ Can run all three projects locally without errors
 
 ### Tasks
 
-- [ ] **1.1** Define data models
+- [x] **1.1** Define data models
   - `Post` — Raw social/forum post with source, content, timestamp
   - `Cluster` — Grouped keywords with sentiment score
   - `Insight` — AI-generated business summary
@@ -101,34 +101,35 @@ Can run all three projects locally without errors
   - Create Grails domain classes (backend)
   - Create Python dataclasses (ML engine)
 
-- [ ] **1.2** Create mock data fixtures
+- [x] **1.2** Create mock data fixtures
   - Twitter/X: 50-100 mock tweets (trucker hashtags, Peterbilt mentions)
   - YouTube: 30-50 mock comments (rig reviews, walkaround videos)
   - Forums: 20-30 mock posts (TruckersReport, Reddit r/Truckers)
   - All data Peterbilt-themed with realistic keywords
 
-- [ ] **1.3** Create Peterbilt keyword taxonomy
+- [x] **1.3** Create Peterbilt keyword taxonomy (config/taxonomy.yaml)
   - EV Adoption: 579EV, charging range, battery-electric, 350kW DC
   - Driver Comfort: sleeper, 80-inch, ergonomics, Platinum Ionic Gray
   - Uptime/Reliability: PACCAR Powertrain, service alerts, dealer network
   - Model Demand: 589, 579, wait times, availability
 
-- [ ] **1.4** Build Gemini data gathering service (Grails)
+- [x] **1.4** Build Gemini data gathering service (Grails)
   - Create service class for Gemini API calls
   - Implement web content extraction prompts
   - Add rate limiting and error handling
   - Store raw data in PostgreSQL
 
-- [ ] **1.5** Create data ingestion CLI
+- [ ] **1.5** Create data ingestion CLI (deferred to Sprint 3)
   - Command to load mock data into database
   - Command to trigger Gemini data gathering (future)
   - Logging for debugging
 
 ### Deliverables
-- [ ] Mock data JSON files in `data/fixtures/`
-- [ ] Data models in all three projects
-- [ ] Gemini service class (ready for real data)
-- [ ] Database seeded with mock data
+- [x] Mock data JSON files in `data/fixtures/`
+- [x] Data models in all three projects
+- [x] Gemini service class (ready for real data)
+- [x] Taxonomy config file (config/taxonomy.yaml)
+- [ ] Database seeded with mock data (Sprint 3)
 
 ### Definition of Done
 `grails run-app` serves mock data via REST endpoint

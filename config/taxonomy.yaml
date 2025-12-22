@@ -1,0 +1,337 @@
+# Peterbilt Sentiment Analyzer - Keyword Taxonomy
+# 
+# This file defines the business categories used to classify and cluster
+# social media posts, forum discussions, and other public feedback.
+#
+# AUDITING: This file is the single source of truth for cluster categories.
+# Marketing and Sales teams can review and request updates to keywords here.
+#
+# Last Updated: 2024-12-22
+# Maintainer: Ben Hislop
+
+# =============================================================================
+# CLUSTER CATEGORIES
+# =============================================================================
+# Each category represents a business-relevant topic area.
+# - id: Unique identifier used in code
+# - label: Human-readable name shown in dashboard
+# - description: Business context for this category
+# - keywords: Terms that indicate this topic (case-insensitive)
+# - sentiment_indicators: Words that suggest positive/negative sentiment
+# =============================================================================
+
+clusters:
+
+  # ---------------------------------------------------------------------------
+  # EV ADOPTION
+  # Tracks customer sentiment around Peterbilt's electric vehicle offerings
+  # ---------------------------------------------------------------------------
+  - id: ev_adoption
+    label: "EV Adoption"
+    description: >
+      Feedback related to Peterbilt's electric vehicle lineup, charging 
+      infrastructure, range concerns, and zero-emission trucking adoption.
+    business_value: "Product roadmap feedback, infrastructure investment decisions"
+    keywords:
+      # Models
+      - "579ev"
+      - "579 ev"
+      - "model 579ev"
+      - "electric 579"
+      # Technology
+      - "battery electric"
+      - "battery-electric"
+      - "bev"
+      - "zero emission"
+      - "zero-emission"
+      - "electric truck"
+      - "electric semi"
+      - "e-truck"
+      # Charging
+      - "charging"
+      - "charger"
+      - "350kw"
+      - "dc fast"
+      - "megawatt charging"
+      - "mcs"
+      - "charging infrastructure"
+      - "charging station"
+      - "charging network"
+      # Range
+      - "range"
+      - "miles per charge"
+      - "range anxiety"
+      - "battery range"
+      # Incentives
+      - "carb"
+      - "clean truck"
+      - "hvip"
+      - "incentive"
+      - "rebate"
+    sentiment_indicators:
+      positive:
+        - "impressed"
+        - "future"
+        - "innovation"
+        - "clean"
+        - "quiet"
+        - "smooth"
+        - "love the ev"
+      negative:
+        - "range anxiety"
+        - "not enough chargers"
+        - "too expensive"
+        - "infrastructure"
+        - "wait time"
+        - "charging desert"
+
+  # ---------------------------------------------------------------------------
+  # DRIVER COMFORT
+  # Tracks feedback on cab ergonomics, sleeper features, and interior quality
+  # ---------------------------------------------------------------------------
+  - id: driver_comfort
+    label: "Driver Comfort"
+    description: >
+      Feedback on cab interior, sleeper berth, seating, ergonomics, and 
+      overall driver experience during long hauls.
+    business_value: "Marketing messaging, product feature prioritization"
+    keywords:
+      # Sleeper
+      - "sleeper"
+      - "sleeper cab"
+      - "80 inch"
+      - "80-inch"
+      - "72 inch"
+      - "ultraloft"
+      - "ultra loft"
+      # Interior
+      - "interior"
+      - "cab interior"
+      - "dashboard"
+      - "platinum"
+      - "platinum interior"
+      - "ionic gray"
+      - "platinum ionic gray"
+      # Comfort
+      - "ergonomic"
+      - "ergonomics"
+      - "comfortable"
+      - "comfort"
+      - "seat"
+      - "seating"
+      - "air ride seat"
+      - "lumbar"
+      # Features
+      - "climate control"
+      - "hvac"
+      - "bunk heater"
+      - "apu"
+      - "auxiliary power"
+      - "fridge"
+      - "refrigerator"
+      - "microwave"
+      - "storage"
+      - "cabinet"
+    sentiment_indicators:
+      positive:
+        - "love"
+        - "comfortable"
+        - "spacious"
+        - "home away from home"
+        - "best sleeper"
+        - "premium"
+        - "luxury"
+      negative:
+        - "cramped"
+        - "uncomfortable"
+        - "cheap"
+        - "noisy"
+        - "hot"
+        - "cold"
+        - "poor quality"
+
+  # ---------------------------------------------------------------------------
+  # UPTIME & RELIABILITY
+  # Tracks feedback on mechanical reliability, service, and dealer experience
+  # ---------------------------------------------------------------------------
+  - id: uptime_reliability
+    label: "Uptime & Reliability"
+    description: >
+      Feedback on truck reliability, breakdown frequency, dealer service 
+      quality, parts availability, and overall uptime.
+    business_value: "Service team insights, dealer network improvements"
+    keywords:
+      # Powertrain
+      - "paccar"
+      - "paccar powertrain"
+      - "mx-13"
+      - "mx-11"
+      - "mx13"
+      - "mx11"
+      - "cummins"
+      - "engine"
+      - "transmission"
+      # Reliability
+      - "reliable"
+      - "reliability"
+      - "uptime"
+      - "breakdown"
+      - "broke down"
+      - "stranded"
+      - "tow"
+      - "roadside"
+      # Service
+      - "dealer"
+      - "dealership"
+      - "service"
+      - "service center"
+      - "warranty"
+      - "recall"
+      - "parts"
+      - "parts availability"
+      - "wait for parts"
+      # Alerts
+      - "check engine"
+      - "fault code"
+      - "derate"
+      - "limp mode"
+      - "service alert"
+      - "smartlinq"
+    sentiment_indicators:
+      positive:
+        - "never broke down"
+        - "reliable"
+        - "dependable"
+        - "great service"
+        - "quick turnaround"
+        - "million miles"
+      negative:
+        - "always in shop"
+        - "breakdown"
+        - "stranded"
+        - "waiting for parts"
+        - "poor service"
+        - "dealer nightmare"
+        - "derate"
+
+  # ---------------------------------------------------------------------------
+  # MODEL DEMAND
+  # Tracks interest and availability concerns for specific truck models
+  # ---------------------------------------------------------------------------
+  - id: model_demand
+    label: "Model Demand"
+    description: >
+      Feedback on model availability, wait times, order backlogs, and 
+      general demand for specific Peterbilt models.
+    business_value: "Sales forecasting, production planning"
+    keywords:
+      # Models
+      - "589"
+      - "model 589"
+      - "579"
+      - "model 579"
+      - "567"
+      - "model 567"
+      - "389"
+      - "model 389"
+      - "359"
+      - "model 359"
+      # Availability
+      - "wait time"
+      - "wait list"
+      - "waiting"
+      - "backlog"
+      - "order"
+      - "ordered"
+      - "delivery"
+      - "delivery date"
+      - "availability"
+      - "available"
+      - "in stock"
+      - "allocation"
+      # Purchase
+      - "buying"
+      - "purchased"
+      - "new truck"
+      - "spec"
+      - "specced"
+      - "build"
+      - "custom"
+      - "factory order"
+    sentiment_indicators:
+      positive:
+        - "finally got"
+        - "worth the wait"
+        - "excited"
+        - "can't wait"
+        - "dream truck"
+        - "beautiful"
+      negative:
+        - "still waiting"
+        - "delayed"
+        - "pushed back"
+        - "frustrated"
+        - "too long"
+        - "gave up"
+        - "went with"
+
+# =============================================================================
+# DATA SOURCES
+# =============================================================================
+# Defines the public data sources we gather sentiment from.
+# Each source has specific characteristics for parsing and weighting.
+# =============================================================================
+
+sources:
+
+  - id: twitter
+    label: "Twitter/X"
+    description: "Public tweets mentioning Peterbilt, trucking hashtags"
+    weight: 1.0
+    hashtags:
+      - "#peterbilt"
+      - "#peterbilttrucks"
+      - "#579ev"
+      - "#trucking"
+      - "#truckdriver"
+      - "#owneroperator"
+      - "#cdldriver"
+    accounts:
+      - "@petaborlttrucks"
+      - "@pacaborcar"
+
+  - id: youtube
+    label: "YouTube"
+    description: "Comments on Peterbilt rig reviews and walkaround videos"
+    weight: 1.2  # Slightly higher weight - more detailed feedback
+    channels:
+      - "Peterbilt"
+      - "Truck reviews"
+      - "Owner operator vlogs"
+
+  - id: forums
+    label: "Forums"
+    description: "Trucking forum discussions (TruckersReport, Reddit)"
+    weight: 1.5  # Higher weight - detailed, authentic driver feedback
+    sites:
+      - "thetruckersreport.com"
+      - "reddit.com/r/Truckers"
+      - "reddit.com/r/TruckDrivers"
+      - "reddit.com/r/Peterbilt"
+
+# =============================================================================
+# SENTIMENT THRESHOLDS
+# =============================================================================
+# Defines how sentiment scores are classified for visualization.
+# =============================================================================
+
+sentiment:
+  thresholds:
+    positive: 0.3      # Score >= 0.3 is positive (green)
+    negative: -0.3     # Score <= -0.3 is negative (red)
+    # Scores between -0.3 and 0.3 are neutral (yellow)
+  
+  colors:
+    positive: "#22c55e"  # Green
+    neutral: "#eab308"   # Yellow
+    negative: "#ef4444"  # Red

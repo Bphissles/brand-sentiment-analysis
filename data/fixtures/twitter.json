@@ -1,0 +1,187 @@
+{
+  "source": "twitter",
+  "description": "Mock Twitter/X posts mentioning Peterbilt trucks",
+  "generated": "2024-12-22",
+  "posts": [
+    {
+      "id": "tw-001",
+      "externalId": "1234567890123456789",
+      "content": "Just took delivery of my new Peterbilt 579EV. The torque is insane and it's so quiet! Range is about 150 miles loaded which works for my regional routes. #579EV #ElectricTruck #Peterbilt",
+      "author": "TruckerMike_OO",
+      "authorUrl": "https://twitter.com/TruckerMike_OO",
+      "postUrl": "https://twitter.com/TruckerMike_OO/status/1234567890123456789",
+      "publishedAt": "2024-12-20T14:32:00Z"
+    },
+    {
+      "id": "tw-002",
+      "externalId": "1234567890123456790",
+      "content": "6 months waiting for my 589 and still no delivery date. Dealer says allocation is tight. Anyone else dealing with this? Getting frustrated. #Peterbilt #589",
+      "author": "HighwayHauler22",
+      "authorUrl": "https://twitter.com/HighwayHauler22",
+      "postUrl": "https://twitter.com/HighwayHauler22/status/1234567890123456790",
+      "publishedAt": "2024-12-19T09:15:00Z"
+    },
+    {
+      "id": "tw-003",
+      "externalId": "1234567890123456791",
+      "content": "The 80-inch UltraLoft sleeper on my 579 is like a hotel room. Best investment I ever made. Home away from home for real. #OwnerOperator #Peterbilt #TruckerLife",
+      "author": "LoneStarTrucker",
+      "authorUrl": "https://twitter.com/LoneStarTrucker",
+      "postUrl": "https://twitter.com/LoneStarTrucker/status/1234567890123456791",
+      "publishedAt": "2024-12-18T22:45:00Z"
+    },
+    {
+      "id": "tw-004",
+      "externalId": "1234567890123456792",
+      "content": "PACCAR MX-13 just hit 800,000 miles on my 579. Original engine, just regular maintenance. These things are bulletproof. #Peterbilt #PACCAR #MillionMileClub",
+      "author": "VeteranDriver_Jim",
+      "authorUrl": "https://twitter.com/VeteranDriver_Jim",
+      "postUrl": "https://twitter.com/VeteranDriver_Jim/status/1234567890123456792",
+      "publishedAt": "2024-12-17T16:20:00Z"
+    },
+    {
+      "id": "tw-005",
+      "externalId": "1234567890123456793",
+      "content": "Where are the charging stations for the 579EV?? Love the truck but infrastructure is NOT there yet. Spent 2 hours finding a charger in Nevada. #EVTruck #ChargingDesert",
+      "author": "GreenFleetOps",
+      "authorUrl": "https://twitter.com/GreenFleetOps",
+      "postUrl": "https://twitter.com/GreenFleetOps/status/1234567890123456793",
+      "publishedAt": "2024-12-16T11:30:00Z"
+    },
+    {
+      "id": "tw-006",
+      "externalId": "1234567890123456794",
+      "content": "Dealer service has been a nightmare. 3 weeks waiting for a turbo on my 579. Parts availability is killing my uptime. Not happy. #Peterbilt #TruckRepair",
+      "author": "FreightKing_LLC",
+      "authorUrl": "https://twitter.com/FreightKing_LLC",
+      "postUrl": "https://twitter.com/FreightKing_LLC/status/1234567890123456794",
+      "publishedAt": "2024-12-15T08:45:00Z"
+    },
+    {
+      "id": "tw-007",
+      "externalId": "1234567890123456795",
+      "content": "Finally specced out my dream truck - 589 with Platinum interior in Ionic Gray. 6 month wait but it's going to be worth it! #Peterbilt589 #DreamTruck",
+      "author": "ChromeAndClass",
+      "authorUrl": "https://twitter.com/ChromeAndClass",
+      "postUrl": "https://twitter.com/ChromeAndClass/status/1234567890123456795",
+      "publishedAt": "2024-12-14T19:00:00Z"
+    },
+    {
+      "id": "tw-008",
+      "externalId": "1234567890123456796",
+      "content": "The new 579 dashboard layout is so much better than the old design. Everything is where you need it. Ergonomics on point. #Peterbilt #TruckInterior",
+      "author": "MidwestMover",
+      "authorUrl": "https://twitter.com/MidwestMover",
+      "postUrl": "https://twitter.com/MidwestMover/status/1234567890123456796",
+      "publishedAt": "2024-12-13T14:15:00Z"
+    },
+    {
+      "id": "tw-009",
+      "externalId": "1234567890123456797",
+      "content": "Check engine light again on my 2022 579. Third time this month. Dealer says it's a sensor but I'm losing money every time it derates. Frustrated! #Peterbilt #TruckProblems",
+      "author": "RoadWarrior_Steve",
+      "authorUrl": "https://twitter.com/RoadWarrior_Steve",
+      "postUrl": "https://twitter.com/RoadWarrior_Steve/status/1234567890123456797",
+      "publishedAt": "2024-12-12T07:30:00Z"
+    },
+    {
+      "id": "tw-010",
+      "externalId": "1234567890123456798",
+      "content": "Got the HVIP rebate approved for our 579EV fleet order. $120k back makes the numbers work. California leading the way on clean trucks! #ZeroEmission #579EV",
+      "author": "SoCalLogistics",
+      "authorUrl": "https://twitter.com/SoCalLogistics",
+      "postUrl": "https://twitter.com/SoCalLogistics/status/1234567890123456798",
+      "publishedAt": "2024-12-11T15:45:00Z"
+    },
+    {
+      "id": "tw-011",
+      "externalId": "1234567890123456799",
+      "content": "Peterbilt 389 is still the king of the highway. Nothing beats that classic look with modern reliability. #389 #ClassicTruck #Peterbilt",
+      "author": "OldSchoolTrucker",
+      "authorUrl": "https://twitter.com/OldSchoolTrucker",
+      "postUrl": "https://twitter.com/OldSchoolTrucker/status/1234567890123456799",
+      "publishedAt": "2024-12-10T20:00:00Z"
+    },
+    {
+      "id": "tw-012",
+      "externalId": "1234567890123456800",
+      "content": "SmartLINQ alert saved me from a breakdown. Got a service warning, pulled into dealer, they found a coolant leak before it became a problem. Technology works! #Peterbilt #SmartLINQ",
+      "author": "TechTrucker2024",
+      "authorUrl": "https://twitter.com/TechTrucker2024",
+      "postUrl": "https://twitter.com/TechTrucker2024/status/1234567890123456800",
+      "publishedAt": "2024-12-09T12:30:00Z"
+    },
+    {
+      "id": "tw-013",
+      "externalId": "1234567890123456801",
+      "content": "The air ride seat in my 579 is amazing for long hauls. No more back pain after 11 hours. Should have upgraded years ago. #DriverComfort #Peterbilt",
+      "author": "LongHaulLarry",
+      "authorUrl": "https://twitter.com/LongHaulLarry",
+      "postUrl": "https://twitter.com/LongHaulLarry/status/1234567890123456801",
+      "publishedAt": "2024-12-08T18:15:00Z"
+    },
+    {
+      "id": "tw-014",
+      "externalId": "1234567890123456802",
+      "content": "Ordered a 567 for vocational work. Dealer says 4 month wait. Better than the 8 months last year I guess. #Peterbilt567 #Construction",
+      "author": "HeavyHaulPro",
+      "authorUrl": "https://twitter.com/HeavyHaulPro",
+      "postUrl": "https://twitter.com/HeavyHaulPro/status/1234567890123456802",
+      "publishedAt": "2024-12-07T10:00:00Z"
+    },
+    {
+      "id": "tw-015",
+      "externalId": "1234567890123456803",
+      "content": "579EV range anxiety is real. 150 miles isn't enough for my routes. Going back to diesel until charging infrastructure catches up. #EVTruck #RangeAnxiety",
+      "author": "PracticalTrucker",
+      "authorUrl": "https://twitter.com/PracticalTrucker",
+      "postUrl": "https://twitter.com/PracticalTrucker/status/1234567890123456803",
+      "publishedAt": "2024-12-06T16:45:00Z"
+    },
+    {
+      "id": "tw-016",
+      "externalId": "1234567890123456804",
+      "content": "Just toured the Peterbilt factory in Denton. Incredible to see how these trucks are built. Pride in every weld. #Peterbilt #MadeInAmerica",
+      "author": "TruckEnthusiast",
+      "authorUrl": "https://twitter.com/TruckEnthusiast",
+      "postUrl": "https://twitter.com/TruckEnthusiast/status/1234567890123456804",
+      "publishedAt": "2024-12-05T13:20:00Z"
+    },
+    {
+      "id": "tw-017",
+      "externalId": "1234567890123456805",
+      "content": "MX-11 fuel economy is impressive. Averaging 8.2 mpg on my regional routes. PACCAR knows engines. #Peterbilt #FuelEconomy #MX11",
+      "author": "EfficientFleet",
+      "authorUrl": "https://twitter.com/EfficientFleet",
+      "postUrl": "https://twitter.com/EfficientFleet/status/1234567890123456805",
+      "publishedAt": "2024-12-04T09:30:00Z"
+    },
+    {
+      "id": "tw-018",
+      "externalId": "1234567890123456806",
+      "content": "Bunk heater stopped working in my 579 sleeper. -10 outside and dealer can't see me for 3 days. This is unacceptable service. #Peterbilt #ServiceFail",
+      "author": "FrozenTrucker",
+      "authorUrl": "https://twitter.com/FrozenTrucker",
+      "postUrl": "https://twitter.com/FrozenTrucker/status/1234567890123456806",
+      "publishedAt": "2024-12-03T06:00:00Z"
+    },
+    {
+      "id": "tw-019",
+      "externalId": "1234567890123456807",
+      "content": "The 350kW DC fast charging on the 579EV is a game changer. 80% in under an hour. Now we just need more chargers! #579EV #FastCharging",
+      "author": "EVFleetManager",
+      "authorUrl": "https://twitter.com/EVFleetManager",
+      "postUrl": "https://twitter.com/EVFleetManager/status/1234567890123456807",
+      "publishedAt": "2024-12-02T14:00:00Z"
+    },
+    {
+      "id": "tw-020",
+      "externalId": "1234567890123456808",
+      "content": "Peterbilt dealer in Phoenix is top notch. In and out for service in 4 hours. This is how it should be everywhere. #Peterbilt #GoodService",
+      "author": "DesertHauler",
+      "authorUrl": "https://twitter.com/DesertHauler",
+      "postUrl": "https://twitter.com/DesertHauler/status/1234567890123456808",
+      "publishedAt": "2024-12-01T11:15:00Z"
+    }
+  ]
+}
