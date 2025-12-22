@@ -2,6 +2,36 @@ package backend
 
 class UrlMappings {
     static mappings = {
+        
+        // ===================
+        // REST API Endpoints
+        // ===================
+        
+        // Posts API
+        "/api/posts"(controller: 'post') {
+            action = [GET: 'index', POST: 'save']
+        }
+        "/api/posts/$id"(controller: 'post') {
+            action = [GET: 'show', DELETE: 'delete']
+        }
+        "/api/posts/sources"(controller: 'post', action: 'sources')
+        
+        // Clusters API
+        "/api/clusters"(controller: 'cluster', action: 'index')
+        "/api/clusters/summary"(controller: 'cluster', action: 'summary')
+        "/api/clusters/$id"(controller: 'cluster', action: 'show')
+        
+        // Analysis API
+        "/api/analysis"(controller: 'analysis', action: 'index', method: 'GET')
+        "/api/analysis/trigger"(controller: 'analysis', action: 'trigger', method: 'POST')
+        "/api/analysis/load-fixtures"(controller: 'analysis', action: 'loadFixtures', method: 'POST')
+        "/api/analysis/clear"(controller: 'analysis', action: 'clear', method: 'DELETE')
+        "/api/analysis/$id"(controller: 'analysis', action: 'show', method: 'GET')
+        
+        // Health check
+        "/api/health"(controller: 'health', action: 'index')
+
+        // Default mappings
         "/$controller/$action?/$id?(.$format)?"{
             constraints {
                 // apply constraints here
@@ -11,6 +41,5 @@ class UrlMappings {
         "/"(view:"/index")
         "500"(view:'/error')
         "404"(view:'/notFound')
-
     }
 }
