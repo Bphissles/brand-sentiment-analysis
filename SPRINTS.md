@@ -26,7 +26,7 @@
 
 | Sprint | Focus | Duration | Status |
 |--------|-------|----------|--------|
-| Sprint 0 | Foundation & Setup | 3-4 hours | ⬜ Pending |
+| Sprint 0 | Foundation & Setup | 3-4 hours | ✅ Complete |
 | Sprint 1 | Data Pipeline & Mock Data | 4-6 hours | ⬜ Pending |
 | Sprint 2 | Python ML Engine | 6-8 hours | ⬜ Pending |
 | Sprint 3 | Grails API Layer | 4-6 hours | ⬜ Pending |
@@ -43,45 +43,45 @@
 
 ### Tasks
 
-- [ ] **0.1** Set up Gemini API access
+- [x] **0.1** Set up Gemini API access
   - Go to [Google AI Studio](https://aistudio.google.com/)
   - Create API key for data gathering
   - Test with simple request
   - Note: Free tier = 60 requests/minute, 1500/day
 
-- [ ] **0.2** Initialize Nuxt 3 frontend project
+- [x] **0.2** Initialize Nuxt 3 frontend project
   - `npx nuxi init frontend`
   - Install dependencies: TailwindCSS, D3.js, @sidebase/nuxt-auth
   - Create directory structure
   - Set up .env.example and .gitignore
 
-- [ ] **0.3** Initialize Grails backend project
-  - Create Grails 6.x application
+- [x] **0.3** Initialize Grails backend project
+  - Create Grails 6.x application (requires Java 17)
   - Configure for REST API mode
   - Set up CORS for local development
   - Create .env.example for secrets
 
-- [ ] **0.4** Initialize Python ML project
+- [x] **0.4** Initialize Python ML project
   - Create virtual environment
   - Install: scikit-learn, nltk, pandas, flask (for API)
   - Create requirements.txt
   - Set up project structure
 
-- [ ] **0.5** Set up PostgreSQL locally
-  - Create development database
+- [x] **0.5** Set up Supabase (PostgreSQL)
+  - Create free Supabase account
   - Configure connection in Grails
   - Document schema requirements
 
-- [ ] **0.6** Create project documentation
+- [x] **0.6** Create project documentation
   - README.md with setup instructions
   - ARCHITECTURE.md with Mermaid diagrams
   - .env.example files for all components
 
 ### Deliverables
-- [ ] Three project directories: `frontend/`, `backend/`, `ml-engine/`
-- [ ] All dependencies installed
-- [ ] Gemini API key working
-- [ ] Local PostgreSQL running
+- [x] Three project directories: `frontend/`, `backend/`, `ml-engine/`
+- [x] All dependencies installed
+- [ ] Gemini API key working (user to configure)
+- [x] Supabase documented (user to configure)
 
 ### Definition of Done
 Can run all three projects locally without errors

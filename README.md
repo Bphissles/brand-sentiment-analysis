@@ -73,9 +73,9 @@ sentiment-analyzer/
 ### Prerequisites
 
 - Node.js 18+
-- Java 17+ (for Grails)
+- **Java 17** (required for Grails 6 — Java 23 not supported)
 - Python 3.11+
-- PostgreSQL 15+
+- Supabase account (free tier)
 
 ### 1. Clone and install
 
@@ -98,6 +98,8 @@ npm run dev
 
 ```bash
 cd backend
+# Ensure Java 17 is active
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
 ./gradlew bootRun
 # Runs on http://localhost:8080
 ```
@@ -113,11 +115,17 @@ python app/api.py
 # Runs on http://localhost:5000
 ```
 
-### 5. Database setup
+### 5. Database setup (Supabase)
+
+1. Create a free account at [supabase.com](https://supabase.com)
+2. Create a new project
+3. Go to Settings → Database to get connection string
+4. Go to Settings → API to get your keys
+5. Add credentials to `.env` files
 
 ```bash
-createdb peterbilt_sentiment_dev
-# Configure connection in backend/grails-app/conf/application.yml
+# Copy the .env.example and fill in Supabase credentials
+cp .env.example .env
 ```
 
 ---

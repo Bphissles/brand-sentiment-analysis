@@ -1,0 +1,50 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# Build outputs
+.nuxt/
+.output/
+dist/
+build/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Grails
+.gradle/
+target/
+out/
+
+# Python
+*.egg-info/
+.eggs/
+*.egg
+.pytest_cache/
+
+# Data (keep fixtures, ignore generated)
+data/*.json
+!data/fixtures/
+
+# Secrets
+*.pem
+*.key
