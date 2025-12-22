@@ -1,0 +1,18 @@
+Thumbs.db
+.DS_Store
+.gradle
+build/
+target/
+out/
+.idea
+*.iml
+*.ipr
+*.iws
+.project
+.settings
+.classpath
+.factorypath
+
+# Environment secrets
+.env
+.env.local
