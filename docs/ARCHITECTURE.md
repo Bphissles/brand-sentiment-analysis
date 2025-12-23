@@ -158,26 +158,30 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph frontend["frontend/"]
-        PAGES[pages/<br/>login, dashboard]
-        COMPONENTS[components/<br/>ClusterGraph, DetailPanel]
-        COMPOSABLES[composables/<br/>useApi, useAuth]
+        PAGES[pages/<br/>index.vue]
+        COMPONENTS[components/<br/>BubbleChart, ClusterCard,<br/>ClusterDetail, SentimentBadge]
+        COMPOSABLES[composables/<br/>useApi]
     end
 
     subgraph backend["backend/"]
-        CONTROLLERS[controllers/<br/>REST endpoints]
-        SERVICES[services/<br/>Gemini, ML client]
-        DOMAIN[domain/<br/>Post, Cluster, User]
+        CONTROLLERS[controllers/<br/>Post, Cluster, Analysis, Health]
+        SERVICES[services/<br/>Gemini, MlEngine, DataLoader]
+        DOMAIN[domain/<br/>Post, Cluster, AnalysisRun, User]
     end
 
     subgraph mlengine["ml-engine/"]
         API[api.py<br/>Flask routes]
-        CLUSTERING[clustering.py<br/>K-Means, LDA]
-        SENTIMENT[sentiment.py<br/>VADER]
-        PREPROCESS[preprocessing.py<br/>TF-IDF]
+        CLUSTERING[clustering.py<br/>K-Means + TF-IDF]
+        SENTIMENT[sentiment.py<br/>NLTK VADER]
+        PREPROCESS[preprocessing.py<br/>Tokenization]
+    end
+
+    subgraph config["config/"]
+        TAXONOMY[taxonomy.yaml<br/>Auditable categories]
     end
 
     subgraph data["data/"]
-        FIXTURES[fixtures/<br/>Mock JSON]
+        FIXTURES[fixtures/<br/>50 mock posts]
     end
 
     PAGES --> COMPOSABLES
@@ -197,28 +201,25 @@ graph LR
 
 ```mermaid
 graph TD
-    subgraph Graph["Force-Directed Graph"]
+    subgraph Graph["Bubble Chart (D3.js Pack Layout)"]
         subgraph Nodes["Cluster Bubbles"]
-            N1["🟢 Driver Comfort<br/>+0.72 sentiment<br/>45 posts"]
-            N2["🔴 Model Demand<br/>-0.31 sentiment<br/>28 posts"]
-            N3["🟡 EV Adoption<br/>+0.12 sentiment<br/>62 posts"]
-            N4["🟢 Uptime<br/>+0.58 sentiment<br/>33 posts"]
-            N5["🟡 SmartLINQ<br/>+0.05 sentiment<br/>19 posts"]
+            N1["🟢 Model Demand<br/>+0.34 sentiment<br/>22 posts"]
+            N2["🟡 Uptime & Reliability<br/>-0.14 sentiment<br/>13 posts"]
+            N3["🟡 EV Adoption<br/>+0.12 sentiment<br/>10 posts"]
+            N4["🟡 Model Demand (567)<br/>+0.23 sentiment<br/>5 posts"]
         end
     end
 
     subgraph Legend["Legend"]
-        GREEN["🟢 Positive (>0.3)"]
+        GREEN["🟢 Positive (≥0.3)"]
         YELLOW["🟡 Neutral (-0.3 to 0.3)"]
-        RED["🔴 Negative (<-0.3)"]
+        RED["🔴 Negative (≤-0.3)"]
         SIZE["Bubble size = post count"]
     end
 
     subgraph Interaction["User Interactions"]
-        HOVER["Hover → Tooltip"]
-        CLICK["Click → Detail Panel"]
-        DRAG["Drag → Reposition"]
-        ZOOM["Scroll → Zoom"]
+        HOVER["Hover → Highlight"]
+        CLICK["Click → Detail Modal"]
     end
 ```
 
