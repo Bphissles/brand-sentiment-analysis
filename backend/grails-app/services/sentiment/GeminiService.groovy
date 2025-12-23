@@ -44,6 +44,58 @@ class GeminiService {
     }
 
     /**
+     * Search the web using Gemini with Google Search grounding
+     * Returns real content from the web, not generated/synthetic data
+     * 
+     * @param searchQuery The search query
+     * @param sourceType The source type for context (twitter, youtube, forums)
+     * @param maxResults Approximate number of posts to find
+     * @return JSON string with extracted posts from real web sources
+     */
+    String searchWebForPosts(String searchQuery, String sourceType, int maxResults = 15) {
+        def prompt = buildSearchPrompt(searchQuery, sourceType, maxResults)
+        return callGeminiApiWithSearch(prompt)
+    }
+
+    /**
+     * Build prompt for web search extraction
+     */
+    private String buildSearchPrompt(String searchQuery, String sourceType, int maxResults) {
+        def platformContext
+        switch(sourceType) {
+            case 'twitter':
+                platformContext = 'Twitter/X posts, tweets'
+                break
+            case 'youtube':
+                platformContext = 'YouTube video comments and descriptions'
+                break
+            case 'forums':
+                platformContext = 'trucking forum posts from sites like TruckersReport, Reddit r/Truckers, TheTruckersReport.com'
+                break
+            default:
+                platformContext = 'social media posts'
+        }
+        
+        return """Search the web for recent ${platformContext} about: ${searchQuery}
+
+Find REAL posts from REAL users discussing this topic. Focus on:
+- Actual user opinions and experiences  
+- Recent discussions (within the last few months)
+- Varied sentiments (positive, negative, neutral)
+
+CRITICAL JSON FORMATTING RULES:
+1. Return ONLY a valid JSON array - no markdown, no explanation
+2. Use straight double quotes for JSON structure: "
+3. Inside content strings, replace any quotes with single quotes or remove them
+4. Do not use curly/smart quotes anywhere
+
+Example format:
+[{"content":"User said this truck is great and they love it","author":"username","publishedAt":"2024-12-20","postUrl":"https://example.com","sourceSite":"reddit.com"}]
+
+Find up to ${maxResults} real posts. Only return actual content found on the web."""
+    }
+
+    /**
      * Generate AI trend analysis based on sentiment distribution and clusters
      */
     String generateTrendAnalysis(Map sentimentDistribution, List<Map> clusters, Integer totalPosts) {
@@ -172,7 +224,82 @@ Return valid JSON only, no additional text."""
     }
 
     /**
-     * Call the Gemini API
+     * Call the Gemini API with Google Search grounding enabled
+     * This allows Gemini to search the web for real content
+     * 
+     * @param prompt The prompt to send
+     * @return The generated text response with real web data
+     */
+    String callGeminiApiWithSearch(String prompt) {
+        def apiKey = grailsApplication.config.getProperty('gemini.apiKey', String)
+        
+        if (!apiKey || apiKey == 'your_gemini_api_key_here') {
+            log.warn("Gemini API key not configured")
+            return "[Gemini API not configured]"
+        }
+
+        try {
+            // Use gemini-2.0-flash for search grounding
+            def url = new URL("${GEMINI_API_URL}?key=${apiKey}")
+            def connection = url.openConnection() as HttpURLConnection
+            
+            connection.requestMethod = "POST"
+            connection.setRequestProperty("Content-Type", "application/json")
+            connection.doOutput = true
+            connection.connectTimeout = 30000
+            connection.readTimeout = 120000  // Longer timeout for search
+
+            // Include google_search tool for grounding
+            def requestBody = JsonOutput.toJson([
+                contents: [
+                    [
+                        parts: [
+                            [text: prompt]
+                        ]
+                    ]
+                ],
+                tools: [
+                    [
+                        google_search: [:]  // Enable Google Search grounding
+                    ]
+                ],
+                generationConfig: [
+                    temperature: 0.3,  // Lower temperature for factual extraction
+                    maxOutputTokens: 4096
+                ]
+            ])
+
+            connection.outputStream.withWriter("UTF-8") { writer ->
+                writer.write(requestBody)
+            }
+
+            def responseCode = connection.responseCode
+            
+            if (responseCode == 200) {
+                def response = new JsonSlurper().parseText(connection.inputStream.text)
+                
+                // Log grounding metadata for debugging
+                def groundingMetadata = response?.candidates?.getAt(0)?.groundingMetadata
+                if (groundingMetadata) {
+                    log.info("Search queries used: ${groundingMetadata.webSearchQueries}")
+                    log.info("Sources found: ${groundingMetadata.groundingChunks?.size() ?: 0}")
+                }
+                
+                return response?.candidates?.getAt(0)?.content?.parts?.getAt(0)?.text ?: ""
+            } else {
+                def errorBody = connection.errorStream?.text ?: "No error details"
+                log.error("Gemini API error: ${responseCode} - ${errorBody}")
+                return "[Error calling Gemini API: ${responseCode}]"
+            }
+            
+        } catch (Exception e) {
+            log.error("Failed to call Gemini API with search", e)
+            return "[Error: ${e.message}]"
+        }
+    }
+
+    /**
+     * Call the Gemini API (without search grounding)
      * 
      * @param prompt The prompt to send
      * @return The generated text response

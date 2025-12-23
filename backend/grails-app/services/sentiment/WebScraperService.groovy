@@ -6,104 +6,101 @@ import groovy.json.JsonOutput
 
 /**
  * Service for scraping web content from various sources
- * Uses Gemini API for intelligent content extraction
+ * Uses Gemini API with Google Search grounding for real web content extraction
  */
 @Transactional
 class WebScraperService {
 
     GeminiService geminiService
 
-    // Search URLs for different platforms
-    private static final Map<String, String> SEARCH_URLS = [
-        twitter: "https://nitter.net/search?q=peterbilt",
-        youtube: "https://www.youtube.com/results?search_query=peterbilt+truck+review",
-        reddit: "https://www.reddit.com/r/Truckers/search/?q=peterbilt&restrict_sr=1&sort=new"
+    // Default search queries for different platforms
+    private static final Map<String, List<String>> SEARCH_QUERIES = [
+        twitter: [
+            'Peterbilt truck site:twitter.com OR site:x.com',
+            'Peterbilt 579 OR 589 OR 389 trucker',
+            '#Peterbilt truck driver review'
+        ],
+        youtube: [
+            'Peterbilt truck review comments',
+            'Peterbilt 579EV electric truck',
+            'Peterbilt vs Kenworth trucker opinion'
+        ],
+        forums: [
+            'Peterbilt site:reddit.com/r/Truckers',
+            'Peterbilt site:thetruckersreport.com',
+            'Peterbilt truck owner experience forum'
+        ]
     ]
 
     /**
-     * Generate realistic posts using Gemini AI
-     * Since direct web scraping is often blocked, we use Gemini to generate
-     * realistic sample posts based on real trucking industry topics
+     * Search for real posts using Gemini with Google Search grounding
+     * This finds ACTUAL content from the web, not synthetic data
      * 
      * @param sourceType The source type (twitter, youtube, forums)
-     * @param count Number of posts to generate
-     * @return List of generated post maps
+     * @param maxPosts Approximate number of posts to find
+     * @return List of real post maps from the web
      */
-    List<Map> generatePostsWithGemini(String sourceType, int count = 10) {
-        log.info("Generating ${count} ${sourceType} posts with Gemini...")
+    List<Map> searchForRealPosts(String sourceType, int maxPosts = 15) {
+        log.info("Searching web for real ${sourceType} posts about Peterbilt...")
         
-        try {
-            def prompt = buildGenerationPrompt(sourceType, count)
-            def generatedJson = geminiService.callGeminiApi(prompt)
-            return parseExtractedPosts(generatedJson, sourceType)
-        } catch (Exception e) {
-            log.error("Failed to generate posts for ${sourceType}", e)
-            return []
+        def allPosts = []
+        def queries = SEARCH_QUERIES[sourceType] ?: ['Peterbilt truck']
+        
+        // Run multiple search queries to get diverse results
+        queries.each { query ->
+            try {
+                log.info("Searching: ${query}")
+                def searchResult = geminiService.searchWebForPosts(query, sourceType, maxPosts)
+                def posts = parseExtractedPosts(searchResult, sourceType)
+                allPosts.addAll(posts)
+                log.info("Found ${posts.size()} posts for query: ${query}")
+            } catch (Exception e) {
+                log.error("Search failed for query '${query}': ${e.message}")
+            }
         }
-    }
-
-    /**
-     * Build prompt for generating realistic posts
-     */
-    private String buildGenerationPrompt(String sourceType, int count) {
-        def platform = sourceType == 'twitter' ? 'Twitter/X' : (sourceType == 'youtube' ? 'YouTube comments' : 'trucking forum posts')
         
-        return """Generate ${count} realistic ${platform} posts about Peterbilt trucks.
-
-Include a mix of:
-- Positive reviews about specific models (579, 589, 389, 567)
-- Complaints about service, wait times, or issues
-- Questions about features, specs, or comparisons
-- Comments about EV trucks (579EV) and charging
-- Discussions about reliability, fuel economy, and comfort
-
-Each post should feel authentic to the platform:
-${sourceType == 'twitter' ? '- Short, casual, may include hashtags like #Peterbilt #TruckerLife #579EV' : ''}
-${sourceType == 'youtube' ? '- Comment style, responding to truck review videos' : ''}
-${sourceType == 'forums' ? '- Longer, more detailed, sharing personal experiences' : ''}
-
-Return ONLY a JSON array with this exact structure (no markdown, no extra text):
-[
-  {
-    "content": "The actual post text",
-    "author": "RealisticUsername123",
-    "publishedAt": "2024-12-${String.format('%02d', (Math.random() * 20 + 1) as int)}T${String.format('%02d', (Math.random() * 24) as int)}:00:00Z"
-  }
-]
-
-Generate exactly ${count} posts with varied sentiments (positive, negative, neutral)."""
+        // Deduplicate by content hash
+        def uniquePosts = allPosts.unique { post ->
+            post.content?.take(100)?.hashCode()
+        }
+        
+        log.info("Total unique ${sourceType} posts found: ${uniquePosts.size()}")
+        return uniquePosts.take(maxPosts)
     }
 
     /**
-     * Generate Twitter/X style posts about Peterbilt using Gemini
+     * Search Twitter/X for real posts about Peterbilt
+     * Uses Gemini Google Search grounding to find actual tweets
      * 
-     * @param searchQuery Search query (used for context)
-     * @param maxPosts Number of posts to generate
-     * @return List of post maps
+     * @param searchQuery Additional search terms
+     * @param maxPosts Maximum posts to return
+     * @return List of real post maps
      */
     List<Map> scrapeTwitter(String searchQuery = "peterbilt", int maxPosts = 15) {
-        return generatePostsWithGemini("twitter", maxPosts)
+        return searchForRealPosts("twitter", maxPosts)
     }
 
     /**
-     * Generate YouTube comment style posts about Peterbilt using Gemini
+     * Search YouTube for real comments about Peterbilt
+     * Uses Gemini Google Search grounding to find actual comments
      * 
-     * @param searchQuery Search query (used for context)
-     * @param maxPosts Number of posts to generate
-     * @return List of post maps
+     * @param searchQuery Additional search terms
+     * @param maxPosts Maximum posts to return
+     * @return List of real post maps
      */
     List<Map> scrapeYouTube(String searchQuery = "peterbilt truck review", int maxPosts = 10) {
-        return generatePostsWithGemini("youtube", maxPosts)
+        return searchForRealPosts("youtube", maxPosts)
     }
 
     /**
-     * Generate forum style posts about Peterbilt using Gemini
+     * Search forums for real posts about Peterbilt
+     * Uses Gemini Google Search grounding to find actual forum discussions
      * 
-     * @param maxPosts Number of posts to generate
-     * @return List of post maps
+     * @param maxPosts Maximum posts to return
+     * @return List of real post maps
      */
     List<Map> scrapeForums(int maxPosts = 10) {
-        return generatePostsWithGemini("forums", maxPosts)
+        return searchForRealPosts("forums", maxPosts)
     }
 
     /**
@@ -112,43 +109,13 @@ Generate exactly ${count} posts with varied sentiments (positive, negative, neut
      * @return Map with posts from each source
      */
     Map<String, List<Map>> scrapeAllSources() {
-        log.info("Starting full scrape of all sources...")
+        log.info("Starting web search across all sources...")
         
         return [
             twitter: scrapeTwitter(),
             youtube: scrapeYouTube(),
             forums: scrapeForums()
         ]
-    }
-
-    /**
-     * Fetch URL content with proper headers
-     */
-    private String fetchUrl(String urlString) {
-        try {
-            def url = new URL(urlString)
-            def connection = url.openConnection() as HttpURLConnection
-            
-            // Set headers to appear as a browser
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-            connection.setRequestProperty("Accept-Language", "en-US,en;q=0.5")
-            connection.connectTimeout = 15000
-            connection.readTimeout = 30000
-            
-            def responseCode = connection.responseCode
-            
-            if (responseCode == 200) {
-                return connection.inputStream.getText("UTF-8")
-            } else {
-                log.warn("HTTP ${responseCode} from ${urlString}")
-                return null
-            }
-            
-        } catch (Exception e) {
-            log.error("Failed to fetch ${urlString}: ${e.message}")
-            return null
-        }
     }
 
     /**
@@ -167,15 +134,51 @@ Generate exactly ${count} posts with varied sentiments (positive, negative, neut
                 .replaceAll(/```\s*/, '')
                 .trim()
             
-            def posts = new JsonSlurper().parseText(cleanJson)
+            // Find the JSON array in the response
+            def startIdx = cleanJson.indexOf('[')
+            def endIdx = cleanJson.lastIndexOf(']')
+            if (startIdx >= 0 && endIdx > startIdx) {
+                cleanJson = cleanJson.substring(startIdx, endIdx + 1)
+            }
+            
+            // Normalize quotes - Gemini sometimes returns curly/smart quotes
+            cleanJson = cleanJson
+                .replace('\u201c', '"')   // Left double quote "
+                .replace('\u201d', '"')   // Right double quote "
+                .replace('\u2018', "'")   // Left single quote '
+                .replace('\u2019', "'")   // Right single quote '
+                .replace('\u201e', '"')   // Low double quote „
+                .replace('\u201f', '"')   // Double high-reversed-9 ‟
+                .replace('\u0022', '"')   // Standard quote
+            
+            // Fix unescaped quotes inside JSON string values
+            // This regex finds content between "content":" and the next ", and escapes internal quotes
+            cleanJson = fixInternalQuotes(cleanJson)
+            
+            // Try to parse, with fallback for common issues
+            def posts
+            try {
+                posts = new JsonSlurper().parseText(cleanJson)
+            } catch (Exception parseError) {
+                // Try fixing common JSON issues
+                log.warn("Initial parse failed, attempting to fix JSON: ${parseError.message}")
+                
+                // Sometimes Gemini uses single quotes - convert to double
+                def fixedJson = cleanJson.replaceAll(/(?<!\\)'/, '"')
+                
+                // Try again with LAX parser
+                def slurper = new JsonSlurper().setType(groovy.json.JsonParserType.LAX)
+                posts = slurper.parseText(fixedJson)
+            }
             
             if (posts instanceof List) {
                 return posts.collect { post ->
                     [
                         content: post.content?.toString() ?: '',
-                        author: post.author?.toString() ?: 'Unknown',
+                        author: post.author?.toString() ?: 'Anonymous',
                         source: sourceType,
-                        postUrl: post.postUrl?.toString() ?: '',
+                        postUrl: post.postUrl?.toString() ?: post.url?.toString() ?: '',
+                        sourceSite: post.sourceSite?.toString() ?: '',
                         publishedAt: parseDate(post.publishedAt),
                         externalId: generateExternalId(post, sourceType)
                     ]
@@ -186,9 +189,72 @@ Generate exactly ${count} posts with varied sentiments (positive, negative, neut
             
         } catch (Exception e) {
             log.error("Failed to parse extracted posts: ${e.message}")
-            log.debug("Raw JSON: ${jsonString?.take(500)}")
+            log.warn("Raw response (first 1000 chars): ${jsonString?.take(1000)}")
             return []
         }
+    }
+
+    /**
+     * Fix unescaped quotes inside JSON string values
+     * Gemini sometimes returns quotes inside content that break JSON parsing
+     */
+    private String fixInternalQuotes(String json) {
+        // Simple approach: replace problematic patterns
+        // Pattern: ": "...text with "quotes" inside..." becomes properly escaped
+        def result = new StringBuilder()
+        def inString = false
+        def escaped = false
+        def fieldStart = false
+        
+        for (int i = 0; i < json.length(); i++) {
+            char c = json.charAt(i)
+            
+            if (escaped) {
+                result.append(c)
+                escaped = false
+                continue
+            }
+            
+            if (c == '\\' as char) {
+                escaped = true
+                result.append(c)
+                continue
+            }
+            
+            if (c == '"' as char) {
+                // Check if this quote is a JSON structural quote or content quote
+                if (!inString) {
+                    inString = true
+                    result.append(c)
+                } else {
+                    // Look ahead to see if this ends the string
+                    def nextNonSpace = findNextNonSpace(json, i + 1)
+                    if (nextNonSpace == ',' as char || nextNonSpace == '}' as char || 
+                        nextNonSpace == ']' as char || nextNonSpace == ':' as char) {
+                        // This is a closing quote
+                        inString = false
+                        result.append(c)
+                    } else {
+                        // This is an internal quote - escape it
+                        result.append("\\'")
+                    }
+                }
+            } else {
+                result.append(c)
+            }
+        }
+        
+        return result.toString()
+    }
+    
+    private char findNextNonSpace(String s, int start) {
+        for (int i = start; i < s.length(); i++) {
+            char c = s.charAt(i)
+            if (c != ' ' as char && c != '\n' as char && c != '\r' as char && c != '\t' as char) {
+                return c
+            }
+        }
+        return '\0' as char
     }
 
     /**

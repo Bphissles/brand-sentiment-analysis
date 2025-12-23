@@ -221,16 +221,16 @@ const handleRunAnalysis = async () => {
           </div>
         </div>
 
-        <!-- Gemini Web Scraping (Admin Only) -->
+        <!-- Gemini Web Search (Admin Only) -->
         <div v-if="isAdmin" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-          <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">Gemini Web Scraping</h2>
+          <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">Web Search</h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
-            Use Google Gemini AI to scrape and extract posts from social media and forums.
+            Search the web for real Peterbilt discussions using Gemini AI with Google Search.
           </p>
           
           <div v-if="!status?.geminiConfigured" class="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg mb-4">
             <p class="text-sm text-amber-700 dark:text-amber-400">
-              <strong>Gemini API key required.</strong> Set the <code class="bg-amber-100 dark:bg-amber-900/50 px-1 rounded">GEMINI_API_KEY</code> environment variable to enable web scraping.
+              <strong>Gemini API key required.</strong> Set the <code class="bg-amber-100 dark:bg-amber-900/50 px-1 rounded">GEMINI_API_KEY</code> environment variable to enable web search.
             </p>
           </div>
           
@@ -244,7 +244,7 @@ const handleRunAnalysis = async () => {
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span>{{ scraping ? 'Scraping...' : 'Scrape All Sources' }}</span>
+              <span>{{ scraping ? 'Searching...' : 'Search All Sources' }}</span>
             </button>
             
             <div class="grid grid-cols-3 gap-2">
