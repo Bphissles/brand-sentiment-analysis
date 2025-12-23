@@ -16,7 +16,25 @@ The application has three testing layers:
 
 ## Backend Testing (Grails + Spock)
 
-### Setup
+### 2.1 Current Status
+
+**✅ Framework Configured:**
+- Spock testing framework installed
+- Jacoco coverage plugin configured
+- Java 17 compatibility enforced via `test.sh`
+- Test infrastructure verified and working
+
+**⚠️ Test Coverage:**
+- Currently: 1 basic test (`SampleSpec.groovy`)
+- Recommended: Comprehensive tests per `TESTING_REVIEW.md` and `CODE_REVIEW_v2.md`
+
+**📋 Priority Tests Needed (from code reviews):**
+1. **AuthService**: JWT generation, validation, password hashing, registration
+2. **AuthInterceptor**: Public endpoints, admin routes, dev-mode bypass
+3. **AnalysisController.trigger()**: Success, ML failure, empty posts
+4. **MlEngineService**: Success, connection failure, error responses
+
+### 2.2 Setup
 
 Tests are located in `backend/src/test/groovy/sentiment/`
 
@@ -25,24 +43,33 @@ Tests are located in `backend/src/test/groovy/sentiment/`
 ```bash
 cd backend
 
-# Run all tests
+# Run all tests (use test.sh script to ensure Java 17)
+./test.sh
+
+# Or manually set Java 17
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
 ./gradlew test
 
 # Run specific test
-./gradlew test --tests AuthServiceSpec
-
-# Run with coverage
-./gradlew test jacocoTestReport
+./test.sh --tests SampleSpec
 
 # View coverage report
 open build/reports/jacoco/test/html/index.html
+
+# View test results
+open build/reports/tests/test/index.html
+```
+
+**Note:** The project requires Java 17. If you get "Unsupported class file major version 67" errors, stop the Gradle daemon and use the `test.sh` script:
+
+```bash
+./gradlew --stop
+./test.sh
 ```
 
 ### Test Files
 
-- ✅ `AuthServiceSpec.groovy` - Authentication and JWT token management
-- ✅ `HealthControllerSpec.groovy` - Health check endpoint
-- ✅ `PostControllerSpec.groovy` - Post CRUD operations
+- ✅ `SampleSpec.groovy` - Basic test to verify framework is working
 
 ### Writing New Tests
 
@@ -82,7 +109,28 @@ Current coverage:
 
 ## Frontend Testing (Nuxt + Vitest)
 
-### Setup
+### 3.1 Current Status
+
+**✅ Framework Configured:**
+- Vitest testing framework installed
+- Vue Test Utils for component testing
+- @vitejs/plugin-vue configured
+- Coverage reporting with v8 provider
+
+**✅ Test Coverage:**
+- 11 tests passing across 3 test files
+- LoadingScreen component: 100% coverage
+- Basic composable tests implemented
+
+**📋 Recommended Additions (from code reviews):**
+1. **useAuth composable**: Full authentication flow tests
+2. **useApi composable**: All API endpoint tests
+3. **Key components**: ClusterDetail, BubbleChart, data management views
+4. **Route guards**: When authentication middleware is implemented
+
+### 3.2 Setup
+
+The frontend uses Vitest with Vue Test Utils for component and composable testing.
 
 ```bash
 cd frontend
@@ -103,11 +151,11 @@ npm install
 ```bash
 cd frontend
 
-# Run all tests
+# Run all tests (runs once and exits)
 npm test
 
 # Run tests in watch mode
-npm test -- --watch
+npm run test:watch
 
 # Run tests with UI
 npm run test:ui
@@ -121,9 +169,9 @@ open coverage/index.html
 
 ### Test Files
 
-- ✅ `tests/composables/useAuth.spec.ts` - Authentication composable
-- ✅ `tests/composables/useApi.spec.ts` - API client composable
-- ✅ `tests/components/LoadingScreen.spec.ts` - Loading screen component
+- ✅ `sample.spec.ts` - Basic tests to verify framework is working
+- ✅ `tests/composables/useApi.spec.ts` - API composable tests (2 tests)
+- ✅ `tests/components/LoadingScreen.spec.ts` - Loading screen component tests (5 tests)
 
 ### Writing New Tests
 

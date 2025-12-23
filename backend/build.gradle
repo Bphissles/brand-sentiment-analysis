@@ -8,6 +8,7 @@ plugins {
     id "com.bertramlabs.asset-pipeline"
     id "application"
     id "eclipse"
+    id "jacoco"
 }
 
 group = "backend"
@@ -63,9 +64,6 @@ dependencies {
     testImplementation("org.grails:grails-web-testing-support")
     testImplementation("org.grails:views-json-testing-support")
     testImplementation("org.spockframework:spock-core")
-    testImplementation("org.testcontainers:postgresql")
-    testImplementation("org.testcontainers:spock")
-    testImplementation("org.testcontainers:testcontainers")
     testImplementation("io.micronaut:micronaut-http-client")
 
     // JWT authentication (without Spring Security)
@@ -90,6 +88,29 @@ tasks.withType(Test) {
     systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
     systemProperty 'webdriver.chrome.driver', "${System.getenv('CHROMEWEBDRIVER')}/chromedriver"
     systemProperty 'webdriver.gecko.driver', "${System.getenv('GECKOWEBDRIVER')}/geckodriver"
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/Application.class',
+                '**/BootStrap.class',
+                '**/UrlMappings.class'
+            ])
+        }))
+    }
 }
 tasks.withType(War).configureEach { War war ->
     war.dependsOn compileGroovyPages
