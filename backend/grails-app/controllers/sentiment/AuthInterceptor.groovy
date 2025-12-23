@@ -41,7 +41,7 @@ class AuthInterceptor {
 
         // In development mode, allow unauthenticated access with warning
         def environment = grails.util.Environment.current.name
-        if (environment == 'DEVELOPMENT') {
+        if (environment.equalsIgnoreCase('DEVELOPMENT')) {
             def authHeader = request.getHeader('Authorization')
             if (!authHeader || !authHeader.startsWith('Bearer ')) {
                 log.warn("Unauthenticated request to ${requestPath} - allowed in DEVELOPMENT mode")

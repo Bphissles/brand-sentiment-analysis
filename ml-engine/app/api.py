@@ -4,6 +4,7 @@ Provides endpoints for clustering and sentiment analysis
 """
 import os
 import time
+import math
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 
@@ -67,7 +68,10 @@ def analyze():
     with_sentiment = analyze_posts_sentiment(preprocessed)
     
     # Step 3: Cluster posts by topic
-    n_clusters = min(4, len(posts))  # Don't create more clusters than posts
+    # Dynamic cluster count based on data size
+    # Formula: sqrt(n/2), clamped between 3 and 10
+    n_clusters = max(3, min(10, int(math.sqrt(len(posts) / 2))))
+    n_clusters = min(n_clusters, len(posts))  # Don't create more clusters than posts
     clusters, clustered_posts = cluster_posts(with_sentiment, n_clusters=n_clusters)
     
     # Step 4: Calculate aggregate sentiment per cluster
