@@ -13,7 +13,8 @@ class AuthController {
         login: 'POST',
         register: 'POST',
         me: 'GET',
-        logout: 'POST'
+        logout: 'POST',
+        promoteToAdmin: 'POST'
     ]
 
     AuthService authService
@@ -137,5 +138,47 @@ class AuthController {
      */
     def logout() {
         respond([success: true, message: 'Logged out successfully'])
+    }
+
+    /**
+     * POST /api/auth/promote
+     * Promote a user to admin role (admin only, or first user becomes admin)
+     */
+    def promoteToAdmin() {
+        def json = request.JSON
+        def email = json?.email
+
+        if (!email) {
+            render status: 400, text: [error: 'Email required'] as JSON
+            return
+        }
+
+        def user = User.findByEmail(email)
+        if (!user) {
+            render status: 404, text: [error: 'User not found'] as JSON
+            return
+        }
+
+        // Check if this is the first admin (bootstrap scenario)
+        def adminCount = User.countByRole('admin')
+        def requestingUserRole = request.getAttribute('userRole')
+
+        // Allow promotion if: no admins exist OR requester is admin
+        if (adminCount == 0 || requestingUserRole == 'admin') {
+            user.role = 'admin'
+            user.save(flush: true)
+
+            respond([
+                success: true,
+                message: "User ${email} promoted to admin",
+                user: [
+                    id: user.id,
+                    email: user.email,
+                    role: user.role
+                ]
+            ])
+        } else {
+            render status: 403, text: [error: 'Admin access required'] as JSON
+        }
     }
 }

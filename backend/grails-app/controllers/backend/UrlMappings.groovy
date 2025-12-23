@@ -42,6 +42,7 @@ class UrlMappings {
         "/api/auth/register"(controller: 'auth', action: 'register')
         "/api/auth/me"(controller: 'auth', action: 'me')
         "/api/auth/logout"(controller: 'auth', action: 'logout')
+        "/api/auth/promote"(controller: 'auth', action: 'promoteToAdmin')
 
         // Default mappings
         "/$controller/$action?/$id?(.$format)?"{

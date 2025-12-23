@@ -14,6 +14,7 @@ class AuthInterceptor {
     private static final List<String> PUBLIC_ENDPOINTS = [
         '/api/auth/login',
         '/api/auth/register',
+        '/api/auth/promote',  // Has its own auth logic for bootstrap
         '/api/health'
     ]
 

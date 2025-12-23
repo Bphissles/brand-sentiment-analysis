@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { user } = useAuth()
 const { 
   getIngestionStatus, 
   scrapeAllSources, 
@@ -7,6 +8,9 @@ const {
   clearAllData,
   triggerAnalysis 
 } = useApi()
+
+// Check if user is admin
+const isAdmin = computed(() => user.value?.role === 'admin')
 
 const status = ref<any>(null)
 const loading = ref(false)
@@ -207,8 +211,8 @@ const handleRunAnalysis = async () => {
           </div>
         </div>
 
-        <!-- Gemini Web Scraping -->
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+        <!-- Gemini Web Scraping (Admin Only) -->
+        <div v-if="isAdmin" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
           <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">Gemini Web Scraping</h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Use Google Gemini AI to scrape and extract posts from social media and forums.
@@ -259,8 +263,8 @@ const handleRunAnalysis = async () => {
           </div>
         </div>
 
-        <!-- Mock Data -->
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+        <!-- Mock Data (Admin Only) -->
+        <div v-if="isAdmin" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
           <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">Mock Data</h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Load pre-defined fixture data for testing and demonstration purposes.
@@ -298,7 +302,9 @@ const handleRunAnalysis = async () => {
               <span>Run ML Analysis</span>
             </button>
             
+            <!-- Clear Data (Admin Only) -->
             <button
+              v-if="isAdmin"
               @click="handleClearData"
               :disabled="loading"
               class="w-full px-4 py-3 bg-rose-500 text-white font-medium rounded-lg hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
@@ -308,6 +314,16 @@ const handleRunAnalysis = async () => {
               </svg>
               <span>Clear All Data</span>
             </button>
+            
+            <!-- Viewer notice -->
+            <p v-if="!isAdmin" class="text-sm text-slate-500 dark:text-slate-400 text-center py-2">
+              <span class="inline-flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Admin access required for destructive actions
+              </span>
+            </p>
           </div>
         </div>
       </div>

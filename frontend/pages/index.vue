@@ -2,7 +2,10 @@
 import type { Cluster, Post } from '~/types/models'
 
 const api = useApi()
-const { initAuth } = useAuth()
+const { initAuth, user } = useAuth()
+
+// Check if user is admin
+const isAdmin = computed(() => user.value?.role === 'admin')
 
 // State
 const clusters = ref<Cluster[]>([])
@@ -147,6 +150,7 @@ const sentimentTrend = computed(() => {
               <option value="forums">Forums</option>
             </select>
             <NuxtLink 
+              v-if="isAdmin"
               to="/data"
               class="px-2 lg:px-3 py-2 bg-slate-700 text-slate-200 text-sm font-medium rounded-lg hover:bg-slate-600 border border-slate-600 transition-colors"
               title="Data Management"
