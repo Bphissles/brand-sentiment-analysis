@@ -16,7 +16,10 @@ This document tracks the current state of testing implementation against the rec
 - **CI/CD Ready**: Test commands documented and scriptable
 
 ### Working Tests
-- **Backend**: 2 passing tests (SampleSpec)
+- **Backend**: 14 passing tests
+  - `SampleSpec.groovy`: 2 tests
+  - `AuthServiceBehaviorSpec.groovy`: 5 tests (BCrypt, JWT structure)
+  - `MlEngineServiceBehaviorSpec.groovy`: 7 tests (HTTP, timeouts, error handling)
 - **Frontend**: 11 passing tests
   - `sample.spec.ts`: 4 tests
   - `tests/composables/useApi.spec.ts`: 2 tests

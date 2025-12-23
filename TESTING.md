@@ -100,10 +100,15 @@ class MyServiceSpec extends Specification implements ServiceUnitTest<MyService> 
 
 ### Test Coverage
 
-Current coverage:
-- ✅ AuthService: Password hashing, token generation/validation, user registration
-- ✅ HealthController: Health check with ML engine status
-- ✅ PostController: CRUD operations, filtering, pagination
+### Test Files
+
+- ✅ `SampleSpec.groovy` - Basic framework verification (2 tests)
+- ✅ `AuthServiceBehaviorSpec.groovy` - Authentication behavior tests (5 tests)
+- ✅ `MlEngineServiceBehaviorSpec.groovy` - ML engine communication tests (7 tests)
+
+**Total: 14 passing tests**
+
+**Note:** These are behavioral/unit tests. Full integration tests with database require proper test database configuration. See `TESTING_REVIEW.md` for integration test specifications.
 
 ---
 
