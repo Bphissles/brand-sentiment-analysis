@@ -99,6 +99,8 @@ def cluster_posts(posts: List[dict], n_clusters: int = 4) -> Tuple[List[Dict], L
     
     # Build cluster objects
     clusters = []
+    used_taxonomy_ids = set()  # Track used taxonomy labels to prevent duplicates
+    
     for cluster_idx in range(n_clusters):
         # Get posts in this cluster
         cluster_post_indices = [valid_indices[i] for i, label in enumerate(cluster_labels) if label == cluster_idx]
@@ -112,8 +114,9 @@ def cluster_posts(posts: List[dict], n_clusters: int = 4) -> Tuple[List[Dict], L
         top_indices = centroid.argsort()[-15:][::-1]
         keywords = [feature_names[i] for i in top_indices]
         
-        # Match to taxonomy
-        taxonomy_id, label = match_cluster_to_taxonomy(keywords)
+        # Match to taxonomy, excluding already-used labels
+        taxonomy_id, label = match_cluster_to_taxonomy(keywords, exclude=used_taxonomy_ids)
+        used_taxonomy_ids.add(taxonomy_id)
         description = CLUSTER_TAXONOMY.get(taxonomy_id, {}).get('description', '')
         
         # Create cluster object (using camelCase for consistency with backend)
@@ -162,16 +165,20 @@ def extract_cluster_keywords(cluster_posts: List[dict], top_n: int = 10) -> List
     return [token for token, count in token_counts.most_common(top_n)]
 
 
-def match_cluster_to_taxonomy(keywords: List[str]) -> Tuple[str, str]:
+def match_cluster_to_taxonomy(keywords: List[str], exclude: set = None) -> Tuple[str, str]:
     """
     Match cluster keywords to predefined taxonomy using weighted scoring
     
     Args:
         keywords: List of cluster keywords
+        exclude: Set of taxonomy_ids to exclude (already used)
         
     Returns:
         Tuple of (taxonomy_key, human_readable_label)
     """
+    if exclude is None:
+        exclude = set()
+    
     best_match = None
     best_score = 0
     
@@ -180,6 +187,10 @@ def match_cluster_to_taxonomy(keywords: List[str]) -> Tuple[str, str]:
     keywords_set = set(keywords_lower)
     
     for key, taxonomy in CLUSTER_TAXONOMY.items():
+        # Skip already-used taxonomy labels
+        if key in exclude:
+            continue
+            
         taxonomy_keywords = set(k.lower() for k in taxonomy['keywords'])
         
         # Score based on overlap, weighted by position in keyword list
@@ -199,5 +210,11 @@ def match_cluster_to_taxonomy(keywords: List[str]) -> Tuple[str, str]:
     if best_match and best_score > 0.5:
         return best_match
     
-    # Default if no strong match found
-    return ('general', 'General Discussion')
+    # Default if no strong match found - make unique by adding cluster number
+    general_key = 'general'
+    counter = 1
+    while general_key in exclude:
+        general_key = f'general_{counter}'
+        counter += 1
+    
+    return (general_key, 'General Discussion')

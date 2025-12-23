@@ -140,7 +140,7 @@ const sentimentTrend = computed(() => {
             </div>
           </div>
           <div class="flex items-center gap-2 lg:gap-3">
-            <select 
+            <!-- <select 
               v-model="selectedSource"
               @change="handleSourceChange"
               class="px-2 lg:px-3 py-2 bg-white  border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
@@ -149,7 +149,7 @@ const sentimentTrend = computed(() => {
               <option value="twitter">Twitter/X</option>
               <option value="youtube">YouTube</option>
               <option value="forums">Forums</option>
-            </select>
+            </select> -->
             <NuxtLink 
               v-if="isAdmin"
               to="/data"
