@@ -107,6 +107,15 @@ const sentimentTrend = computed(() => {
               <option value="youtube">YouTube</option>
               <option value="forums">Forums</option>
             </select>
+            <NuxtLink 
+              to="/data"
+              class="px-3 py-2 bg-slate-700 text-slate-200 text-sm font-medium rounded-lg hover:bg-slate-600 border border-slate-600 transition-colors"
+              title="Data Management"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+              </svg>
+            </NuxtLink>
             <ThemeToggle />
             <button
               @click="runAnalysis"

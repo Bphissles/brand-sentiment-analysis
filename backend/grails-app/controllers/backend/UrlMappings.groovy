@@ -31,6 +31,12 @@ class UrlMappings {
         // Health check
         "/api/health"(controller: 'health', action: 'index')
 
+        // Data Ingestion API (Gemini web scraping)
+        "/api/ingestion/status"(controller: 'dataIngestion', action: 'status')
+        "/api/ingestion/scrapeAll"(controller: 'dataIngestion', action: 'scrapeAll')
+        "/api/ingestion/scrape/$source"(controller: 'dataIngestion', action: 'scrapeSource')
+        "/api/ingestion/import"(controller: 'dataIngestion', action: 'manualImport')
+
         // Default mappings
         "/$controller/$action?/$id?(.$format)?"{
             constraints {

@@ -14,7 +14,7 @@ class GeminiService {
     // Injected from application.yml
     def grailsApplication
 
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent"
 
     /**
      * Generate a business insight for a cluster of posts
@@ -95,7 +95,7 @@ Return valid JSON only, no additional text."""
      * @param prompt The prompt to send
      * @return The generated text response
      */
-    private String callGeminiApi(String prompt) {
+    String callGeminiApi(String prompt) {
         def apiKey = grailsApplication.config.getProperty('gemini.apiKey', String)
         
         if (!apiKey || apiKey == 'your_gemini_api_key_here') {

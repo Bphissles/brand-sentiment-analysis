@@ -72,6 +72,44 @@ export const useApi = () => {
     return response
   }
 
+  /**
+   * Get data ingestion status
+   */
+  const getIngestionStatus = async (): Promise<any> => {
+    const response = await $fetch<any>(`${baseUrl}/api/ingestion/status`)
+    return response
+  }
+
+  /**
+   * Scrape all sources using Gemini
+   */
+  const scrapeAllSources = async (): Promise<any> => {
+    const response = await $fetch<any>(`${baseUrl}/api/ingestion/scrapeAll`, {
+      method: 'POST'
+    })
+    return response
+  }
+
+  /**
+   * Scrape a specific source
+   */
+  const scrapeSource = async (source: 'twitter' | 'youtube' | 'forums'): Promise<any> => {
+    const response = await $fetch<any>(`${baseUrl}/api/ingestion/scrape/${source}`, {
+      method: 'POST'
+    })
+    return response
+  }
+
+  /**
+   * Clear all data (posts and clusters)
+   */
+  const clearAllData = async (): Promise<any> => {
+    const response = await $fetch<any>(`${baseUrl}/api/analysis/clear`, {
+      method: 'DELETE'
+    })
+    return response
+  }
+
   return {
     fetchSummary,
     fetchClusters,
@@ -79,6 +117,10 @@ export const useApi = () => {
     fetchPosts,
     triggerAnalysis,
     loadFixtures,
-    checkHealth
+    checkHealth,
+    getIngestionStatus,
+    scrapeAllSources,
+    scrapeSource,
+    clearAllData
   }
 }
