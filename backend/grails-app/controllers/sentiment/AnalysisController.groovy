@@ -44,6 +44,10 @@ class AnalysisController {
      */
     @Transactional
     def trigger() {
+        // Clear previous clusters before new analysis
+        Cluster.executeUpdate('delete from Cluster')
+        Post.executeUpdate('update Post set clusterId = null')
+        
         // Create analysis run record
         def run = new AnalysisRun(
             status: 'processing',
