@@ -187,6 +187,12 @@ Look for:
 
 ---
 
+## Persistence / action tracking
+
+After each review, also write or append the same structured output to `CODE_REVIEW_LOG.md` at the repo root (or ensure an equivalent log entry is added there). Use a dated heading (e.g., `## 2025-12-23 – Feature X`) so teams can track findings and follow-up actions over time.
+
+---
+
 ## Extra “things to always check” for this stack
 
 * New endpoints: are they protected by JWT filter/AuthInterceptor?

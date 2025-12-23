@@ -33,7 +33,14 @@ Your goal is to detect **integration risks between services**. Be concise. If yo
 
 - Start with a brief summary of cross-service impact.
 - Then list **only cross-cutting risks**, ordered by importance.
-- If you see **no integration risk**, respond: “No cross-cutting integration risks detected.” and stop. 
+- If you see **no integration risk**, respond: “No cross-cutting integration risks detected.” and stop.
+
+### Logging for Execution
+
+- After each cross-service review, append the same structured output to `CODE_REVIEW_LOG.md` at the repo root.
+- Use a dated heading (for example, `## 2025-12-23 – Cross-service review`) so automation and humans can track what was reviewed and when.
+- This log is the canonical place for tools and scripts to read review results during or after `/review` execution.
+
 
 **Cross-cutting summary**
 

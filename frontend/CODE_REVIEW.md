@@ -216,6 +216,16 @@ Treat as **High** if regressing:
 
 ---
 
+## Review logging (mandatory)
+
+After producing the review output above, append a new section to `CODE_REVIEW_LOG.md` with:
+
+- A heading including the date and PR identifier or short description.
+- A checklist of **Medium/Low** issues and **Test follow-ups** that can be actioned later (one checkbox per item).
+- File paths for each item (e.g., `components/UserMenu.vue`) so contributors can quickly navigate to fix them.
+
+---
+
 ## “Always check” quick scan for this project
 
 * SSR guards (`import.meta.client`, `onMounted`) and hydration stability

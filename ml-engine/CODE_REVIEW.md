@@ -234,6 +234,18 @@ Require tests for:
 
 ---
 
+## Review logging (mandatory)
+
+After producing the review output above, append a new section to `CODE_REVIEW_LOG.md` with:
+
+- A heading including the date and PR identifier or short description.
+* Ensure each issue (Blocker/High/Medium/Low) includes enough context (file, line/snippet, What — Why — Fix) so it can be turned into a ticket.
+* Optionally append links or IDs for any created follow-up tickets under the corresponding bullet points.
+
+These logs allow the team to audit past reviews and systematically track fixes over time.
+
+---
+
 ## “Always check” quick scan for this engine
 
 * `KMeans(random_state=…)` present for reproducibility
