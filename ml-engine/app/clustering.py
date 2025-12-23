@@ -94,7 +94,7 @@ def cluster_posts(posts: List[dict], n_clusters: int = 4) -> Tuple[List[Dict], L
     for idx, valid_idx in enumerate(valid_indices):
         updated_posts[valid_idx] = {
             **updated_posts[valid_idx],
-            'cluster_idx': int(cluster_labels[idx])
+            'clusterIdx': int(cluster_labels[idx])
         }
     
     # Build cluster objects
@@ -116,22 +116,22 @@ def cluster_posts(posts: List[dict], n_clusters: int = 4) -> Tuple[List[Dict], L
         taxonomy_id, label = match_cluster_to_taxonomy(keywords)
         description = CLUSTER_TAXONOMY.get(taxonomy_id, {}).get('description', '')
         
-        # Create cluster object
+        # Create cluster object (using camelCase for consistency with backend)
         cluster = {
             'id': str(uuid.uuid4()),
-            'taxonomy_id': taxonomy_id,
+            'taxonomyId': taxonomy_id,
             'label': label,
             'description': description,
             'keywords': keywords[:10],
-            'post_count': len(cluster_posts_list),
-            'post_ids': [p.get('id') for p in cluster_posts_list]
+            'postCount': len(cluster_posts_list),
+            'postIds': [p.get('id') for p in cluster_posts_list]
         }
         
         clusters.append(cluster)
         
         # Update posts with cluster ID
         for post_idx in cluster_post_indices:
-            updated_posts[post_idx]['cluster_id'] = cluster['id']
+            updated_posts[post_idx]['clusterId'] = cluster['id']
     
     return clusters, updated_posts
 

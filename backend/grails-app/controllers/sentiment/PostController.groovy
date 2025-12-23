@@ -33,7 +33,15 @@ class PostController {
             order('publishedAt', 'desc')
         }
 
-        def total = Post.count()
+        // Calculate total based on the same filters
+        def total = Post.createCriteria().count {
+            if (source) {
+                eq('source', source)
+            }
+            if (clusterId) {
+                eq('clusterId', clusterId)
+            }
+        }
 
         respond([
             data: posts,

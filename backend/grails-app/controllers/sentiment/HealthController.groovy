@@ -20,6 +20,7 @@ class HealthController {
             status: 'healthy',
             service: 'grails-backend',
             timestamp: new Date().toInstant().toString(),
+            mlEngineStatus: mlHealthy ? 'healthy' : 'unavailable',
             dependencies: [
                 mlEngine: mlHealthy ? 'healthy' : 'unavailable'
             ]

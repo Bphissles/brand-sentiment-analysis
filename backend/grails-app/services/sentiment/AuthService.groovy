@@ -17,7 +17,19 @@ class AuthService {
 
     // JWT secret key - should be at least 256 bits for HS256
     private Key getSigningKey() {
-        def secret = grailsApplication.config.getProperty('jwt.secret', String) ?: 'default-secret-key-change-in-production-must-be-at-least-256-bits'
+        def secret = grailsApplication.config.getProperty('jwt.secret', String)
+        
+        // Fail fast if JWT secret is not configured in non-dev environments
+        if (!secret) {
+            def environment = grails.util.Environment.current.name
+            if (environment != 'DEVELOPMENT') {
+                throw new IllegalStateException("JWT secret must be configured in ${environment} environment. Set jwt.secret in application.yml or JWT_SECRET environment variable.")
+            }
+            // Use default only in development
+            log.warn("Using default JWT secret - THIS IS ONLY SAFE FOR DEVELOPMENT")
+            secret = 'default-secret-key-change-in-production-must-be-at-least-256-bits'
+        }
+        
         return Keys.hmacShaKeyFor(secret.bytes)
     }
 

@@ -14,8 +14,8 @@ export interface Post {
   author: string;              // Username or handle
   authorUrl?: string;          // Link to author profile
   postUrl?: string;            // Link to original post
-  publishedAt: string;         // ISO date string
-  fetchedAt: string;           // When we retrieved it
+  publishedAt: string | number;  // ISO date string or epoch milliseconds
+  fetchedAt: string | number;    // ISO date string or epoch milliseconds
   
   // ML-generated fields (populated after analysis)
   sentimentCompound?: number;      // Overall score: -1 to 1
@@ -169,6 +169,15 @@ export interface ClusterNode {
   y?: number;                  // D3 position
 }
 
+// Simplified cluster summary for dashboard
+export interface ClusterSummary {
+  id: string;
+  label: string;
+  sentiment: number;
+  sentimentLabel: 'positive' | 'negative' | 'neutral';
+  postCount: number;
+}
+
 export interface DashboardSummary {
   totalPosts: number;
   totalClusters: number;
@@ -178,7 +187,7 @@ export interface DashboardSummary {
     neutral: number;
     negative: number;
   };
-  topClusters: Cluster[];
-  recentInsights: Insight[];
+  topClusters: ClusterSummary[];
+  recentInsights?: Insight[];
   lastAnalysisAt?: string;
 }

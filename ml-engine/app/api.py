@@ -72,7 +72,7 @@ def analyze():
     
     # Step 4: Calculate aggregate sentiment per cluster
     for cluster in clusters:
-        cluster_post_ids = set(cluster.get('post_ids', []))
+        cluster_post_ids = set(cluster.get('postIds', []))
         cluster_posts_list = [p for p in clustered_posts if p.get('id') in cluster_post_ids]
         
         avg_sentiment = aggregate_cluster_sentiment(cluster_posts_list)
@@ -92,7 +92,7 @@ def analyze():
             'author': post.get('author'),
             'publishedAt': post.get('publishedAt'),
             'sentiment': post.get('sentiment'),
-            'clusterId': post.get('cluster_id'),
+            'clusterId': post.get('clusterId'),
             'keywords': post.get('tokens', [])[:10]  # Top 10 tokens as keywords
         }
         response_posts.append(response_post)

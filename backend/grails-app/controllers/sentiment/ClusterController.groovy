@@ -10,7 +10,7 @@ import grails.gorm.transactions.Transactional
 class ClusterController {
 
     static responseFormats = ['json']
-    static allowedMethods = [index: 'GET', show: 'GET']
+    static allowedMethods = [index: 'GET', show: 'GET', summary: 'GET']
 
     /**
      * GET /api/clusters

@@ -44,10 +44,6 @@ class AnalysisController {
      */
     @Transactional
     def trigger() {
-        // Clear previous clusters before new analysis
-        Cluster.executeUpdate('delete from Cluster')
-        Post.executeUpdate('update Post set clusterId = null')
-        
         // Create analysis run record
         def run = new AnalysisRun(
             status: 'processing',
@@ -74,7 +70,7 @@ class AnalysisController {
                 return
             }
 
-            // Call ML Engine
+            // Call ML Engine first before clearing existing data
             def result = mlEngineService.analyzePostsForClusters(posts)
 
             if (!result.success) {
@@ -87,24 +83,28 @@ class AnalysisController {
                 return
             }
 
+            // Only clear previous clusters after successful ML analysis
+            Cluster.executeUpdate('delete from Cluster')
+            Post.executeUpdate('update Post set clusterId = null')
+
             // Save clusters from ML response
             def clustersCreated = 0
             result.clusters.each { clusterData ->
                 def cluster = new Cluster(
-                    taxonomyId: clusterData.taxonomy_id ?: clusterData.taxonomyId,
+                    taxonomyId: clusterData.taxonomyId,
                     label: clusterData.label,
                     description: clusterData.description,
                     keywords: clusterData.keywords?.join(','),
                     sentiment: clusterData.sentiment,
                     sentimentLabel: clusterData.sentimentLabel,
-                    postCount: clusterData.post_count ?: clusterData.postCount,
+                    postCount: clusterData.postCount,
                     analysisRunId: run.id.toString()
                 )
                 cluster.save(flush: true)
                 clustersCreated++
 
-                // Update posts with cluster assignment and sentiment
-                clusterData.post_ids?.each { postId ->
+                // Update posts with cluster assignment
+                clusterData.postIds?.each { postId ->
                     def post = Post.get(postId as Long)
                     if (post) {
                         post.clusterId = cluster.id.toString()
