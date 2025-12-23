@@ -2,6 +2,7 @@
 import type { Cluster, Post } from '~/types/models'
 
 const api = useApi()
+const { initAuth } = useAuth()
 
 // State
 const clusters = ref<Cluster[]>([])
@@ -16,6 +17,7 @@ const lastAnalysis = ref<string | null>(null)
 
 // Load data on mount
 onMounted(async () => {
+  initAuth()
   await loadData()
 })
 
@@ -128,6 +130,7 @@ const sentimentTrend = computed(() => {
               </svg>
               <span>{{ loading ? 'Analyzing...' : 'Run Analysis' }}</span>
             </button>
+            <UserMenu />
           </div>
         </div>
       </div>

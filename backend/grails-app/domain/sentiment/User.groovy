@@ -33,6 +33,7 @@ class User {
     }
 
     static mapping = {
-        password column: 'password_hash'
+        table 'app_user'  // Avoid reserved word 'user'
+        passwordHash column: 'password_hash'
     }
 }

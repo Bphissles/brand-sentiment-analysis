@@ -37,6 +37,12 @@ class UrlMappings {
         "/api/ingestion/scrape/$source"(controller: 'dataIngestion', action: 'scrapeSource')
         "/api/ingestion/import"(controller: 'dataIngestion', action: 'manualImport')
 
+        // Authentication API
+        "/api/auth/login"(controller: 'auth', action: 'login')
+        "/api/auth/register"(controller: 'auth', action: 'register')
+        "/api/auth/me"(controller: 'auth', action: 'me')
+        "/api/auth/logout"(controller: 'auth', action: 'logout')
+
         // Default mappings
         "/$controller/$action?/$id?(.$format)?"{
             constraints {
