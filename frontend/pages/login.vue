@@ -9,10 +9,12 @@ const confirmPassword = ref('')
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-// Redirect if already authenticated
+// Redirect if already authenticated (handled by global middleware, but keep as backup)
 watch(isAuthenticated, (authenticated) => {
   if (authenticated) {
-    router.push('/')
+    const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/'
+    sessionStorage.removeItem('redirectAfterLogin')
+    router.push(redirectPath)
   }
 }, { immediate: true })
 
@@ -43,7 +45,10 @@ const handleSubmit = async () => {
       : await register(email.value, password.value)
 
     if (result.success) {
-      router.push('/')
+      // Check for redirect destination (set by auth middleware)
+      const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/'
+      sessionStorage.removeItem('redirectAfterLogin')
+      router.push(redirectPath)
     } else {
       error.value = result.error || 'Authentication failed'
     }
