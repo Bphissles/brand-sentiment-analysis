@@ -19,13 +19,15 @@ Aggregates and analyzes publicly available data from social media, forums, and c
 
 - ✅ Multi-channel data ingestion (Twitter, YouTube, Forums)
 - ✅ ML clustering with K-Means + TF-IDF (Python/scikit-learn)
-- ✅ NLTK VADER sentiment analysis per post and cluster
+- ✅ Sentiment analysis (NLTK VADER + Gemini 2.0 Flash)
 - ✅ Interactive D3.js bubble chart visualization
-- ✅ Responsive dashboard UI with TailwindCSS
+- ✅ Responsive dashboard UI with TailwindCSS + dark mode
 - ✅ Unified local dev scripts (`start-local.sh`, `stop-local.sh`)
 - ✅ Comprehensive testing framework (Spock, Vitest, pytest)
-- ⚠️ AI-powered insights (Gemini 1.5 Flash) — stub ready
-- ⚠️ JWT authentication — Sprint 5
+- ✅ AI-powered insights (Gemini 2.0 Flash) — Trend Analysis, Recommendations, Executive Summary
+- ✅ JWT authentication with login/register/logout
+- ✅ Admin-only Data Management page
+- ✅ Sentiment filtering and sorting in modals
 
 ---
 
@@ -35,10 +37,10 @@ Aggregates and analyzes publicly available data from social media, forums, and c
 |-------|------------|------------|
 | Frontend | Nuxt 3 + TailwindCSS + D3.js | Netlify |
 | API | Grails 6 (Spring Boot) | Render |
-| ML Engine | Python (scikit-learn, NLTK, Flask) | Render |
-| AI/NLP | Google Gemini 1.5 Flash | API |
+| ML Engine | Python (scikit-learn, NLTK/VADER, Flask) | Render |
+| AI/NLP | Google Gemini 2.0 Flash | API (Grails + Python) |
 | Database | PostgreSQL | Supabase (free tier) |
-| Auth | JWT (Grails Spring Security REST) | — |
+| Auth | Custom JWT | Grails-issued tokens |
 
 ---
 
@@ -184,7 +186,7 @@ FLASK_ENV=development
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/health` | Health check with ML engine status |
-| GET | `/api/posts` | List all posts (paginated) |
+| GET | `/api/posts` | List all posts (paginated, filterable by source/sentiment) |
 | GET | `/api/posts/{id}` | Get single post |
 | GET | `/api/posts/sources` | Get source counts |
 | GET | `/api/clusters` | Get all clusters with sample posts |
@@ -192,7 +194,13 @@ FLASK_ENV=development
 | GET | `/api/clusters/summary` | Dashboard summary stats |
 | POST | `/api/analysis/trigger` | Run ML analysis on all posts |
 | POST | `/api/analysis/load-fixtures` | Load mock data into database |
-| DELETE | `/api/analysis/clear` | Clear all data (dev only) |
+| DELETE | `/api/analysis/clear` | Clear all data (admin only) |
+| GET | `/api/insights` | Get cached AI insights |
+| POST | `/api/insights/generate` | Generate new AI insights (Gemini) |
+| POST | `/api/auth/login` | User login, returns JWT |
+| POST | `/api/auth/register` | User registration |
+| GET | `/api/auth/me` | Get current user info |
+| POST | `/api/auth/logout` | User logout |
 
 ### ML Engine (Python) - Port 5000
 
@@ -206,7 +214,7 @@ FLASK_ENV=development
 
 ## Documentation
 
-- [Sprint Breakdown](SPRINTS.md) — Development roadmap (Sprints 0-4 complete)
+- [Sprint Breakdown](SPRINTS.md) — Development roadmap (Sprints 0-5 complete)
 - [Architecture](docs/ARCHITECTURE.md) — System design diagrams
 - [Testing Guide](TESTING.md) — Testing setup and execution
 - [Testing Status](TESTING_STATUS.md) — Current test coverage and roadmap

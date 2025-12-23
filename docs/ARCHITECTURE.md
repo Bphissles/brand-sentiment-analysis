@@ -29,7 +29,7 @@ flowchart TB
         FLASK[Flask API<br/>:5000]
         PREPROCESS[Preprocessing<br/>TF-IDF]
         KMEANS[K-Means<br/>Clustering]
-        SENTIMENT[VADER<br/>Sentiment]
+        SENTIMENT[VADER + Gemini<br/>Sentiment]
     end
 
     subgraph Database["🗄️ PostgreSQL (Supabase)"]
@@ -158,21 +158,22 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph frontend["frontend/"]
-        PAGES[pages/<br/>index.vue]
-        COMPONENTS[components/<br/>BubbleChart, ClusterCard,<br/>ClusterDetail, SentimentBadge]
-        COMPOSABLES[composables/<br/>useApi]
+        PAGES[pages/<br/>index.vue, data.vue,<br/>login.vue, register.vue]
+        COMPONENTS[components/<br/>BubbleChart, ClusterDetail,<br/>UserMenu, ThemeToggle]
+        COMPOSABLES[composables/<br/>useApi, useAuth]
     end
 
     subgraph backend["backend/"]
-        CONTROLLERS[controllers/<br/>Post, Cluster, Analysis, Health]
-        SERVICES[services/<br/>Gemini, MlEngine, DataLoader]
-        DOMAIN[domain/<br/>Post, Cluster, AnalysisRun, User]
+        CONTROLLERS[controllers/<br/>Post, Cluster, Analysis,<br/>Auth, AiInsight, Health]
+        SERVICES[services/<br/>Gemini, MlEngine,<br/>AiInsight, Auth, DataLoader]
+        DOMAIN[domain/<br/>Post, Cluster, AnalysisRun,<br/>AiInsight, User]
     end
 
     subgraph mlengine["ml-engine/"]
         API[api.py<br/>Flask routes]
         CLUSTERING[clustering.py<br/>K-Means + TF-IDF]
-        SENTIMENT[sentiment.py<br/>NLTK VADER]
+        SENTIMENT[sentiment.py<br/>VADER + Gemini]
+        GEMINI_PY[sentiment_gemini.py<br/>Gemini API]
         PREPROCESS[preprocessing.py<br/>Tokenization]
     end
 
@@ -271,7 +272,7 @@ flowchart LR
     end
 
     subgraph External["External APIs"]
-        GEMINI[Google Gemini<br/>1.5 Flash]
+        GEMINI[Google Gemini<br/>2.0 Flash]
     end
 
     NUXT <-->|HTTPS| GRAILS

@@ -5,6 +5,6 @@ Project Context:
 
 Target Client: Peterbilt (Heavy Duty Trucking/EV sector).
 
-Tech Stack: Nuxt 3 (Frontend), Grails (Backend), D3.js (Visualization), Gemini 1.5 Flash (AI/NLP Engine).
+Tech Stack: Nuxt 3 (Frontend), Grails (Backend), D3.js (Visualization), Gemini 2.0 Flash (AI/NLP Engine), Python ML Engine (scikit-learn, NLTK/VADER).
 
 The Goal: Visualize how specific themes (e.g., "579EV Range," "PACCAR Reliability," "Driver Ergonomics", etc.) cluster together and correlate with sentiment scores.

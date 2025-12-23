@@ -15,9 +15,9 @@
 |-------|------------|------------|
 | Frontend | Nuxt 3 + TailwindCSS + D3.js | Netlify |
 | API | Grails (Spring Boot) | Render |
-| ML Engine | Python (scikit-learn, NLTK) | Render |
-| AI Data Gathering | Gemini 1.5 Flash API | Called from Grails |
-| Auth | Nuxt Auth + JWT | Grails-issued tokens |
+| ML Engine | Python (scikit-learn, NLTK/VADER, Gemini) | Render |
+| AI Insights | Gemini 2.0 Flash API | Called from Grails + Python |
+| Auth | Custom JWT | Grails-issued tokens |
 | Database | PostgreSQL | Supabase (free tier) |
 
 ---
@@ -32,7 +32,7 @@
 | Sprint 3 | Grails API Layer | 4-6 hours | ✅ Complete |
 | Sprint 4 | D3.js Visualization | 6-8 hours | ✅ Complete |
 | Sprint 4.5 | Testing Framework | 3-4 hours | ✅ Complete |
-| Sprint 5 | Dashboard UI & Auth | 4-6 hours | ⬜ Pending |
+| Sprint 5 | Dashboard UI & Auth | 4-6 hours | ✅ Complete |
 | Sprint 6 | Deploy & Demo | 3-4 hours | ⬜ Pending |
 
 **Total estimated time to MVP:** 30-42 hours
@@ -227,7 +227,7 @@ Can run all three projects locally without errors
 ### Deliverables
 - [x] Grails API running on port 8080
 - [x] All REST endpoints functional
-- [ ] JWT auth working (Sprint 5)
+- [x] JWT auth working
 - [x] ML engine integration tested
 
 ### Definition of Done
@@ -330,51 +330,61 @@ All three testing frameworks operational with sample tests passing ✅
 
 ### Tasks
 
-- [ ] **5.1** Implement Nuxt Auth
-  - Configure @sidebase/nuxt-auth
+- [x] **5.1** Implement Custom JWT Auth
+  - Custom JWT authentication (not @sidebase/nuxt-auth)
   - Create login/register pages
-  - Protected route middleware
-  - Token storage and refresh
+  - Protected route middleware via AuthInterceptor
+  - Token storage in localStorage
+  - User menu component with logout
 
-- [ ] **5.2** Create dashboard layout
-  - Header with logo and user menu
-  - Sidebar with navigation
+- [x] **5.2** Create dashboard layout
+  - Header with logo, source filter, and user menu
   - Main content area for visualization
   - Footer with metadata
+  - Dark/light mode toggle (ThemeToggle component)
 
-- [ ] **5.3** Build dashboard pages
+- [x] **5.3** Build dashboard pages
   - `/login` — Authentication
-  - `/register` — New user signup
-  - `/dashboard` — Main visualization (protected)
-  - `/dashboard/posts` — Raw post browser (protected)
-  - `/dashboard/insights` — AI insights list (protected)
+  - `/register` — New user signup  
+  - `/` — Main dashboard with visualization
+  - `/data` — Data management page (admin only)
 
-- [ ] **5.4** Add real-time indicators
+- [x] **5.4** Add real-time indicators
   - Last analysis timestamp
-  - Data freshness indicator
-  - Loading states
-  - Error handling UI
+  - Loading states with spinners
+  - Error handling UI with dismissible alerts
+  - ESC key to close modals
 
-- [ ] **5.5** Create summary cards
+- [x] **5.5** Create summary cards & AI insights
   - Total posts analyzed
-  - Sentiment distribution pie chart
-  - Top clusters by volume
-  - Recent insights
+  - Sentiment distribution bar with clickable filters
+  - Top clusters by volume (filterable by sentiment)
+  - AI Trend Analysis (Gemini-powered)
+  - AI Recommendations (Gemini-powered)
+  - Executive Summary (Gemini-powered, auto-cached)
 
-- [ ] **5.6** Polish and responsive design
+- [x] **5.6** Polish and responsive design
   - Mobile-friendly layout
-  - Dark/light mode (optional)
-  - Accessibility audit
-  - Loading skeletons
+  - Dark/light mode with system preference detection
+  - Custom scrollbar styling
+  - Loading skeletons and states
+
+- [x] **5.7** Advanced UX Features (Added)
+  - Cluster sentiment filter dropdown
+  - Clickable sentiment distribution to view posts by sentiment
+  - Sentiment posts modal with sorting (strongest/newest/oldest)
+  - Source filter applies to all views including modals
+  - Gemini sentiment analysis in ML engine (with VADER fallback)
 
 ### Deliverables
-- [ ] Complete auth flow
-- [ ] Polished dashboard UI
-- [ ] All pages functional
-- [ ] Responsive design
+- [x] Complete auth flow (login, register, logout, protected routes)
+- [x] Polished dashboard UI with dark mode
+- [x] All pages functional
+- [x] Responsive design
+- [x] AI-powered insights (cached after analysis)
 
 ### Definition of Done
-End-to-end flow: login → view dashboard → interact with clusters
+End-to-end flow: login → view dashboard → interact with clusters ✅
 
 ---
 
@@ -443,7 +453,8 @@ sentiment-analyzer/
 │   ├── pages/
 │   │   └── index.vue         # Main dashboard
 │   ├── composables/
-│   │   └── useApi.ts         # API client
+│   │   ├── useApi.ts         # API client
+│   │   └── useAuth.ts        # Authentication composable
 │   ├── types/
 │   │   └── models.ts         # TypeScript interfaces
 │   ├── app.vue
@@ -460,10 +471,12 @@ sentiment-analyzer/
 │   │   │   ├── Post.groovy
 │   │   │   ├── Cluster.groovy
 │   │   │   ├── AnalysisRun.groovy
+│   │   │   ├── AiInsight.groovy          # Cached AI insights
 │   │   │   └── User.groovy
 │   │   └── services/sentiment/
-│   │       ├── GeminiService.groovy
+│   │       ├── GeminiService.groovy      # AI insights generation
 │   │       ├── MlEngineService.groovy
+│   │       ├── AiInsightService.groovy   # Insight caching
 │   │       └── DataLoaderService.groovy
 │   └── grails-app/conf/application.yml
 │
@@ -471,7 +484,8 @@ sentiment-analyzer/
 │   ├── app/
 │   │   ├── api.py            # Flask API endpoints
 │   │   ├── clustering.py     # K-Means with TF-IDF
-│   │   ├── sentiment.py      # NLTK VADER sentiment
+│   │   ├── sentiment.py      # NLTK VADER + Gemini sentiment
+│   │   ├── sentiment_gemini.py # Gemini sentiment analysis
 │   │   ├── preprocessing.py  # Text cleaning & tokenization
 │   │   └── models.py         # Python dataclasses
 │   ├── requirements.txt
@@ -541,6 +555,8 @@ scikit-learn>=1.4.0
 nltk>=3.8.0
 pandas>=2.1.0
 gunicorn>=21.0.0
+google-genai>=1.0.0
+python-dotenv>=1.0.0
 ```
 
 ---
