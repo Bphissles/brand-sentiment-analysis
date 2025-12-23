@@ -19,6 +19,7 @@ class ClusterController {
     def index() {
         def analysisRunId = params.analysisRunId
         def sentimentLabel = params.sentimentLabel
+        def source = params.source
 
         def criteria = Cluster.createCriteria()
         def clusters = criteria.list {
@@ -31,9 +32,24 @@ class ClusterController {
             order('postCount', 'desc')
         }
 
+        // If source filter is specified, filter clusters by posts from that source
+        if (source) {
+            def clusterIdsWithSource = Post.findAllBySource(source)*.clusterId.unique()
+            clusters = clusters.findAll { clusterIdsWithSource.contains(it.id.toString()) }
+        }
+
         // Enrich with post sample for each cluster
         def enrichedClusters = clusters.collect { cluster ->
-            def samplePosts = Post.findAllByClusterId(cluster.id.toString(), [max: 3])
+            def postCriteria = [max: 3]
+            def samplePosts = source 
+                ? Post.findAllByClusterIdAndSource(cluster.id.toString(), source, postCriteria)
+                : Post.findAllByClusterId(cluster.id.toString(), postCriteria)
+            
+            // Recalculate post count for this source if filtered
+            def postCount = source 
+                ? Post.countByClusterIdAndSource(cluster.id.toString(), source)
+                : cluster.postCount
+            
             [
                 id: cluster.id,
                 taxonomyId: cluster.taxonomyId,
@@ -42,15 +58,15 @@ class ClusterController {
                 keywords: cluster.keywords?.split(',')?.toList() ?: [],
                 sentiment: cluster.sentiment,
                 sentimentLabel: cluster.sentimentLabel,
-                postCount: cluster.postCount,
+                postCount: postCount,
                 insight: cluster.insight,
                 samplePosts: samplePosts.collect { p ->
                     [id: p.id, content: p.content?.take(200), author: p.author]
                 }
             ]
-        }
+        }.findAll { it.postCount > 0 }  // Only include clusters with posts for this source
 
-        respond([clusters: enrichedClusters, total: clusters.size()])
+        respond([clusters: enrichedClusters, total: enrichedClusters.size()])
     }
 
     /**
@@ -107,16 +123,24 @@ class ClusterController {
      * Get dashboard summary of all clusters
      */
     def summary() {
+        def source = params.source
+        
         def clusters = Cluster.list()
-        def posts = Post.list()
+        def posts = source ? Post.findAllBySource(source) : Post.list()
 
-        // Calculate sentiment distribution using cluster data
-        def positive = clusters.count { it.sentimentLabel == 'positive' }
-        def negative = clusters.count { it.sentimentLabel == 'negative' }
-        def neutral = clusters.count { it.sentimentLabel == 'neutral' }
+        // If source filter, only include clusters that have posts from that source
+        if (source) {
+            def clusterIdsWithSource = posts*.clusterId.unique()
+            clusters = clusters.findAll { clusterIdsWithSource.contains(it.id.toString()) }
+        }
 
-        // Calculate average sentiment using cluster data
-        def avgSentiment = clusters ? clusters.sum { it.sentiment ?: 0 } / clusters.size() : 0
+        // Calculate sentiment distribution from posts (more accurate when filtered)
+        def positive = posts.count { it.sentimentLabel == 'positive' }
+        def negative = posts.count { it.sentimentLabel == 'negative' }
+        def neutral = posts.count { it.sentimentLabel == 'neutral' }
+
+        // Calculate average sentiment from posts
+        def avgSentiment = posts ? posts.sum { it.sentimentCompound ?: 0 } / posts.size() : 0
 
         respond([
             totalPosts: posts.size(),
@@ -128,14 +152,17 @@ class ClusterController {
                 negative: negative
             ],
             topClusters: clusters.take(4).collect { c ->
+                def clusterPostCount = source 
+                    ? Post.countByClusterIdAndSource(c.id.toString(), source)
+                    : c.postCount
                 [
                     id: c.id,
                     label: c.label,
                     sentiment: c.sentiment,
                     sentimentLabel: c.sentimentLabel,
-                    postCount: c.postCount
+                    postCount: clusterPostCount
                 ]
-            }
+            }.findAll { it.postCount > 0 }
         ])
     }
 }

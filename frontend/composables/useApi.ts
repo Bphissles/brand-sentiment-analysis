@@ -9,20 +9,22 @@ export const useApi = () => {
   const { getAuthHeader } = useAuth()
 
   /**
-   * Fetch dashboard summary
+   * Fetch dashboard summary with optional source filter
    */
-  const fetchSummary = async (): Promise<DashboardSummary> => {
-    const response = await $fetch<any>(`${baseUrl}/api/clusters/summary`, {
+  const fetchSummary = async (source?: string): Promise<DashboardSummary> => {
+    const query = source && source !== 'all' ? `?source=${source}` : ''
+    const response = await $fetch<any>(`${baseUrl}/api/clusters/summary${query}`, {
       headers: getAuthHeader()
     })
     return response
   }
 
   /**
-   * Fetch all clusters
+   * Fetch all clusters with optional source filter
    */
-  const fetchClusters = async (): Promise<Cluster[]> => {
-    const response = await $fetch<any>(`${baseUrl}/api/clusters`, {
+  const fetchClusters = async (source?: string): Promise<Cluster[]> => {
+    const query = source && source !== 'all' ? `?source=${source}` : ''
+    const response = await $fetch<any>(`${baseUrl}/api/clusters${query}`, {
       headers: getAuthHeader()
     })
     return response.clusters || []

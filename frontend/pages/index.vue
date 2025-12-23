@@ -61,9 +61,10 @@ const loadData = async () => {
   error.value = null
   
   try {
+    const source = selectedSource.value !== 'all' ? selectedSource.value : undefined
     const [clustersData, summaryData] = await Promise.all([
-      api.fetchClusters(),
-      api.fetchSummary()
+      api.fetchClusters(source),
+      api.fetchSummary(source)
     ])
     
     clusters.value = clustersData
@@ -272,6 +273,178 @@ const sentimentTrend = computed(() => {
                 @click="handleClusterClick"
               />
             </div>
+          </div>
+        </div>
+
+        <!-- AI Insights Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <!-- Sentiment Trends -->
+          <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Sentiment Trends</h3>
+              </div>
+              <span class="px-2 py-1 bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 text-xs font-medium rounded-full">
+                AI Enhanced
+              </span>
+            </div>
+            
+            <!-- Sentiment Distribution Bar -->
+            <div class="mb-4">
+              <div class="flex justify-between text-sm text-slate-600 dark:text-slate-400 mb-2">
+                <span>Sentiment Distribution</span>
+                <span>{{ summary?.totalPosts || 0 }} posts analyzed</span>
+              </div>
+              <div class="h-4 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden flex">
+                <div 
+                  class="bg-emerald-500 transition-all duration-500"
+                  :style="{ width: `${(summary?.sentimentDistribution?.positive || 0) / Math.max(summary?.totalPosts || 1, 1) * 100}%` }"
+                ></div>
+                <div 
+                  class="bg-amber-500 transition-all duration-500"
+                  :style="{ width: `${(summary?.sentimentDistribution?.neutral || 0) / Math.max(summary?.totalPosts || 1, 1) * 100}%` }"
+                ></div>
+                <div 
+                  class="bg-rose-500 transition-all duration-500"
+                  :style="{ width: `${(summary?.sentimentDistribution?.negative || 0) / Math.max(summary?.totalPosts || 1, 1) * 100}%` }"
+                ></div>
+              </div>
+              <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <span class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  Positive ({{ summary?.sentimentDistribution?.positive || 0 }})
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                  Neutral ({{ summary?.sentimentDistribution?.neutral || 0 }})
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                  Negative ({{ summary?.sentimentDistribution?.negative || 0 }})
+                </span>
+              </div>
+            </div>
+
+            <!-- AI Analysis Placeholder -->
+            <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-dashed border-slate-300 dark:border-slate-600">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-violet-100 dark:bg-violet-900/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg class="w-3 h-3 text-violet-600 dark:text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">AI Trend Analysis</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400 italic">
+                    {{ clusters.length > 0 
+                      ? `Overall sentiment is ${(summary?.averageSentiment || 0) >= 0.1 ? 'positive' : (summary?.averageSentiment || 0) <= -0.1 ? 'negative' : 'neutral'}. The "${clusters[0]?.label || 'top cluster'}" topic shows the strongest engagement with ${clusters[0]?.postCount || 0} posts.`
+                      : 'Run analysis to generate AI-powered trend insights...'
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Themes & Recommendations -->
+          <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Key Themes</h3>
+              </div>
+              <span class="px-2 py-1 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 text-xs font-medium rounded-full">
+                AI Synthesized
+              </span>
+            </div>
+
+            <!-- Theme Tags -->
+            <div class="flex flex-wrap gap-2 mb-4">
+              <template v-if="clusters.length > 0">
+                <span 
+                  v-for="cluster in clusters.slice(0, 6)" 
+                  :key="cluster.id"
+                  class="px-3 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer hover:opacity-80"
+                  :class="{
+                    'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400': cluster.sentimentLabel === 'positive',
+                    'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400': cluster.sentimentLabel === 'neutral',
+                    'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400': cluster.sentimentLabel === 'negative'
+                  }"
+                  @click="handleClusterClick(cluster)"
+                >
+                  {{ cluster.label }}
+                </span>
+              </template>
+              <template v-else>
+                <span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-400 rounded-full text-sm">
+                  No themes detected
+                </span>
+              </template>
+            </div>
+
+            <!-- AI Recommendations Placeholder -->
+            <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-dashed border-slate-300 dark:border-slate-600">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-cyan-100 dark:bg-cyan-900/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg class="w-3 h-3 text-cyan-600 dark:text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">AI Recommendations</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400 italic">
+                    {{ clusters.length > 0 
+                      ? `Focus on addressing concerns in the "${clusters.find(c => c.sentimentLabel === 'negative')?.label || clusters[clusters.length-1]?.label || 'lowest sentiment'}" category. Consider amplifying positive discussions around "${clusters.find(c => c.sentimentLabel === 'positive')?.label || clusters[0]?.label || 'top topics'}".`
+                      : 'Run analysis to generate AI-powered recommendations...'
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Executive Summary Section -->
+        <div class="bg-gradient-to-r from-slate-800 to-slate-900 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-lg p-6 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-white">Executive Summary</h3>
+                <p class="text-sm text-slate-400">AI-generated narrative for stakeholder reporting</p>
+              </div>
+            </div>
+            <span class="px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full border border-amber-500/30">
+              Coming Soon
+            </span>
+          </div>
+          
+          <div class="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50">
+            <p class="text-slate-300 text-sm leading-relaxed">
+              <template v-if="clusters.length > 0">
+                <span class="text-white font-medium">Summary:</span> Analysis of {{ summary?.totalPosts || 0 }} social media posts reveals {{ clusters.length }} distinct topic clusters. 
+                The overall brand sentiment is <span :class="{'text-emerald-400': (summary?.averageSentiment || 0) >= 0.1, 'text-rose-400': (summary?.averageSentiment || 0) <= -0.1, 'text-amber-400': Math.abs(summary?.averageSentiment || 0) < 0.1}">{{ (summary?.averageSentiment || 0) >= 0.1 ? 'positive' : (summary?.averageSentiment || 0) <= -0.1 ? 'negative' : 'neutral' }}</span> 
+                with a compound score of {{ (summary?.averageSentiment || 0).toFixed(2) }}. 
+                Key discussion topics include {{ clusters.slice(0, 3).map(c => c.label).join(', ') || 'various themes' }}.
+                <span class="text-slate-400 italic"> Enhanced AI narrative generation will provide deeper insights when Gemini integration is fully configured.</span>
+              </template>
+              <template v-else>
+                <span class="text-slate-400 italic">Load data and run analysis to generate an executive summary. This section will provide a comprehensive AI-generated narrative suitable for stakeholder presentations and reports.</span>
+              </template>
+            </p>
           </div>
         </div>
 
