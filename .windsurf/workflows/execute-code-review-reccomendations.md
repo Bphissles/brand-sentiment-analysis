@@ -68,14 +68,15 @@ The frontend depends on backend API contracts—fix it last among service layers
 
 After all layer-specific fixes are complete, perform integration review.
 
-1. Read `CODE_REVIEW.md` at the repo root for the cross-service review guide
-2. Review the changes made in Phases 1-3 for cross-cutting concerns:
+1. Read `AGENTS.md` at the repo root for the cross-service review guide
+2. Read `CODE_REVIEW.md` at the repo root for the cross-service review guide
+3. Review the changes made in Phases 1-3 for cross-cutting concerns:
    - API contract alignment (FE ↔ BE ↔ ML)
    - Auth propagation and protection
    - Failure modes and fallbacks
    - Data model and persistence alignment
    - Config and environment consistency
-3. Document any integration risks found
+4. Document any integration risks found
 
 ---
 

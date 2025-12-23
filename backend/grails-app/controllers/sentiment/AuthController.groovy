@@ -163,8 +163,9 @@ class AuthController {
         def adminCount = User.countByRole('admin')
         def requestingUserRole = request.getAttribute('userRole')
 
-        // Allow promotion if: no admins exist OR requester is admin
-        if (adminCount == 0 || requestingUserRole == 'admin') {
+        // Allow promotion if: bootstrap mode (no admins exist) OR requester is admin
+        // 'bootstrap' role is set by AuthInterceptor when no admins exist
+        if (requestingUserRole == 'bootstrap' || requestingUserRole == 'admin') {
             user.role = 'admin'
             user.save(flush: true)
 

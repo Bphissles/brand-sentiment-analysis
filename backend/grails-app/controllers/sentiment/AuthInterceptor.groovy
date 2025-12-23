@@ -14,9 +14,11 @@ class AuthInterceptor {
     private static final List<String> PUBLIC_ENDPOINTS = [
         '/api/auth/login',
         '/api/auth/register',
-        '/api/auth/promote',  // Has its own auth logic for bootstrap
         '/api/health'
     ]
+    
+    // Bootstrap-only endpoint (allowed unauthenticated only when no admins exist)
+    private static final String BOOTSTRAP_PROMOTE_ENDPOINT = '/api/auth/promote'
 
     // Admin-only endpoints
     private static final List<String> ADMIN_ENDPOINTS = [
@@ -37,6 +39,18 @@ class AuthInterceptor {
         // Allow public endpoints
         if (isPublicEndpoint(requestPath)) {
             return true
+        }
+        
+        // Special handling for bootstrap promote endpoint
+        // Allow unauthenticated access ONLY when no admins exist (first admin bootstrap)
+        if (requestPath.startsWith(BOOTSTRAP_PROMOTE_ENDPOINT)) {
+            def adminCount = User.countByRole('admin')
+            if (adminCount == 0) {
+                log.info("Bootstrap mode: allowing unauthenticated admin promotion (no admins exist)")
+                request.setAttribute('userRole', 'bootstrap')
+                return true
+            }
+            // If admins exist, fall through to require JWT authentication
         }
 
         // In development mode, allow unauthenticated access with warning

@@ -51,7 +51,7 @@ def cluster_posts(posts: List[dict], n_clusters: int = 4) -> Tuple[List[Dict], L
     """
     if not posts or len(posts) < n_clusters:
         # Not enough posts to cluster meaningfully
-        return [], posts
+        return [{'reason': 'insufficient_posts', 'message': f'Need at least {n_clusters} posts for clustering'}], posts
     
     # Build document strings from tokens
     documents = [' '.join(p.get('tokens', [])) for p in posts]
@@ -59,7 +59,7 @@ def cluster_posts(posts: List[dict], n_clusters: int = 4) -> Tuple[List[Dict], L
     # Filter out empty documents
     valid_indices = [i for i, doc in enumerate(documents) if doc.strip()]
     if len(valid_indices) < n_clusters:
-        return [], posts
+        return [{'reason': 'insufficient_vocabulary', 'message': 'Not enough non-empty tokenized documents for clustering'}], posts
     
     valid_documents = [documents[i] for i in valid_indices]
     
@@ -75,7 +75,7 @@ def cluster_posts(posts: List[dict], n_clusters: int = 4) -> Tuple[List[Dict], L
         tfidf_matrix = vectorizer.fit_transform(valid_documents)
     except ValueError:
         # Not enough vocabulary
-        return [], posts
+        return [{'reason': 'insufficient_vocabulary', 'message': 'Not enough unique terms for TF-IDF vectorization'}], posts
     
     # Run K-Means clustering
     kmeans = KMeans(

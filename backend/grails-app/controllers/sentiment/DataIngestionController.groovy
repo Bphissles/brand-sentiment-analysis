@@ -225,7 +225,7 @@ class DataIngestionController {
                     fetchedAt: new Date()
                 )
 
-                if (post.validate() && post.save(flush: true)) {
+                if (post.validate() && post.save()) {
                     imported++
                 } else {
                     log.warn("Failed to save post: ${post.errors}")

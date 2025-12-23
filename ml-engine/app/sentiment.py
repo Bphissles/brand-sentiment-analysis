@@ -21,11 +21,14 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-# Download VADER lexicon if not present
+# Verify VADER lexicon is available (must be pre-installed)
 try:
     nltk.data.find('sentiment/vader_lexicon.zip')
 except LookupError:
-    nltk.download('vader_lexicon', quiet=True)
+    raise RuntimeError(
+        "NLTK 'vader_lexicon' not found. Please install it before starting the service: "
+        "python -c \"import nltk; nltk.download('vader_lexicon')\""
+    )
 
 # Initialize VADER analyzer (singleton)
 _sia = None

@@ -1,7 +1,21 @@
 /**
  * Composable for API calls to the Grails backend
  */
-import type { Cluster, Post, DashboardSummary } from '~/types/models'
+import type {
+  Cluster,
+  Post,
+  DashboardSummary,
+  ClustersResponse,
+  ClusterDetailResponse,
+  PostsResponse,
+  AnalysisTriggerResponse,
+  LoadFixturesResponse,
+  HealthResponse,
+  IngestionStatusResponse,
+  ScrapeResponse,
+  ClearDataResponse,
+  InsightsResponse
+} from '~/types/models'
 
 export const useApi = () => {
   const config = useRuntimeConfig()
@@ -13,7 +27,7 @@ export const useApi = () => {
    */
   const fetchSummary = async (source?: string): Promise<DashboardSummary> => {
     const query = source && source !== 'all' ? `?source=${source}` : ''
-    const response = await $fetch<any>(`${baseUrl}/api/clusters/summary${query}`, {
+    const response = await $fetch<DashboardSummary>(`${baseUrl}/api/clusters/summary${query}`, {
       headers: getAuthHeader()
     })
     return response
@@ -24,7 +38,7 @@ export const useApi = () => {
    */
   const fetchClusters = async (source?: string): Promise<Cluster[]> => {
     const query = source && source !== 'all' ? `?source=${source}` : ''
-    const response = await $fetch<any>(`${baseUrl}/api/clusters${query}`, {
+    const response = await $fetch<ClustersResponse>(`${baseUrl}/api/clusters${query}`, {
       headers: getAuthHeader()
     })
     return response.clusters || []
@@ -33,8 +47,8 @@ export const useApi = () => {
   /**
    * Fetch a single cluster by ID
    */
-  const fetchCluster = async (id: string | number): Promise<{ cluster: Cluster; posts: Post[] }> => {
-    const response = await $fetch<any>(`${baseUrl}/api/clusters/${id}`, {
+  const fetchCluster = async (id: string | number): Promise<ClusterDetailResponse> => {
+    const response = await $fetch<ClusterDetailResponse>(`${baseUrl}/api/clusters/${id}`, {
       headers: getAuthHeader()
     })
     return response
@@ -50,7 +64,7 @@ export const useApi = () => {
     if (params?.sentiment) query.set('sentimentLabel', params.sentiment)
     
     const url = query.toString() ? `${baseUrl}/api/posts?${query}` : `${baseUrl}/api/posts`
-    const response = await $fetch<any>(url, {
+    const response = await $fetch<PostsResponse>(url, {
       headers: getAuthHeader()
     })
     return response.data || []
@@ -59,8 +73,8 @@ export const useApi = () => {
   /**
    * Trigger ML analysis
    */
-  const triggerAnalysis = async (): Promise<any> => {
-    const response = await $fetch<any>(`${baseUrl}/api/analysis/trigger`, {
+  const triggerAnalysis = async (): Promise<AnalysisTriggerResponse> => {
+    const response = await $fetch<AnalysisTriggerResponse>(`${baseUrl}/api/analysis/trigger`, {
       method: 'POST',
       headers: getAuthHeader()
     })
@@ -70,8 +84,8 @@ export const useApi = () => {
   /**
    * Load fixture data (admin only)
    */
-  const loadFixtures = async (): Promise<any> => {
-    const response = await $fetch<any>(`${baseUrl}/api/analysis/load-fixtures`, {
+  const loadFixtures = async (): Promise<LoadFixturesResponse> => {
+    const response = await $fetch<LoadFixturesResponse>(`${baseUrl}/api/analysis/load-fixtures`, {
       method: 'POST',
       headers: getAuthHeader()
     })
@@ -81,16 +95,16 @@ export const useApi = () => {
   /**
    * Check API health
    */
-  const checkHealth = async (): Promise<any> => {
-    const response = await $fetch<any>(`${baseUrl}/api/health`)
+  const checkHealth = async (): Promise<HealthResponse> => {
+    const response = await $fetch<HealthResponse>(`${baseUrl}/api/health`)
     return response
   }
 
   /**
    * Get data ingestion status
    */
-  const getIngestionStatus = async (): Promise<any> => {
-    const response = await $fetch<any>(`${baseUrl}/api/ingestion/status`, {
+  const getIngestionStatus = async (): Promise<IngestionStatusResponse> => {
+    const response = await $fetch<IngestionStatusResponse>(`${baseUrl}/api/ingestion/status`, {
       headers: getAuthHeader()
     })
     return response
@@ -99,8 +113,8 @@ export const useApi = () => {
   /**
    * Scrape all sources using Gemini (admin only)
    */
-  const scrapeAllSources = async (): Promise<any> => {
-    const response = await $fetch<any>(`${baseUrl}/api/ingestion/scrapeAll`, {
+  const scrapeAllSources = async (): Promise<ScrapeResponse> => {
+    const response = await $fetch<ScrapeResponse>(`${baseUrl}/api/ingestion/scrapeAll`, {
       method: 'POST',
       headers: getAuthHeader()
     })
@@ -110,8 +124,8 @@ export const useApi = () => {
   /**
    * Scrape a specific source (admin only)
    */
-  const scrapeSource = async (source: 'twitter' | 'youtube' | 'forums'): Promise<any> => {
-    const response = await $fetch<any>(`${baseUrl}/api/ingestion/scrape/${source}`, {
+  const scrapeSource = async (source: 'twitter' | 'youtube' | 'forums'): Promise<ScrapeResponse> => {
+    const response = await $fetch<ScrapeResponse>(`${baseUrl}/api/ingestion/scrape/${source}`, {
       method: 'POST',
       headers: getAuthHeader()
     })
@@ -121,8 +135,8 @@ export const useApi = () => {
   /**
    * Clear all data (posts and clusters) - admin only
    */
-  const clearAllData = async (): Promise<any> => {
-    const response = await $fetch<any>(`${baseUrl}/api/analysis/clear`, {
+  const clearAllData = async (): Promise<ClearDataResponse> => {
+    const response = await $fetch<ClearDataResponse>(`${baseUrl}/api/analysis/clear`, {
       method: 'DELETE',
       headers: getAuthHeader()
     })
@@ -132,9 +146,9 @@ export const useApi = () => {
   /**
    * Fetch AI insights (cached)
    */
-  const fetchInsights = async (source?: string): Promise<any> => {
+  const fetchInsights = async (source?: string): Promise<InsightsResponse> => {
     const query = source && source !== 'all' ? `?source=${source}` : ''
-    const response = await $fetch<any>(`${baseUrl}/api/insights${query}`, {
+    const response = await $fetch<InsightsResponse>(`${baseUrl}/api/insights${query}`, {
       headers: getAuthHeader()
     })
     return response
@@ -143,9 +157,9 @@ export const useApi = () => {
   /**
    * Generate new AI insights
    */
-  const generateInsights = async (source?: string): Promise<any> => {
+  const generateInsights = async (source?: string): Promise<InsightsResponse> => {
     const query = source && source !== 'all' ? `?source=${source}` : ''
-    const response = await $fetch<any>(`${baseUrl}/api/insights/generate${query}`, {
+    const response = await $fetch<InsightsResponse>(`${baseUrl}/api/insights/generate${query}`, {
       method: 'POST',
       headers: getAuthHeader()
     })

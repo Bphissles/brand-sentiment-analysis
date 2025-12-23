@@ -7,11 +7,14 @@ from typing import List
 import nltk
 from nltk.corpus import stopwords
 
-# Download NLTK stopwords if not present
+# Verify NLTK stopwords are available (must be pre-installed)
 try:
     nltk.data.find('corpora/stopwords')
 except LookupError:
-    nltk.download('stopwords', quiet=True)
+    raise RuntimeError(
+        "NLTK 'stopwords' corpus not found. Please install it before starting the service: "
+        "python -c \"import nltk; nltk.download('stopwords')\""
+    )
 
 # Trucking/Peterbilt-specific stop words to add
 DOMAIN_STOP_WORDS = {

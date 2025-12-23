@@ -5,6 +5,7 @@ Provides endpoints for clustering and sentiment analysis
 import os
 import time
 import math
+import logging
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 
@@ -14,7 +15,119 @@ from clustering import cluster_posts
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
+
+# Request size limits (configurable via environment)
+MAX_POSTS_PER_REQUEST = int(os.environ.get('MAX_POSTS_PER_REQUEST', '500'))
+MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', '10000'))
+
+
+def make_error_response(code: str, message: str, details: str = None, status_code: int = 400):
+    """Create a consistent JSON error response envelope"""
+    error = {
+        'error': {
+            'code': code,
+            'message': message
+        }
+    }
+    if details:
+        error['error']['details'] = details
+    return jsonify(error), status_code
+
+
+def validate_posts(posts: list) -> tuple:
+    """
+    Validate posts array structure and enforce limits.
+    
+    Returns:
+        Tuple of (is_valid, error_response_or_none)
+    """
+    if not isinstance(posts, list):
+        return False, make_error_response(
+            'INVALID_PAYLOAD',
+            'posts must be an array',
+            status_code=400
+        )
+    
+    if len(posts) > MAX_POSTS_PER_REQUEST:
+        return False, make_error_response(
+            'PAYLOAD_TOO_LARGE',
+            f'Too many posts in request',
+            f'Maximum {MAX_POSTS_PER_REQUEST} posts allowed, received {len(posts)}',
+            status_code=413
+        )
+    
+    for i, post in enumerate(posts):
+        if not isinstance(post, dict):
+            return False, make_error_response(
+                'INVALID_POST',
+                f'Post at index {i} is not an object',
+                status_code=400
+            )
+        
+        if 'content' not in post:
+            return False, make_error_response(
+                'MISSING_FIELD',
+                f'Post at index {i} is missing required field: content',
+                status_code=400
+            )
+        
+        if not isinstance(post.get('content'), str):
+            return False, make_error_response(
+                'INVALID_FIELD',
+                f'Post at index {i} has invalid content type (expected string)',
+                status_code=400
+            )
+        
+        if len(post.get('content', '')) > MAX_CONTENT_LENGTH:
+            return False, make_error_response(
+                'CONTENT_TOO_LARGE',
+                f'Post at index {i} content exceeds maximum length',
+                f'Maximum {MAX_CONTENT_LENGTH} characters allowed',
+                status_code=413
+            )
+        
+        if 'id' not in post:
+            return False, make_error_response(
+                'MISSING_FIELD',
+                f'Post at index {i} is missing required field: id',
+                status_code=400
+            )
+    
+    return True, None
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Global error handler for unhandled exceptions"""
+    logger.exception(f"Unhandled exception: {e}")
+    return make_error_response(
+        'INTERNAL_ERROR',
+        'An unexpected error occurred',
+        status_code=500
+    )
+
+
+@app.errorhandler(400)
+def handle_bad_request(e):
+    """Handle 400 errors"""
+    return make_error_response(
+        'BAD_REQUEST',
+        str(e.description) if hasattr(e, 'description') else 'Bad request',
+        status_code=400
+    )
+
+
+@app.errorhandler(404)
+def handle_not_found(e):
+    """Handle 404 errors"""
+    return make_error_response(
+        'NOT_FOUND',
+        'Resource not found',
+        status_code=404
+    )
 
 
 @app.route('/health', methods=['GET'])
@@ -49,9 +162,18 @@ def analyze():
     data = request.get_json()
     
     if not data or 'posts' not in data:
-        return jsonify({'error': 'Missing posts in request body'}), 400
+        return make_error_response(
+            'MISSING_FIELD',
+            'Missing posts in request body',
+            status_code=400
+        )
     
     posts = data['posts']
+    
+    # Validate posts structure and limits
+    is_valid, error_response = validate_posts(posts)
+    if not is_valid:
+        return error_response
     
     if len(posts) == 0:
         return jsonify({
@@ -122,9 +244,25 @@ def sentiment_only():
     data = request.get_json()
     
     if not data or 'posts' not in data:
-        return jsonify({'error': 'Missing posts in request body'}), 400
+        return make_error_response(
+            'MISSING_FIELD',
+            'Missing posts in request body',
+            status_code=400
+        )
     
     posts = data['posts']
+    
+    # Validate posts structure and limits
+    is_valid, error_response = validate_posts(posts)
+    if not is_valid:
+        return error_response
+    
+    if len(posts) == 0:
+        return jsonify({
+            'posts': [],
+            'count': 0
+        })
+    
     results = analyze_posts_sentiment(posts)
     
     return jsonify({

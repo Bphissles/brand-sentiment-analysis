@@ -7,8 +7,9 @@ import groovy.json.JsonOutput
 /**
  * Service for scraping web content from various sources
  * Uses Gemini API with Google Search grounding for real web content extraction
+ * Note: No @Transactional at class level - this service is primarily network/CPU bound
+ * and does not require long-lived DB transactions during web scraping operations
  */
-@Transactional
 class WebScraperService {
 
     GeminiService geminiService

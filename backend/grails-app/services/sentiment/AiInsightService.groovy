@@ -56,9 +56,11 @@ class AiInsightService {
         // Apply source filter if specified
         if (source && source != 'all') {
             posts = posts.findAll { it.source == source }
-            def postIds = posts.collect { it.id.toString() }
+            // Filter clusters to only those that have posts from this source
+            // Derive cluster membership from Post.clusterId (not cluster.postIds which doesn't exist)
+            def clusterIdsWithSourcePosts = posts.collect { it.clusterId }.findAll { it != null }.toSet()
             clusters = clusters.findAll { cluster ->
-                cluster.postIds?.any { it in postIds }
+                cluster.id.toString() in clusterIdsWithSourcePosts
             }
         }
         

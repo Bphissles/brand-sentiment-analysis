@@ -49,7 +49,7 @@ export const useAuth = () => {
    */
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      const response = await $fetch<any>(`${baseUrl}/api/auth/login`, {
+      const response = await $fetch<{ success: boolean; token: string; user: User }>(`${baseUrl}/api/auth/login`, {
         method: 'POST',
         body: { email, password }
       })
@@ -81,7 +81,7 @@ export const useAuth = () => {
    */
   const register = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      const response = await $fetch<any>(`${baseUrl}/api/auth/register`, {
+      const response = await $fetch<{ success: boolean; token: string; user: User }>(`${baseUrl}/api/auth/register`, {
         method: 'POST',
         body: { email, password, role: 'viewer' }
       })
@@ -131,7 +131,7 @@ export const useAuth = () => {
     if (!authState.value.token) return null
 
     try {
-      const response = await $fetch<any>(`${baseUrl}/api/auth/me`, {
+      const response = await $fetch<{ user: User }>(`${baseUrl}/api/auth/me`, {
         headers: {
           Authorization: `Bearer ${authState.value.token}`
         }

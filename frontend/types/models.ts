@@ -155,6 +155,96 @@ export interface PaginatedResponse<T> {
   hasMore: boolean;
 }
 
+// Specific API response types for stronger typing
+export interface ClustersResponse {
+  clusters: Cluster[];
+}
+
+export interface ClusterDetailResponse {
+  cluster: Cluster;
+  posts: Post[];
+}
+
+export interface PostsResponse {
+  data: Post[];
+  total: number;
+}
+
+export interface AnalysisTriggerResponse {
+  run: AnalysisRun;
+  clusters?: number;
+  postsAnalyzed?: number;
+  message?: string;
+}
+
+export interface LoadFixturesResponse {
+  success: boolean;
+  postsLoaded: number;
+  sources: Record<string, number>;
+}
+
+export interface HealthResponse {
+  status: 'healthy' | 'unhealthy';
+  service: string;
+}
+
+export interface IngestionStatusResponse {
+  status: 'running' | 'idle';
+  lastRun: string | null;
+  lastResult: {
+    success: boolean;
+    imported?: Record<string, number>;
+    total?: number;
+    errors?: Array<{ source: string; error: string }>;
+    error?: string;
+  } | null;
+  totalPosts: number;
+  sourceBreakdown: Record<string, number>;
+  geminiConfigured: boolean;
+}
+
+export interface ScrapeResponse {
+  success: boolean;
+  imported?: Record<string, number>;
+  totalImported?: number;
+  source?: string;
+  scraped?: number;
+  errors?: Array<{ source: string; error: string }>;
+}
+
+export interface ClearDataResponse {
+  success: boolean;
+  postsDeleted: number;
+  clustersDeleted: number;
+}
+
+export interface InsightsResponse {
+  trendAnalysis: string | null;
+  recommendations: string | null;
+  executiveSummary: string | null;
+  generatedAt?: string;
+  cached: boolean;
+}
+
+export interface AuthLoginResponse {
+  success: boolean;
+  token: string;
+  user: {
+    id: number;
+    email: string;
+    role: 'admin' | 'viewer';
+  };
+}
+
+export interface AuthMeResponse {
+  user: {
+    id: number;
+    email: string;
+    role: 'admin' | 'viewer';
+    lastLoginAt?: string;
+  };
+}
+
 // =============================================================================
 // DASHBOARD VIEW MODELS
 // =============================================================================
