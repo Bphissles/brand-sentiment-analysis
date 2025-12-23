@@ -9,5 +9,24 @@ export default defineNuxtConfig({
     public: {
       apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:8080'
     }
+  },
+
+  app: {
+    head: {
+      script: [
+        {
+          innerHTML: `
+            (function() {
+              const saved = localStorage.getItem('colorMode');
+              const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+              if (saved === 'dark' || (!saved && prefersDark)) {
+                document.documentElement.classList.add('dark');
+              }
+            })();
+          `,
+          type: 'text/javascript'
+        }
+      ]
+    }
   }
 })

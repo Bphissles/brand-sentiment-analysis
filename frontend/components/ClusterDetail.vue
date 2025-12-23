@@ -14,38 +14,52 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+  <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="emit('close')">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
       <!-- Header -->
-      <div class="p-4 border-b flex justify-between items-center bg-gray-50">
-        <div>
-          <h2 class="text-xl font-bold text-gray-900">{{ cluster.label }}</h2>
-          <p class="text-sm text-gray-500">{{ cluster.description }}</p>
+      <div class="p-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 dark:from-slate-800 to-white dark:to-slate-800">
+        <div class="flex justify-between items-start">
+          <div class="flex items-center gap-3">
+            <div 
+              class="w-4 h-4 rounded-full"
+              :class="{
+                'bg-emerald-500': cluster.sentiment >= 0.3,
+                'bg-rose-500': cluster.sentiment <= -0.3,
+                'bg-amber-500': cluster.sentiment > -0.3 && cluster.sentiment < 0.3
+              }"
+            ></div>
+            <div>
+              <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">{{ cluster.label }}</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ cluster.description }}</p>
+            </div>
+          </div>
+          <button 
+            @click="emit('close')"
+            class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-        <button 
-          @click="emit('close')"
-          class="text-gray-400 hover:text-gray-600 text-2xl"
-        >
-          ×
-        </button>
       </div>
 
       <!-- Stats -->
-      <div class="p-4 border-b bg-gray-50 grid grid-cols-3 gap-4">
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 grid grid-cols-3 gap-6">
         <div class="text-center">
-          <p class="text-2xl font-bold text-gray-900">{{ cluster.postCount }}</p>
-          <p class="text-sm text-gray-500">Posts</p>
+          <p class="text-3xl font-bold text-slate-800 dark:text-slate-100">{{ cluster.postCount }}</p>
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-1">Posts</p>
         </div>
-        <div class="text-center">
+        <div class="text-center flex flex-col items-center justify-center">
           <SentimentBadge :sentiment="cluster.sentiment" size="lg" />
         </div>
         <div class="text-center">
-          <p class="text-sm text-gray-500">Top Keywords</p>
-          <div class="flex flex-wrap justify-center gap-1 mt-1">
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Top Keywords</p>
+          <div class="flex flex-wrap justify-center gap-1.5">
             <span 
               v-for="kw in (cluster.keywords || []).slice(0, 5)" 
               :key="kw"
-              class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs"
+              class="px-2 py-1 bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 rounded-md text-xs font-medium"
             >
               {{ kw }}
             </span>
@@ -54,26 +68,34 @@ const emit = defineEmits<{
       </div>
 
       <!-- Posts List -->
-      <div class="p-4 overflow-y-auto" style="max-height: 50vh;">
-        <h3 class="font-semibold text-gray-700 mb-3">Posts in this cluster</h3>
+      <div class="p-6 overflow-y-auto" style="max-height: 50vh;">
+        <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">{{ posts.length }} posts in this cluster</h3>
         <div class="space-y-3">
           <div 
             v-for="post in posts" 
             :key="post.id"
-            class="p-3 border rounded-lg hover:bg-gray-50"
+            class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-sm transition-all"
           >
             <div class="flex justify-between items-start mb-2">
-              <span class="font-medium text-gray-900">{{ post.author }}</span>
-              <span class="text-xs text-gray-400 px-2 py-0.5 bg-gray-100 rounded">
-                {{ post.source }}
+              <span class="font-medium text-slate-800 dark:text-slate-200">{{ post.author }}</span>
+              <span 
+                class="text-xs font-medium px-2 py-1 rounded-md"
+                :class="{
+                  'bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400': post.source === 'twitter',
+                  'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400': post.source === 'youtube',
+                  'bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400': post.source === 'forums'
+                }"
+              >
+                {{ post.source === 'twitter' ? 'Twitter/X' : post.source === 'youtube' ? 'YouTube' : 'Forum' }}
               </span>
             </div>
-            <p class="text-gray-700 text-sm">{{ post.content }}</p>
-            <div class="mt-2 flex items-center gap-2">
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">{{ post.content }}</p>
+            <div class="mt-3 flex items-center gap-2">
               <SentimentBadge 
                 v-if="post.sentiment" 
                 :sentiment="post.sentiment.compound" 
-                size="sm" 
+                size="sm"
+                :showScore="false"
               />
             </div>
           </div>

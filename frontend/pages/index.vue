@@ -11,6 +11,8 @@ const error = ref<string | null>(null)
 const selectedCluster = ref<Cluster | null>(null)
 const selectedClusterPosts = ref<Post[]>([])
 const showDetail = ref(false)
+const selectedSource = ref<string>('all')
+const lastAnalysis = ref<string | null>(null)
 
 // Load data on mount
 onMounted(async () => {
@@ -79,32 +81,52 @@ const sentimentTrend = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
     <!-- Header -->
-    <header class="bg-white shadow">
-      <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+    <header class="bg-gradient-to-r from-slate-900 to-slate-800 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 py-5 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">
-              Voice of the Operator
-            </h1>
-            <p class="text-sm text-gray-500">Peterbilt Sentiment Dashboard</p>
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
+              <span class="text-white font-bold text-lg">V</span>
+            </div>
+            <div>
+              <h1 class="text-xl font-semibold text-white tracking-tight">
+                Voice of the Operator
+              </h1>
+              <p class="text-sm text-slate-400">Real-time Sentiment Intelligence</p>
+            </div>
           </div>
-          <button
-            @click="runAnalysis"
-            :disabled="loading"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            <span v-if="loading" class="animate-spin">⟳</span>
-            <span>{{ loading ? 'Analyzing...' : 'Run Analysis' }}</span>
-          </button>
+          <div class="flex items-center gap-3">
+            <select 
+              v-model="selectedSource"
+              class="bg-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 border border-slate-600 focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            >
+              <option value="all">All Sources</option>
+              <option value="twitter">Twitter/X</option>
+              <option value="youtube">YouTube</option>
+              <option value="forums">Forums</option>
+            </select>
+            <ThemeToggle />
+            <button
+              @click="runAnalysis"
+              :disabled="loading"
+              class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-medium rounded-lg hover:from-cyan-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
+            >
+              <svg v-if="loading" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>{{ loading ? 'Analyzing...' : 'Run Analysis' }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
       <!-- Error Alert -->
-      <div v-if="error" class="mb-6 p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
+      <div v-if="error" class="mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg">
         {{ error }}
         <button @click="error = null" class="ml-2 font-bold">×</button>
       </div>
@@ -112,8 +134,11 @@ const sentimentTrend = computed(() => {
       <!-- Loading State -->
       <div v-if="loading && !clusters.length" class="flex justify-center items-center h-64">
         <div class="text-center">
-          <div class="animate-spin text-4xl mb-2">⟳</div>
-          <p class="text-gray-500">Loading dashboard...</p>
+          <svg class="animate-spin h-10 w-10 text-cyan-500 mx-auto mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="text-slate-500 dark:text-slate-400 font-medium">Loading dashboard...</p>
         </div>
       </div>
 
@@ -141,56 +166,65 @@ const sentimentTrend = computed(() => {
           />
         </div>
 
-        <!-- Main Visualization -->
-        <div class="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">Topic Clusters</h2>
-          <p class="text-sm text-gray-500 mb-4">
-            Click on a bubble to see posts in that cluster. Size = post count, Color = sentiment.
-          </p>
-          
-          <div v-if="clusters.length" class="flex justify-center">
-            <BubbleChart 
-              :clusters="clusters" 
-              :width="800" 
-              :height="500"
-              @cluster-click="handleClusterClick"
-            />
+        <!-- Main Content: 75/25 Split -->
+        <div class="flex gap-6 mb-6">
+          <!-- Left: Visualization (75%) -->
+          <div class="w-3/4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Topic Clusters</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                  Click on a bubble to explore posts. Size indicates volume, color shows sentiment.
+                </p>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+                <span class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Positive
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-amber-500"></span> Neutral
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-rose-500"></span> Negative
+                </span>
+              </div>
+            </div>
+            
+            <div v-if="clusters.length" class="flex justify-center">
+              <BubbleChart 
+                :clusters="clusters" 
+                :width="600" 
+                :height="450"
+                @cluster-click="handleClusterClick"
+              />
+            </div>
+            <div v-else class="text-center py-16 text-slate-400 dark:text-slate-500">
+              <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <p class="font-medium">No clusters found</p>
+              <p class="text-sm mt-1">Click "Run Analysis" to analyze posts</p>
+            </div>
           </div>
-          <div v-else class="text-center py-12 text-gray-500">
-            No clusters found. Click "Run Analysis" to analyze posts.
+
+          <!-- Right: Cluster List (25%) -->
+          <div class="w-1/4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col">
+            <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-3">Cluster Breakdown</h2>
+            <div class="flex-1 overflow-y-auto space-y-3 pr-1" style="max-height: 480px;">
+              <ClusterCard 
+                v-for="cluster in clusters" 
+                :key="cluster.id"
+                :cluster="cluster"
+                @click="handleClusterClick"
+              />
+            </div>
           </div>
         </div>
 
-        <!-- Cluster Cards Grid -->
-        <div class="mb-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">Cluster Details</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <ClusterCard 
-              v-for="cluster in clusters" 
-              :key="cluster.id"
-              :cluster="cluster"
-              @click="handleClusterClick"
-            />
-          </div>
-        </div>
-
-        <!-- Legend -->
-        <div class="bg-white rounded-lg shadow p-4">
-          <h3 class="text-sm font-semibold text-gray-700 mb-2">Sentiment Legend</h3>
-          <div class="flex gap-6">
-            <div class="flex items-center gap-2">
-              <div class="w-4 h-4 rounded-full bg-green-500"></div>
-              <span class="text-sm text-gray-600">Positive (≥ 0.3)</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="w-4 h-4 rounded-full bg-yellow-500"></div>
-              <span class="text-sm text-gray-600">Neutral (-0.3 to 0.3)</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="w-4 h-4 rounded-full bg-red-500"></div>
-              <span class="text-sm text-gray-600">Negative (≤ -0.3)</span>
-            </div>
-          </div>
+        <!-- Footer Info -->
+        <div class="flex justify-between items-center text-xs text-slate-400 dark:text-slate-500 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <span>Data sources: Twitter/X, YouTube, Forums</span>
+          <span>Powered by K-Means clustering + VADER sentiment analysis</span>
         </div>
       </template>
     </main>

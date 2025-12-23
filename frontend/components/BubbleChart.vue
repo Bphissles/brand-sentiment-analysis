@@ -19,11 +19,11 @@ const emit = defineEmits<{
 
 const chartRef = ref<HTMLDivElement | null>(null)
 
-// Sentiment color scale
+// Sentiment color scale - modern palette
 const getSentimentColor = (sentiment: number): string => {
-  if (sentiment >= 0.3) return '#22c55e' // green
-  if (sentiment <= -0.3) return '#ef4444' // red
-  return '#eab308' // yellow
+  if (sentiment >= 0.3) return '#10b981' // emerald-500
+  if (sentiment <= -0.3) return '#f43f5e' // rose-500
+  return '#f59e0b' // amber-500
 }
 
 // Draw the bubble chart
@@ -118,17 +118,19 @@ const drawChart = () => {
     .attr('font-size', (d: any) => Math.min(d.r / 4, 14))
     .text((d: any) => `${d.data.postCount} posts`)
 
-  // Add sentiment indicator
+  // Add sentiment indicator (no emojis - cleaner look)
   bubbles.append('text')
     .attr('text-anchor', 'middle')
     .attr('dy', '2.5em')
     .attr('fill', 'white')
-    .attr('font-size', (d: any) => Math.min(d.r / 5, 12))
+    .attr('fill-opacity', 0.9)
+    .attr('font-size', (d: any) => Math.min(d.r / 5, 11))
     .text((d: any) => {
       const s = d.data.sentiment || 0
-      if (s >= 0.3) return '😊 Positive'
-      if (s <= -0.3) return '😟 Negative'
-      return '😐 Neutral'
+      const score = s.toFixed(2)
+      if (s >= 0.3) return `+${score}`
+      if (s <= -0.3) return score
+      return score
     })
 }
 

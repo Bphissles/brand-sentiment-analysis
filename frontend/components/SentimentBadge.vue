@@ -3,10 +3,12 @@ interface Props {
   sentiment: number
   label?: string
   size?: 'sm' | 'md' | 'lg'
+  showScore?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  size: 'md'
+  size: 'md',
+  showScore: true
 })
 
 const sentimentLabel = computed(() => {
@@ -17,9 +19,9 @@ const sentimentLabel = computed(() => {
 })
 
 const colorClasses = computed(() => {
-  if (props.sentiment >= 0.3) return 'bg-green-100 text-green-800 border-green-300'
-  if (props.sentiment <= -0.3) return 'bg-red-100 text-red-800 border-red-300'
-  return 'bg-yellow-100 text-yellow-800 border-yellow-300'
+  if (props.sentiment >= 0.3) return 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
+  if (props.sentiment <= -0.3) return 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400'
+  return 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
 })
 
 const sizeClasses = computed(() => {
@@ -30,20 +32,20 @@ const sizeClasses = computed(() => {
   }
 })
 
-const emoji = computed(() => {
-  if (props.sentiment >= 0.3) return '😊'
-  if (props.sentiment <= -0.3) return '😟'
-  return '😐'
+const dotColor = computed(() => {
+  if (props.sentiment >= 0.3) return 'bg-emerald-500'
+  if (props.sentiment <= -0.3) return 'bg-rose-500'
+  return 'bg-amber-500'
 })
 </script>
 
 <template>
   <span 
     :class="[colorClasses, sizeClasses]" 
-    class="inline-flex items-center gap-1 rounded-full border font-medium"
+    class="inline-flex items-center gap-1.5 rounded-lg font-medium"
   >
-    <span>{{ emoji }}</span>
+    <span :class="dotColor" class="w-1.5 h-1.5 rounded-full"></span>
     <span>{{ sentimentLabel }}</span>
-    <span class="opacity-60">({{ sentiment.toFixed(2) }})</span>
+    <span v-if="showScore" class="opacity-60">{{ sentiment.toFixed(2) }}</span>
   </span>
 </template>
