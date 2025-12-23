@@ -14,7 +14,7 @@ class GeminiService {
     // Injected from application.yml
     def grailsApplication
 
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent"
+    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 
     /**
      * Generate a business insight for a cluster of posts
@@ -40,6 +40,88 @@ class GeminiService {
      */
     String extractPostData(String rawContent, String sourceType) {
         def prompt = buildExtractionPrompt(rawContent, sourceType)
+        return callGeminiApi(prompt)
+    }
+
+    /**
+     * Generate AI trend analysis based on sentiment distribution and clusters
+     */
+    String generateTrendAnalysis(Map sentimentDistribution, List<Map> clusters, Integer totalPosts) {
+        def prompt = """You are a marketing analyst for Peterbilt Trucks. Analyze the following sentiment data and provide a brief trend analysis.
+
+SENTIMENT DISTRIBUTION:
+- Positive posts: ${sentimentDistribution.positive ?: 0}
+- Neutral posts: ${sentimentDistribution.neutral ?: 0}
+- Negative posts: ${sentimentDistribution.negative ?: 0}
+- Total posts analyzed: ${totalPosts}
+
+TOP DISCUSSION TOPICS:
+${clusters.take(4).collect { "- ${it.label}: ${it.postCount} posts, sentiment: ${it.sentimentLabel}" }.join("\n")}
+
+Provide a 2-3 sentence trend analysis that:
+1. Summarizes the overall sentiment trend
+2. Highlights which topic has the strongest engagement
+Keep it concise and professional. No bullet points, just flowing text."""
+
+        return callGeminiApi(prompt)
+    }
+
+    /**
+     * Generate AI recommendations based on clusters and sentiment
+     */
+    String generateRecommendations(List<Map> clusters, Map sentimentDistribution) {
+        def negativeClusters = clusters.findAll { it.sentimentLabel == 'negative' }
+        def positiveClusters = clusters.findAll { it.sentimentLabel == 'positive' }
+        
+        def prompt = """You are a marketing strategist for Peterbilt Trucks. Based on customer feedback analysis, provide actionable recommendations.
+
+CLUSTERS WITH NEGATIVE SENTIMENT:
+${negativeClusters.take(3).collect { "- ${it.label}: ${it.postCount} posts" }.join("\n") ?: "None"}
+
+CLUSTERS WITH POSITIVE SENTIMENT:
+${positiveClusters.take(3).collect { "- ${it.label}: ${it.postCount} posts" }.join("\n") ?: "None"}
+
+OVERALL DISTRIBUTION:
+- Positive: ${sentimentDistribution.positive ?: 0}
+- Negative: ${sentimentDistribution.negative ?: 0}
+
+Provide 2-3 sentences of strategic recommendations that:
+1. Address any concerns in negative clusters
+2. Suggest how to amplify positive discussions
+Keep it concise and actionable. No bullet points."""
+
+        return callGeminiApi(prompt)
+    }
+
+    /**
+     * Generate executive summary for stakeholder reporting
+     */
+    String generateExecutiveSummary(Integer totalPosts, Integer clusterCount, Double avgSentiment, List<Map> clusters, Map sentimentDistribution) {
+        def sentimentLabel = avgSentiment >= 0.1 ? "positive" : (avgSentiment <= -0.1 ? "negative" : "neutral")
+        def topTopics = clusters.take(4).collect { it.label }.join(", ")
+        
+        def prompt = """You are preparing an executive summary for Peterbilt Trucks leadership. Create a professional narrative summary.
+
+ANALYSIS OVERVIEW:
+- Total posts analyzed: ${totalPosts}
+- Topic clusters identified: ${clusterCount}
+- Overall brand sentiment: ${sentimentLabel} (score: ${String.format("%.2f", avgSentiment)})
+- Key topics: ${topTopics}
+
+SENTIMENT BREAKDOWN:
+- Positive: ${sentimentDistribution.positive ?: 0} posts
+- Neutral: ${sentimentDistribution.neutral ?: 0} posts  
+- Negative: ${sentimentDistribution.negative ?: 0} posts
+
+TOP CLUSTERS:
+${clusters.take(4).collect { "- ${it.label}: ${it.postCount} posts, ${it.sentimentLabel} sentiment" }.join("\n")}
+
+Write a 3-4 sentence executive summary suitable for stakeholder presentations. Include:
+1. High-level findings
+2. Key themes driving conversation
+3. Overall brand health assessment
+Professional tone, no bullet points, flowing narrative."""
+
         return callGeminiApi(prompt)
     }
 

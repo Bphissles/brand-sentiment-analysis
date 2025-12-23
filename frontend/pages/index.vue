@@ -28,6 +28,11 @@ const sentimentPosts = ref<Post[]>([])
 const loadingSentimentPosts = ref(false)
 const sentimentPostsSort = ref<string>('strongest')
 
+// AI Insights state
+const aiInsights = ref<any>(null)
+const loadingInsights = ref(false)
+const generatingInsights = ref(false)
+
 // Responsive chart dimensions
 const chartWidth = ref(600)
 const chartHeight = ref(450)
@@ -79,11 +84,38 @@ const loadData = async () => {
     
     clusters.value = clustersData
     summary.value = summaryData
+    
+    // Load AI insights (cached)
+    await loadInsights()
   } catch (e: any) {
     error.value = e.message || 'Failed to load data'
     console.error('Failed to load data:', e)
   } finally {
     loading.value = false
+  }
+}
+
+const loadInsights = async () => {
+  loadingInsights.value = true
+  try {
+    const source = selectedSource.value !== 'all' ? selectedSource.value : undefined
+    aiInsights.value = await api.fetchInsights(source)
+  } catch (e) {
+    console.error('Failed to load insights:', e)
+  } finally {
+    loadingInsights.value = false
+  }
+}
+
+const generateNewInsights = async () => {
+  generatingInsights.value = true
+  try {
+    const source = selectedSource.value !== 'all' ? selectedSource.value : undefined
+    aiInsights.value = await api.generateInsights(source)
+  } catch (e) {
+    console.error('Failed to generate insights:', e)
+  } finally {
+    generatingInsights.value = false
   }
 }
 
@@ -247,18 +279,6 @@ onUnmounted(() => {
               </svg>
             </NuxtLink>
             <ThemeToggle />
-            <button
-              @click="runAnalysis"
-              :disabled="loading"
-              class="px-3 lg:px-5 py-2 lg:py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-medium rounded-lg hover:from-cyan-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
-            >
-              <svg v-if="loading" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span class="hidden sm:inline">{{ loading ? 'Analyzing...' : 'Run Analysis' }}</span>
-              <span class="sm:hidden">{{ loading ? '...' : 'Run' }}</span>
-            </button>
             <UserMenu />
           </div>
         </div>
@@ -446,21 +466,26 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <!-- AI Analysis Placeholder -->
-            <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-dashed border-slate-300 dark:border-slate-600">
+            <!-- AI Trend Analysis -->
+            <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
               <div class="flex items-start gap-3">
                 <div class="w-6 h-6 bg-violet-100 dark:bg-violet-900/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg class="w-3 h-3 text-violet-600 dark:text-violet-400" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                   </svg>
                 </div>
-                <div>
+                <div class="flex-1">
                   <p class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">AI Trend Analysis</p>
-                  <p class="text-sm text-slate-500 dark:text-slate-400 italic">
-                    {{ clusters.length > 0 
-                      ? `Overall sentiment is ${(summary?.averageSentiment || 0) >= 0.1 ? 'positive' : (summary?.averageSentiment || 0) <= -0.1 ? 'negative' : 'neutral'}. The "${clusters[0]?.label || 'top cluster'}" topic shows the strongest engagement with ${clusters[0]?.postCount || 0} posts.`
-                      : 'Run analysis to generate AI-powered trend insights...'
-                    }}
+                  <p class="text-sm text-slate-600 dark:text-slate-300">
+                    <template v-if="loadingInsights">
+                      <span class="italic text-slate-400">Loading insights...</span>
+                    </template>
+                    <template v-else-if="aiInsights?.trendAnalysis">
+                      {{ aiInsights.trendAnalysis }}
+                    </template>
+                    <template v-else>
+                      <span class="italic text-slate-400">Run analysis from the Data page to generate AI-powered insights.</span>
+                    </template>
                   </p>
                 </div>
               </div>
@@ -507,21 +532,26 @@ onUnmounted(() => {
               </template>
             </div>
 
-            <!-- AI Recommendations Placeholder -->
-            <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-dashed border-slate-300 dark:border-slate-600">
+            <!-- AI Recommendations -->
+            <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
               <div class="flex items-start gap-3">
                 <div class="w-6 h-6 bg-cyan-100 dark:bg-cyan-900/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg class="w-3 h-3 text-cyan-600 dark:text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                   </svg>
                 </div>
-                <div>
+                <div class="flex-1">
                   <p class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">AI Recommendations</p>
-                  <p class="text-sm text-slate-500 dark:text-slate-400 italic">
-                    {{ clusters.length > 0 
-                      ? `Focus on addressing concerns in the "${clusters.find(c => c.sentimentLabel === 'negative')?.label || clusters[clusters.length-1]?.label || 'lowest sentiment'}" category. Consider amplifying positive discussions around "${clusters.find(c => c.sentimentLabel === 'positive')?.label || clusters[0]?.label || 'top topics'}".`
-                      : 'Run analysis to generate AI-powered recommendations...'
-                    }}
+                  <p class="text-sm text-slate-600 dark:text-slate-300">
+                    <template v-if="loadingInsights">
+                      <span class="italic text-slate-400">Loading insights...</span>
+                    </template>
+                    <template v-else-if="aiInsights?.recommendations">
+                      {{ aiInsights.recommendations }}
+                    </template>
+                    <template v-else>
+                      <span class="italic text-slate-400">Run analysis from the Data page to generate AI-powered recommendations.</span>
+                    </template>
                   </p>
                 </div>
               </div>
@@ -543,19 +573,28 @@ onUnmounted(() => {
                 <p class="text-sm text-slate-400">AI-generated narrative for stakeholder reporting</p>
               </div>
             </div>
-            <span class="px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full border border-amber-500/30">
-              Coming Soon
+            <span 
+              v-if="aiInsights?.cached && aiInsights?.executiveSummary"
+              class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full border border-emerald-500/30"
+            >
+              AI Generated
             </span>
           </div>
           
           <div class="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50">
             <p class="text-slate-300 text-sm leading-relaxed">
-              <template v-if="clusters.length > 0">
+              <template v-if="loadingInsights">
+                <span class="text-slate-400 italic">Loading executive summary...</span>
+              </template>
+              <template v-else-if="aiInsights?.executiveSummary">
+                {{ aiInsights.executiveSummary }}
+              </template>
+              <template v-else-if="clusters.length > 0">
                 <span class="text-white font-medium">Summary:</span> Analysis of {{ summary?.totalPosts || 0 }} social media posts reveals {{ clusters.length }} distinct topic clusters. 
                 The overall brand sentiment is <span :class="{'text-emerald-400': (summary?.averageSentiment || 0) >= 0.1, 'text-rose-400': (summary?.averageSentiment || 0) <= -0.1, 'text-amber-400': Math.abs(summary?.averageSentiment || 0) < 0.1}">{{ (summary?.averageSentiment || 0) >= 0.1 ? 'positive' : (summary?.averageSentiment || 0) <= -0.1 ? 'negative' : 'neutral' }}</span> 
                 with a compound score of {{ (summary?.averageSentiment || 0).toFixed(2) }}. 
                 Key discussion topics include {{ clusters.slice(0, 3).map(c => c.label).join(', ') || 'various themes' }}.
-                <span class="text-slate-400 italic"> Enhanced AI narrative generation will provide deeper insights when Gemini integration is fully configured.</span>
+                <span class="text-slate-400 italic"> Run analysis from the Data page for enhanced AI narrative.</span>
               </template>
               <template v-else>
                 <span class="text-slate-400 italic">Load data and run analysis to generate an executive summary. This section will provide a comprehensive AI-generated narrative suitable for stakeholder presentations and reports.</span>

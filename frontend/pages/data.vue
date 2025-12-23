@@ -6,7 +6,8 @@ const {
   scrapeSource, 
   loadFixtures, 
   clearAllData,
-  triggerAnalysis 
+  triggerAnalysis,
+  generateInsights
 } = useApi()
 
 // Check if user is admin
@@ -110,7 +111,16 @@ const handleRunAnalysis = async () => {
   
   try {
     const result = await triggerAnalysis()
-    successMessage.value = `Analysis complete: ${result.run.clustersCreated} clusters created`
+    successMessage.value = `Analysis complete: ${result.run.clustersCreated} clusters created. Generating AI insights...`
+    
+    // Auto-generate AI insights after analysis completes
+    try {
+      await generateInsights()
+      successMessage.value = `Analysis complete: ${result.run.clustersCreated} clusters created with AI insights generated.`
+    } catch (insightError) {
+      console.error('Failed to generate insights:', insightError)
+      successMessage.value = `Analysis complete: ${result.run.clustersCreated} clusters created. (AI insights generation failed)`
+    }
   } catch (e: any) {
     error.value = e.data?.error || e.message || 'Analysis failed'
   } finally {

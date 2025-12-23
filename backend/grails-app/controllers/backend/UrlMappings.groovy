@@ -44,6 +44,10 @@ class UrlMappings {
         "/api/auth/logout"(controller: 'auth', action: 'logout')
         "/api/auth/promote"(controller: 'auth', action: 'promoteToAdmin')
 
+        // AI Insights API
+        "/api/insights"(controller: 'aiInsight', action: 'index')
+        "/api/insights/generate"(controller: 'aiInsight', action: 'generate')
+
         // Default mappings
         "/$controller/$action?/$id?(.$format)?"{
             constraints {

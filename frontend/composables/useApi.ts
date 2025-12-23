@@ -129,6 +129,29 @@ export const useApi = () => {
     return response
   }
 
+  /**
+   * Fetch AI insights (cached)
+   */
+  const fetchInsights = async (source?: string): Promise<any> => {
+    const query = source && source !== 'all' ? `?source=${source}` : ''
+    const response = await $fetch<any>(`${baseUrl}/api/insights${query}`, {
+      headers: getAuthHeader()
+    })
+    return response
+  }
+
+  /**
+   * Generate new AI insights
+   */
+  const generateInsights = async (source?: string): Promise<any> => {
+    const query = source && source !== 'all' ? `?source=${source}` : ''
+    const response = await $fetch<any>(`${baseUrl}/api/insights/generate${query}`, {
+      method: 'POST',
+      headers: getAuthHeader()
+    })
+    return response
+  }
+
   return {
     fetchSummary,
     fetchClusters,
@@ -140,6 +163,8 @@ export const useApi = () => {
     getIngestionStatus,
     scrapeAllSources,
     scrapeSource,
-    clearAllData
+    clearAllData,
+    fetchInsights,
+    generateInsights
   }
 }
