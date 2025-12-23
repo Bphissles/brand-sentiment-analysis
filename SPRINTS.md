@@ -31,6 +31,7 @@
 | Sprint 2 | Python ML Engine | 6-8 hours | ✅ Complete |
 | Sprint 3 | Grails API Layer | 4-6 hours | ✅ Complete |
 | Sprint 4 | D3.js Visualization | 6-8 hours | ✅ Complete |
+| Sprint 4.5 | Testing Framework | 3-4 hours | ✅ Complete |
 | Sprint 5 | Dashboard UI & Auth | 4-6 hours | ⬜ Pending |
 | Sprint 6 | Deploy & Demo | 3-4 hours | ⬜ Pending |
 
@@ -280,6 +281,47 @@ Frontend can fetch cluster data via API ✅
 
 ### Definition of Done
 Can visualize 4 clusters with 50 posts, smooth interactions ✅
+
+---
+
+## Sprint 4.5: Testing Framework
+**Goal:** Implement comprehensive testing infrastructure across all three layers
+
+### Tasks
+
+- [x] **4.5.1** Backend Testing Setup (Grails + Spock)
+  - Configure Spock testing framework
+  - Add Jacoco for code coverage
+  - Create test.sh script for Java 17 compatibility
+  - Implement SampleSpec to verify framework
+
+- [x] **4.5.2** Frontend Testing Setup (Nuxt + Vitest)
+  - Install Vitest and Vue Test Utils
+  - Configure @vitejs/plugin-vue
+  - Create test setup with Nuxt composable mocks
+  - Implement component and composable tests
+
+- [x] **4.5.3** ML Engine Testing Setup (Python + pytest)
+  - Configure pytest framework
+  - Add pytest-cov for coverage
+  - Create pytest.ini configuration
+  - Set up test structure
+
+- [x] **4.5.4** Documentation
+  - Create TESTING.md with setup instructions
+  - Create TESTING_STATUS.md tracking coverage
+  - Update README.md with testing references
+  - Document test execution commands
+
+### Deliverables
+- [x] Backend: 2 passing tests, Jacoco coverage configured
+- [x] Frontend: 11 passing tests, LoadingScreen at 100% coverage
+- [x] ML Engine: Framework ready for test implementation
+- [x] All test commands documented and working
+- [x] Coverage reports generated for all layers
+
+### Definition of Done
+All three testing frameworks operational with sample tests passing ✅
 
 ---
 

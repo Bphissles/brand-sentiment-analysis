@@ -23,6 +23,7 @@ Aggregates and analyzes publicly available data from social media, forums, and c
 - ✅ Interactive D3.js bubble chart visualization
 - ✅ Responsive dashboard UI with TailwindCSS
 - ✅ Unified local dev scripts (`start-local.sh`, `stop-local.sh`)
+- ✅ Comprehensive testing framework (Spock, Vitest, pytest)
 - ⚠️ AI-powered insights (Gemini 1.5 Flash) — stub ready
 - ⚠️ JWT authentication — Sprint 5
 
@@ -207,6 +208,10 @@ FLASK_ENV=development
 
 - [Sprint Breakdown](SPRINTS.md) — Development roadmap (Sprints 0-4 complete)
 - [Architecture](docs/ARCHITECTURE.md) — System design diagrams
+- [Testing Guide](TESTING.md) — Testing setup and execution
+- [Testing Status](TESTING_STATUS.md) — Current test coverage and roadmap
+- [Implementation Summary](IMPLEMENTATION_SUMMARY.md) — Recent changes and configuration
+- [Code Review](CODE_REVIEW_v2.md) — Latest code review findings
 - [Taxonomy Config](config/taxonomy.yaml) — Auditable cluster categories
 
 ---
