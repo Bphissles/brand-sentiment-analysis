@@ -43,10 +43,11 @@ export const useApi = () => {
   /**
    * Fetch all posts with optional filters
    */
-  const fetchPosts = async (params?: { source?: string; clusterId?: string }): Promise<Post[]> => {
+  const fetchPosts = async (params?: { source?: string; clusterId?: string; sentiment?: string }): Promise<Post[]> => {
     const query = new URLSearchParams()
     if (params?.source) query.set('source', params.source)
     if (params?.clusterId) query.set('clusterId', params.clusterId)
+    if (params?.sentiment) query.set('sentimentLabel', params.sentiment)
     
     const url = query.toString() ? `${baseUrl}/api/posts?${query}` : `${baseUrl}/api/posts`
     const response = await $fetch<any>(url, {

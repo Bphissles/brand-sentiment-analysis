@@ -19,7 +19,8 @@ class PostController {
     def index() {
         def source = params.source
         def clusterId = params.clusterId
-        def max = params.int('max', 50)
+        def sentimentLabel = params.sentimentLabel
+        def max = params.int('max', 100)
         def offset = params.int('offset', 0)
 
         def criteria = Post.createCriteria()
@@ -29,6 +30,9 @@ class PostController {
             }
             if (clusterId) {
                 eq('clusterId', clusterId)
+            }
+            if (sentimentLabel) {
+                eq('sentimentLabel', sentimentLabel)
             }
             order('publishedAt', 'desc')
         }
@@ -40,6 +44,9 @@ class PostController {
             }
             if (clusterId) {
                 eq('clusterId', clusterId)
+            }
+            if (sentimentLabel) {
+                eq('sentimentLabel', sentimentLabel)
             }
         }
 

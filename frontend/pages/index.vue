@@ -18,6 +18,16 @@ const showDetail = ref(false)
 const selectedSource = ref<string>('all')
 const lastAnalysis = ref<string | null>(null)
 
+// Cluster filter state
+const clusterSentimentFilter = ref<string>('all')
+
+// Sentiment posts modal state
+const showSentimentPosts = ref(false)
+const sentimentPostsFilter = ref<string>('positive')
+const sentimentPosts = ref<Post[]>([])
+const loadingSentimentPosts = ref(false)
+const sentimentPostsSort = ref<string>('strongest')
+
 // Responsive chart dimensions
 const chartWidth = ref(600)
 const chartHeight = ref(450)
@@ -120,6 +130,82 @@ const sentimentTrend = computed(() => {
   if (avg <= -0.1) return 'down'
   return 'neutral'
 })
+
+// Filtered clusters based on sentiment filter
+const filteredClusters = computed(() => {
+  if (clusterSentimentFilter.value === 'all') {
+    return clusters.value
+  }
+  return clusters.value.filter(c => c.sentimentLabel === clusterSentimentFilter.value)
+})
+
+// View posts by sentiment
+const viewPostsBySentiment = async (sentiment: string) => {
+  sentimentPostsFilter.value = sentiment
+  showSentimentPosts.value = true
+  loadingSentimentPosts.value = true
+  
+  try {
+    // Apply source filter if selected
+    const source = selectedSource.value !== 'all' ? selectedSource.value : undefined
+    const posts = await api.fetchPosts({ sentiment, source })
+    sentimentPosts.value = posts
+  } catch (e) {
+    console.error('Failed to load sentiment posts:', e)
+    sentimentPosts.value = []
+  } finally {
+    loadingSentimentPosts.value = false
+  }
+}
+
+const closeSentimentPosts = () => {
+  showSentimentPosts.value = false
+  sentimentPosts.value = []
+  sentimentPostsSort.value = 'strongest'
+}
+
+// Sorted sentiment posts
+const sortedSentimentPosts = computed(() => {
+  const posts = [...sentimentPosts.value]
+  
+  switch (sentimentPostsSort.value) {
+    case 'strongest':
+      // Sort by absolute sentiment score (strongest first)
+      return posts.sort((a, b) => 
+        Math.abs(b.sentimentCompound || 0) - Math.abs(a.sentimentCompound || 0)
+      )
+    case 'newest':
+      return posts.sort((a, b) => 
+        new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime()
+      )
+    case 'oldest':
+      return posts.sort((a, b) => 
+        new Date(a.publishedAt || 0).getTime() - new Date(b.publishedAt || 0).getTime()
+      )
+    default:
+      return posts
+  }
+})
+
+// ESC key handler for modals
+const handleEscKey = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    if (showSentimentPosts.value) {
+      closeSentimentPosts()
+    }
+    if (showDetail.value) {
+      closeDetail()
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleEscKey)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleEscKey)
+})
 </script>
 
 <template>
@@ -140,7 +226,7 @@ const sentimentTrend = computed(() => {
             </div>
           </div>
           <div class="flex items-center gap-2 lg:gap-3">
-            <!-- <select 
+            <select 
               v-model="selectedSource"
               @change="handleSourceChange"
               class="px-2 lg:px-3 py-2 bg-white  border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
@@ -149,7 +235,7 @@ const sentimentTrend = computed(() => {
               <option value="twitter">Twitter/X</option>
               <option value="youtube">YouTube</option>
               <option value="forums">Forums</option>
-            </select> -->
+            </select>
             <NuxtLink 
               v-if="isAdmin"
               to="/data"
@@ -264,14 +350,29 @@ const sentimentTrend = computed(() => {
 
           <!-- Right: Cluster List -->
           <div class="w-full lg:w-1/3 xl:w-1/4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col">
-            <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-3">Cluster Breakdown</h2>
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Cluster Breakdown</h2>
+              <!-- Sentiment Filter -->
+              <select 
+                v-model="clusterSentimentFilter"
+                class="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              >
+                <option value="all">All</option>
+                <option value="positive">Positive</option>
+                <option value="neutral">Neutral</option>
+                <option value="negative">Negative</option>
+              </select>
+            </div>
             <div class="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-custom max-h-96 lg:max-h-[480px]">
               <ClusterCard 
-                v-for="cluster in clusters" 
+                v-for="cluster in filteredClusters" 
                 :key="cluster.id"
                 :cluster="cluster"
                 @click="handleClusterClick"
               />
+              <div v-if="filteredClusters.length === 0" class="text-center py-8 text-slate-400 dark:text-slate-500">
+                <p class="text-sm">No clusters match this filter</p>
+              </div>
             </div>
           </div>
         </div>
@@ -314,19 +415,34 @@ const sentimentTrend = computed(() => {
                   :style="{ width: `${(summary?.sentimentDistribution?.negative || 0) / Math.max(summary?.totalPosts || 1, 1) * 100}%` }"
                 ></div>
               </div>
-              <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
-                <span class="flex items-center gap-1">
+              <div class="flex justify-between text-xs mt-2">
+                <button 
+                  @click="viewPostsBySentiment('positive')"
+                  class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors cursor-pointer font-medium"
+                  :disabled="!summary?.sentimentDistribution?.positive"
+                  :class="{ 'opacity-50 cursor-not-allowed': !summary?.sentimentDistribution?.positive }"
+                >
                   <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                   Positive ({{ summary?.sentimentDistribution?.positive || 0 }})
-                </span>
-                <span class="flex items-center gap-1">
+                </button>
+                <button 
+                  @click="viewPostsBySentiment('neutral')"
+                  class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors cursor-pointer font-medium"
+                  :disabled="!summary?.sentimentDistribution?.neutral"
+                  :class="{ 'opacity-50 cursor-not-allowed': !summary?.sentimentDistribution?.neutral }"
+                >
                   <span class="w-2 h-2 rounded-full bg-amber-500"></span>
                   Neutral ({{ summary?.sentimentDistribution?.neutral || 0 }})
-                </span>
-                <span class="flex items-center gap-1">
+                </button>
+                <button 
+                  @click="viewPostsBySentiment('negative')"
+                  class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 hover:bg-rose-200 dark:hover:bg-rose-900/50 transition-colors cursor-pointer font-medium"
+                  :disabled="!summary?.sentimentDistribution?.negative"
+                  :class="{ 'opacity-50 cursor-not-allowed': !summary?.sentimentDistribution?.negative }"
+                >
                   <span class="w-2 h-2 rounded-full bg-rose-500"></span>
                   Negative ({{ summary?.sentimentDistribution?.negative || 0 }})
-                </span>
+                </button>
               </div>
             </div>
 
@@ -463,5 +579,117 @@ const sentimentTrend = computed(() => {
       :posts="selectedClusterPosts"
       @close="closeDetail"
     />
+
+    <!-- Sentiment Posts Modal -->
+    <Teleport to="body">
+      <div 
+        v-if="showSentimentPosts" 
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        @click.self="closeSentimentPosts"
+      >
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-3xl max-h-[85vh] flex flex-col">
+          <!-- Header -->
+          <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-3">
+              <div 
+                class="w-8 h-8 rounded-lg flex items-center justify-center"
+                :class="{
+                  'bg-emerald-100 dark:bg-emerald-900/30': sentimentPostsFilter === 'positive',
+                  'bg-amber-100 dark:bg-amber-900/30': sentimentPostsFilter === 'neutral',
+                  'bg-rose-100 dark:bg-rose-900/30': sentimentPostsFilter === 'negative'
+                }"
+              >
+                <span 
+                  class="w-3 h-3 rounded-full"
+                  :class="{
+                    'bg-emerald-500': sentimentPostsFilter === 'positive',
+                    'bg-amber-500': sentimentPostsFilter === 'neutral',
+                    'bg-rose-500': sentimentPostsFilter === 'negative'
+                  }"
+                ></span>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 capitalize">
+                  {{ sentimentPostsFilter }} Posts
+                </h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  {{ sentimentPosts.length }} posts found
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <select
+                v-model="sentimentPostsSort"
+                class="text-xs px-2 py-1.5 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              >
+                <option value="strongest">Strongest First</option>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+              </select>
+            </div>
+            <button 
+              @click="closeSentimentPosts"
+              class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            >
+              <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Content -->
+          <div class="flex-1 overflow-y-auto p-4 scrollbar-custom">
+            <div v-if="loadingSentimentPosts" class="flex justify-center py-12">
+              <svg class="animate-spin h-8 w-8 text-cyan-500" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            
+            <div v-else-if="sentimentPosts.length === 0" class="text-center py-12 text-slate-400">
+              <p>No posts found with this sentiment</p>
+            </div>
+            
+            <div v-else class="space-y-3">
+              <div 
+                v-for="post in sortedSentimentPosts" 
+                :key="post.id"
+                class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600"
+              >
+                <div class="flex items-start justify-between gap-3 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="font-medium text-slate-800 dark:text-slate-200 text-sm">
+                      {{ post.author || 'Anonymous' }}
+                    </span>
+                    <span class="text-xs px-2 py-0.5 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 rounded">
+                      {{ post.source }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-1 text-xs">
+                    <span 
+                      class="w-2 h-2 rounded-full"
+                      :class="{
+                        'bg-emerald-500': post.sentimentLabel === 'positive',
+                        'bg-amber-500': post.sentimentLabel === 'neutral',
+                        'bg-rose-500': post.sentimentLabel === 'negative'
+                      }"
+                    ></span>
+                    <span class="text-slate-500 dark:text-slate-400">
+                      {{ (post.sentimentCompound || 0).toFixed(2) }}
+                    </span>
+                  </div>
+                </div>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  {{ post.content }}
+                </p>
+                <div class="mt-2 text-xs text-slate-400 dark:text-slate-500">
+                  {{ post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Unknown date' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
