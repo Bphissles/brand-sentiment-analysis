@@ -68,7 +68,7 @@ const emit = defineEmits<{
       </div>
 
       <!-- Posts List -->
-      <div class="p-6 overflow-y-auto" style="max-height: 50vh;">
+      <div class="p-6 overflow-y-auto scrollbar-custom" style="max-height: 50vh;">
         <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">{{ posts.length }} posts in this cluster</h3>
         <div class="space-y-3">
           <div 
@@ -90,13 +90,20 @@ const emit = defineEmits<{
               </span>
             </div>
             <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">{{ post.content }}</p>
-            <div class="mt-3 flex items-center gap-2">
+            <div class="mt-3 flex flex-wrap items-center gap-2">
               <SentimentBadge 
-                v-if="post.sentiment" 
-                :sentiment="post.sentiment.compound" 
+                v-if="post.sentimentCompound !== undefined && post.sentimentCompound !== null" 
+                :sentiment="post.sentimentCompound" 
                 size="sm"
                 :showScore="false"
               />
+              <div v-if="post.sentimentCompound !== undefined && post.sentimentCompound !== null" class="text-xs text-slate-500 dark:text-slate-400">
+                <span class="font-mono">Score: {{ post.sentimentCompound.toFixed(3) }}</span>
+              </div>
+            </div>
+            <div v-if="post.publishedAt" class="mt-2 text-xs text-slate-400 dark:text-slate-500">
+              Published: {{ new Date(post.publishedAt).toLocaleDateString() }} • 
+              Fetched: {{ new Date(post.fetchedAt).toLocaleDateString() }}
             </div>
           </div>
         </div>

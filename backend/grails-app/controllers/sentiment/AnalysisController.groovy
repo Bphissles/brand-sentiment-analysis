@@ -115,15 +115,43 @@ class AnalysisController {
 
             // Update posts with sentiment from ML response
             result.posts?.each { postData ->
-                def post = Post.get(postData.id as Long)
-                if (post && postData.sentiment) {
-                    post.sentimentCompound = postData.sentiment.compound
-                    post.sentimentPositive = postData.sentiment.positive
-                    post.sentimentNegative = postData.sentiment.negative
-                    post.sentimentNeutral = postData.sentiment.neutral
-                    post.sentimentLabel = postData.sentiment.label
-                    post.keywords = postData.keywords?.take(10)?.join(',')
-                    post.save()
+                log.info("Processing post sentiment for ID: ${postData.id}")
+                // Try both string and Long ID conversion
+                def post = null
+                try {
+                    post = Post.get(postData.id as Long)
+                } catch (Exception e) {
+                    log.warn("Could not convert ${postData.id} to Long, trying externalId match")
+                    post = Post.findByExternalId(postData.id.toString())
+                }
+                
+                if (post) {
+                    log.info("Found post ${postData.id} in database")
+                    if (postData.sentiment) {
+                        log.info("Updating sentiment for post ${postData.id}: ${postData.sentiment}")
+                        post.sentimentCompound = postData.sentiment.compound
+                        post.sentimentPositive = postData.sentiment.positive
+                        post.sentimentNegative = postData.sentiment.negative
+                        post.sentimentNeutral = postData.sentiment.neutral
+                        
+                        // Generate sentiment label from compound score
+                        def compound = postData.sentiment.compound as Double
+                        if (compound >= 0.05) {
+                            post.sentimentLabel = 'positive'
+                        } else if (compound <= -0.05) {
+                            post.sentimentLabel = 'negative'
+                        } else {
+                            post.sentimentLabel = 'neutral'
+                        }
+                        
+                        post.keywords = postData.keywords?.take(10)?.join(',')
+                        post.save()
+                        log.info("Saved sentiment for post ${postData.id}")
+                    } else {
+                        log.warn("No sentiment data for post ${postData.id}")
+                    }
+                } else {
+                    log.warn("Post not found in database: ${postData.id}")
                 }
             }
 

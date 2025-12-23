@@ -28,5 +28,7 @@ export default defineNuxtConfig({
         }
       ]
     }
-  }
+  },
+  
+  css: ['~/assets/css/scrollbar.css']
 })

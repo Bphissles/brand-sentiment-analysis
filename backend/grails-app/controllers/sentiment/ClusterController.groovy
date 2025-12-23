@@ -79,7 +79,26 @@ class ClusterController {
                 postCount: cluster.postCount,
                 insight: cluster.insight
             ],
-            posts: posts
+            posts: posts.collect { post ->
+                [
+                    id: post.id,
+                    externalId: post.externalId,
+                    source: post.source,
+                    content: post.content,
+                    author: post.author,
+                    authorUrl: post.authorUrl,
+                    postUrl: post.postUrl,
+                    publishedAt: post.publishedAt?.toEpochMilli(),
+                    fetchedAt: post.fetchedAt?.toEpochMilli(),
+                    sentimentCompound: post.sentimentCompound,
+                    sentimentPositive: post.sentimentPositive,
+                    sentimentNegative: post.sentimentNegative,
+                    sentimentNeutral: post.sentimentNeutral,
+                    sentimentLabel: post.sentimentLabel,
+                    keywords: post.keywords?.split(',')?.toList() ?: [],
+                    clusterId: post.clusterId
+                ]
+            }
         ])
     }
 
@@ -91,13 +110,13 @@ class ClusterController {
         def clusters = Cluster.list()
         def posts = Post.list()
 
-        // Calculate sentiment distribution
-        def positive = posts.count { it.sentimentLabel == 'positive' }
-        def negative = posts.count { it.sentimentLabel == 'negative' }
-        def neutral = posts.count { it.sentimentLabel == 'neutral' }
+        // Calculate sentiment distribution using cluster data
+        def positive = clusters.count { it.sentimentLabel == 'positive' }
+        def negative = clusters.count { it.sentimentLabel == 'negative' }
+        def neutral = clusters.count { it.sentimentLabel == 'neutral' }
 
-        // Calculate average sentiment
-        def avgSentiment = posts ? posts.sum { it.sentimentCompound ?: 0 } / posts.size() : 0
+        // Calculate average sentiment using cluster data
+        def avgSentiment = clusters ? clusters.sum { it.sentiment ?: 0 } / clusters.size() : 0
 
         respond([
             totalPosts: posts.size(),

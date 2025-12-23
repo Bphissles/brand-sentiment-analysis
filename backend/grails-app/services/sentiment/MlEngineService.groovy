@@ -56,6 +56,7 @@ class MlEngineService {
                 return [
                     success: true,
                     clusters: response.clusters ?: [],
+                    posts: response.posts ?: [],
                     postsAnalyzed: response.postsAnalyzed ?: posts.size(),
                     processingTimeMs: response.processingTimeMs ?: 0
                 ]

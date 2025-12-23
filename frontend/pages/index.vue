@@ -15,6 +15,38 @@ const showDetail = ref(false)
 const selectedSource = ref<string>('all')
 const lastAnalysis = ref<string | null>(null)
 
+// Responsive chart dimensions
+const chartWidth = ref(600)
+const chartHeight = ref(450)
+
+// Update chart dimensions based on screen size
+const updateChartDimensions = () => {
+  const width = window.innerWidth
+  if (width < 640) {
+    // Mobile
+    chartWidth.value = Math.min(width - 32, 350)
+    chartHeight.value = 300
+  } else if (width < 1024) {
+    // Tablet
+    chartWidth.value = Math.min(width - 100, 500)
+    chartHeight.value = 400
+  } else {
+    // Desktop
+    chartWidth.value = 600
+    chartHeight.value = 450
+  }
+}
+
+// Listen for window resize
+onMounted(() => {
+  updateChartDimensions()
+  window.addEventListener('resize', updateChartDimensions)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateChartDimensions)
+})
+
 // Load data on mount
 onMounted(async () => {
   initAuth()
@@ -72,6 +104,10 @@ const runAnalysis = async () => {
   }
 }
 
+const handleSourceChange = async () => {
+  await loadData()
+}
+
 // Computed
 const sentimentTrend = computed(() => {
   if (!summary.value) return 'neutral'
@@ -93,16 +129,17 @@ const sentimentTrend = computed(() => {
               <span class="text-white font-bold text-lg">V</span>
             </div>
             <div>
-              <h1 class="text-xl font-semibold text-white tracking-tight">
+              <h1 class="text-lg font-semibold text-white tracking-tight">
                 Voice of the Operator
               </h1>
               <p class="text-sm text-slate-400">Real-time Sentiment Intelligence</p>
             </div>
           </div>
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 lg:gap-3">
             <select 
               v-model="selectedSource"
-              class="bg-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 border border-slate-600 focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              @change="handleSourceChange"
+              class="px-2 lg:px-3 py-2 bg-white  border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
             >
               <option value="all">All Sources</option>
               <option value="twitter">Twitter/X</option>
@@ -111,10 +148,10 @@ const sentimentTrend = computed(() => {
             </select>
             <NuxtLink 
               to="/data"
-              class="px-3 py-2 bg-slate-700 text-slate-200 text-sm font-medium rounded-lg hover:bg-slate-600 border border-slate-600 transition-colors"
+              class="px-2 lg:px-3 py-2 bg-slate-700 text-slate-200 text-sm font-medium rounded-lg hover:bg-slate-600 border border-slate-600 transition-colors"
               title="Data Management"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
               </svg>
             </NuxtLink>
@@ -122,13 +159,14 @@ const sentimentTrend = computed(() => {
             <button
               @click="runAnalysis"
               :disabled="loading"
-              class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-medium rounded-lg hover:from-cyan-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
+              class="px-3 lg:px-5 py-2 lg:py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-medium rounded-lg hover:from-cyan-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
             >
               <svg v-if="loading" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span>{{ loading ? 'Analyzing...' : 'Run Analysis' }}</span>
+              <span class="hidden sm:inline">{{ loading ? 'Analyzing...' : 'Run Analysis' }}</span>
+              <span class="sm:hidden">{{ loading ? '...' : 'Run' }}</span>
             </button>
             <UserMenu />
           </div>
@@ -178,10 +216,10 @@ const sentimentTrend = computed(() => {
           />
         </div>
 
-        <!-- Main Content: 75/25 Split -->
-        <div class="flex gap-6 mb-6">
-          <!-- Left: Visualization (75%) -->
-          <div class="w-3/4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+        <!-- Main Content: Responsive Layout -->
+        <div class="flex flex-col lg:flex-row gap-6 mb-6">
+          <!-- Left: Visualization -->
+          <div class="flex-1 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 lg:p-6">
             <div class="flex justify-between items-start mb-4">
               <div>
                 <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Topic Clusters</h2>
@@ -205,8 +243,8 @@ const sentimentTrend = computed(() => {
             <div v-if="clusters.length" class="flex justify-center">
               <BubbleChart 
                 :clusters="clusters" 
-                :width="600" 
-                :height="450"
+                :width="chartWidth" 
+                :height="chartHeight"
                 @cluster-click="handleClusterClick"
               />
             </div>
@@ -219,10 +257,10 @@ const sentimentTrend = computed(() => {
             </div>
           </div>
 
-          <!-- Right: Cluster List (25%) -->
-          <div class="w-1/4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col">
+          <!-- Right: Cluster List -->
+          <div class="w-full lg:w-1/3 xl:w-1/4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 flex flex-col">
             <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-3">Cluster Breakdown</h2>
-            <div class="flex-1 overflow-y-auto space-y-3 pr-1" style="max-height: 480px;">
+            <div class="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-custom max-h-96 lg:max-h-[480px]">
               <ClusterCard 
                 v-for="cluster in clusters" 
                 :key="cluster.id"

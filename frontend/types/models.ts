@@ -18,7 +18,11 @@ export interface Post {
   fetchedAt: string;           // When we retrieved it
   
   // ML-generated fields (populated after analysis)
-  sentiment?: SentimentScore;
+  sentimentCompound?: number;      // Overall score: -1 to 1
+  sentimentPositive?: number;      // Positive component: 0 to 1
+  sentimentNegative?: number;      // Negative component: 0 to 1
+  sentimentNeutral?: number;       // Neutral component: 0 to 1
+  sentimentLabel?: 'positive' | 'negative' | 'neutral';
   clusterId?: string;
   keywords?: string[];
 }
