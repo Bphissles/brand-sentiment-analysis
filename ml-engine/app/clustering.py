@@ -34,6 +34,30 @@ CLUSTER_TAXONOMY = {
                      'availability', 'new', 'model', 'spec', 'ordered', 'months'],
         'label': 'Model Demand',
         'description': 'Model availability, wait times, and ordering experience'
+    },
+    'technology_features': {
+        'keywords': ['smartlinq', 'infotainment', 'navigation', 'led', 'headlight', 'dashboard',
+                     'apu', 'tech', 'technology', 'system', 'display', 'diagnostics', 'alert'],
+        'label': 'Technology & Features',
+        'description': 'Truck technology, telematics, and modern features'
+    },
+    'brand_comparison': {
+        'keywords': ['kenworth', 'freightliner', 'volvo', 'mack', 'international', 'switch',
+                     'compare', 'comparison', 'versus', 'better', 'competition', 'brand'],
+        'label': 'Brand Comparison',
+        'description': 'Comparisons with competing truck brands and switching decisions'
+    },
+    'pricing_value': {
+        'keywords': ['price', 'cost', 'expensive', 'cheap', 'value', 'worth', 'money',
+                     'rebate', 'hvip', 'incentive', 'roi', 'investment', 'budget', 'afford'],
+        'label': 'Pricing & Value',
+        'description': 'Truck pricing, incentives, and value for money discussions'
+    },
+    'build_quality': {
+        'keywords': ['quality', 'build', 'premium', 'materials', 'craftsmanship', 'weld',
+                     'finish', 'paint', 'chrome', 'durable', 'solid', 'construction'],
+        'label': 'Build Quality',
+        'description': 'Manufacturing quality, materials, and craftsmanship'
     }
 }
 
@@ -217,4 +241,6 @@ def match_cluster_to_taxonomy(keywords: List[str], exclude: set = None) -> Tuple
         general_key = f'general_{counter}'
         counter += 1
     
-    return (general_key, 'General Discussion')
+    # Make label unique too if this isn't the first general cluster
+    label = 'General Discussion' if general_key == 'general' else f'General Discussion {counter}'
+    return (general_key, label)
