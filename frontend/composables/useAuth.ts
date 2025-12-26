@@ -35,12 +35,37 @@ export const useAuth = () => {
       const savedUser = localStorage.getItem('authUser')
       
       if (savedToken && savedUser) {
+        // Check if token is expired before restoring state
+        if (isTokenExpired(savedToken)) {
+          localStorage.removeItem('authToken')
+          localStorage.removeItem('authUser')
+          return
+        }
+        
         authState.value = {
           token: savedToken,
           user: JSON.parse(savedUser),
           isAuthenticated: true
         }
       }
+    }
+  }
+
+  /**
+   * Check if a JWT token is expired by decoding its payload
+   */
+  const isTokenExpired = (token: string): boolean => {
+    try {
+      const parts = token.split('.')
+      if (parts.length !== 3 || !parts[1]) {
+        return true
+      }
+      const payload = JSON.parse(atob(parts[1]))
+      const exp = payload.exp * 1000 // Convert to milliseconds
+      return Date.now() >= exp
+    } catch {
+      // If we can't decode the token, consider it expired
+      return true
     }
   }
 
@@ -166,6 +191,7 @@ export const useAuth = () => {
     isAuthenticated: computed(() => authState.value.isAuthenticated),
     token: computed(() => authState.value.token),
     initAuth,
+    isTokenExpired,
     login,
     register,
     logout,
