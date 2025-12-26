@@ -2,12 +2,17 @@ package sentiment
 
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import java.time.Instant
 
 /**
  * REST controller for Analysis operations
  * Handles triggering ML analysis and managing analysis runs
  */
+@Tag(name = "Analysis", description = "ML analysis and processing")
 class AnalysisController {
 
     static responseFormats = ['json']
@@ -20,6 +25,8 @@ class AnalysisController {
      * GET /api/analysis
      * List all analysis runs
      */
+    @Operation(summary = "List analysis runs", description = "List all analysis runs")
+    @ApiResponse(responseCode = "200", description = "List of analysis runs")
     def index() {
         def runs = AnalysisRun.list(sort: 'dateCreated', order: 'desc', max: 20)
         respond([runs: runs])
@@ -29,7 +36,10 @@ class AnalysisController {
      * GET /api/analysis/{id}
      * Get a single analysis run
      */
-    def show(Long id) {
+    @Operation(summary = "Get analysis run", description = "Get a single analysis run by ID")
+    @ApiResponse(responseCode = "200", description = "Analysis run details")
+    @ApiResponse(responseCode = "404", description = "Analysis run not found")
+    def show(@Parameter(description = "Analysis run ID") Long id) {
         def run = AnalysisRun.get(id)
         if (!run) {
             render status: 404, text: [error: 'Analysis run not found'] as JSON
@@ -42,6 +52,12 @@ class AnalysisController {
      * POST /api/analysis/trigger
      * Trigger a new ML analysis on all posts
      */
+    @Operation(
+        summary = "Trigger analysis",
+        description = "Trigger a new ML analysis on all posts for clustering and sentiment"
+    )
+    @ApiResponse(responseCode = "200", description = "Analysis completed successfully")
+    @ApiResponse(responseCode = "500", description = "Analysis failed")
     @Transactional
     def trigger() {
         // Create analysis run record
@@ -184,6 +200,9 @@ class AnalysisController {
      * POST /api/analysis/load-fixtures
      * Load mock data from fixtures into database
      */
+    @Operation(summary = "Load fixtures", description = "Load sample data from fixtures into database")
+    @ApiResponse(responseCode = "200", description = "Fixtures loaded successfully")
+    @ApiResponse(responseCode = "500", description = "Failed to load fixtures")
     @Transactional
     def loadFixtures() {
         try {
@@ -203,6 +222,8 @@ class AnalysisController {
      * DELETE /api/analysis/clear
      * Clear all posts and clusters (for testing)
      */
+    @Operation(summary = "Clear data", description = "Clear all posts and clusters (for testing)")
+    @ApiResponse(responseCode = "200", description = "Data cleared successfully")
     @Transactional
     def clear() {
         def postCount = Post.count()

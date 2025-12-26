@@ -2,11 +2,16 @@ package sentiment
 
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 
 /**
  * REST controller for Post operations
  * Handles CRUD and listing of social media posts
  */
+@Tag(name = "Posts", description = "Social media post management")
 class PostController {
 
     static responseFormats = ['json']
@@ -16,6 +21,11 @@ class PostController {
      * GET /api/posts
      * List all posts with optional filtering
      */
+    @Operation(
+        summary = "List posts",
+        description = "List all posts with optional filtering by source, cluster, or sentiment"
+    )
+    @ApiResponse(responseCode = "200", description = "Paginated list of posts")
     def index() {
         def source = params.source
         def clusterId = params.clusterId
@@ -63,7 +73,10 @@ class PostController {
      * GET /api/posts/{id}
      * Get a single post by ID
      */
-    def show(Long id) {
+    @Operation(summary = "Get post", description = "Get a single post by ID")
+    @ApiResponse(responseCode = "200", description = "Post details")
+    @ApiResponse(responseCode = "404", description = "Post not found")
+    def show(@Parameter(description = "Post ID") Long id) {
         def post = Post.get(id)
         if (!post) {
             render status: 404, text: [error: 'Post not found'] as JSON
@@ -76,6 +89,9 @@ class PostController {
      * POST /api/posts
      * Create a new post
      */
+    @Operation(summary = "Create post", description = "Create a new social media post")
+    @ApiResponse(responseCode = "201", description = "Post created")
+    @ApiResponse(responseCode = "400", description = "Validation error")
     @Transactional
     def save() {
         def data = request.JSON
@@ -104,8 +120,11 @@ class PostController {
      * DELETE /api/posts/{id}
      * Delete a post
      */
+    @Operation(summary = "Delete post", description = "Delete a post by ID")
+    @ApiResponse(responseCode = "204", description = "Post deleted")
+    @ApiResponse(responseCode = "404", description = "Post not found")
     @Transactional
-    def delete(Long id) {
+    def delete(@Parameter(description = "Post ID") Long id) {
         def post = Post.get(id)
         if (!post) {
             render status: 404, text: [error: 'Post not found'] as JSON
@@ -120,6 +139,8 @@ class PostController {
      * GET /api/posts/sources
      * Get available source types with counts
      */
+    @Operation(summary = "List sources", description = "Get available source types with post counts")
+    @ApiResponse(responseCode = "200", description = "List of sources with counts")
     def sources() {
         def results = Post.executeQuery(
             'select p.source, count(p) from Post p group by p.source'

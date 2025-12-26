@@ -2,11 +2,16 @@ package sentiment
 
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 
 /**
  * Controller for data ingestion operations
  * Handles web scraping and post import from various sources
  */
+@Tag(name = "Data Ingestion", description = "Web scraping and data import")
 class DataIngestionController {
 
     static responseFormats = ['json']
@@ -30,6 +35,8 @@ class DataIngestionController {
      * GET /api/ingestion/status
      * Get the current status of data ingestion
      */
+    @Operation(summary = "Ingestion status", description = "Get the current status of data ingestion")
+    @ApiResponse(responseCode = "200", description = "Ingestion status")
     def status() {
         def postCount = Post.count()
         def sourceBreakdown = Post.executeQuery(
@@ -50,6 +57,10 @@ class DataIngestionController {
      * POST /api/ingestion/scrape-all
      * Scrape all configured sources and import posts
      */
+    @Operation(summary = "Scrape all sources", description = "Scrape all configured sources and import posts")
+    @ApiResponse(responseCode = "200", description = "Scraping completed")
+    @ApiResponse(responseCode = "400", description = "Gemini API not configured")
+    @ApiResponse(responseCode = "409", description = "Scraping already in progress")
     @Transactional
     def scrapeAll() {
         if (scrapingStatus.running) {
@@ -114,8 +125,11 @@ class DataIngestionController {
      * POST /api/ingestion/scrape/{source}
      * Scrape a specific source
      */
+    @Operation(summary = "Scrape source", description = "Scrape a specific source (twitter, youtube, forums)")
+    @ApiResponse(responseCode = "200", description = "Scraping completed")
+    @ApiResponse(responseCode = "400", description = "Invalid source or Gemini not configured")
     @Transactional
-    def scrapeSource(String source) {
+    def scrapeSource(@Parameter(description = "Source name") String source) {
         if (!['twitter', 'youtube', 'forums'].contains(source)) {
             render status: 400, text: [error: "Invalid source: ${source}"] as JSON
             return
@@ -173,6 +187,10 @@ class DataIngestionController {
      * POST /api/ingestion/import
      * Import posts from JSON body (manual import)
      */
+    @Operation(summary = "Manual import", description = "Import posts from JSON body")
+    @ApiResponse(responseCode = "200", description = "Import successful")
+    @ApiResponse(responseCode = "400", description = "Missing posts array")
+    @ApiResponse(responseCode = "500", description = "Import failed")
     @Transactional
     def manualImport() {
         def json = request.JSON

@@ -7,6 +7,7 @@ import time
 import math
 import logging
 from flask import Flask, jsonify, request
+from flasgger import Swagger
 from dotenv import load_dotenv
 
 from preprocessing import preprocess_posts
@@ -18,6 +19,37 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# Swagger/OpenAPI configuration
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": "apispec",
+            "route": "/apispec.json",
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/apidocs/"
+}
+
+swagger_template = {
+    "info": {
+        "title": "ML Engine API",
+        "description": "Sentiment analysis and clustering API for the Brand Sentiment Analyzer",
+        "version": "1.0.0",
+        "contact": {
+            "name": "API Support"
+        }
+    },
+    "basePath": "/",
+    "schemes": ["http", "https"]
+}
+
+swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
 # Request size limits (configurable via environment)
 MAX_POSTS_PER_REQUEST = int(os.environ.get('MAX_POSTS_PER_REQUEST', '500'))
@@ -132,30 +164,116 @@ def handle_not_found(e):
 
 @app.route('/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
+    """Health check endpoint
+    ---
+    tags:
+      - System
+    responses:
+      200:
+        description: Service health status
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: healthy
+            service:
+              type: string
+              example: ml-engine
+    """
     return jsonify({'status': 'healthy', 'service': 'ml-engine'})
 
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
-    """
-    Analyze posts for clustering and sentiment
-    
-    Expected payload:
-    {
-        "posts": [
-            {"id": "1", "content": "...", "source": "twitter"},
-            ...
-        ]
-    }
-    
-    Returns:
-    {
-        "clusters": [...],
-        "posts": [...],
-        "postsAnalyzed": int,
-        "processingTimeMs": int
-    }
+    """Analyze posts for clustering and sentiment
+    ---
+    tags:
+      - Analysis
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - posts
+          properties:
+            posts:
+              type: array
+              items:
+                type: object
+                required:
+                  - id
+                  - content
+                properties:
+                  id:
+                    type: string
+                    example: "1"
+                  content:
+                    type: string
+                    example: "Great product, highly recommend!"
+                  source:
+                    type: string
+                    example: "twitter"
+                  author:
+                    type: string
+                    example: "user123"
+                  publishedAt:
+                    type: string
+                    example: "2024-01-15T10:30:00Z"
+    responses:
+      200:
+        description: Analysis results with clusters and sentiment
+        schema:
+          type: object
+          properties:
+            clusters:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  label:
+                    type: string
+                  postIds:
+                    type: array
+                    items:
+                      type: string
+                  sentiment:
+                    type: number
+                  sentimentLabel:
+                    type: string
+            posts:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  content:
+                    type: string
+                  sentiment:
+                    type: number
+                  clusterId:
+                    type: string
+                  keywords:
+                    type: array
+                    items:
+                      type: string
+            postsAnalyzed:
+              type: integer
+            processingTimeMs:
+              type: integer
+      400:
+        description: Invalid request payload
+      413:
+        description: Payload too large
     """
     start_time = time.time()
     
@@ -233,13 +351,60 @@ def analyze():
 
 @app.route('/api/sentiment', methods=['POST'])
 def sentiment_only():
-    """
-    Analyze sentiment for posts without clustering
-    
-    Expected payload:
-    {
-        "posts": [{"id": "1", "content": "..."}]
-    }
+    """Analyze sentiment for posts without clustering
+    ---
+    tags:
+      - Analysis
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - posts
+          properties:
+            posts:
+              type: array
+              items:
+                type: object
+                required:
+                  - id
+                  - content
+                properties:
+                  id:
+                    type: string
+                    example: "1"
+                  content:
+                    type: string
+                    example: "This is a great product!"
+    responses:
+      200:
+        description: Sentiment analysis results
+        schema:
+          type: object
+          properties:
+            posts:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  content:
+                    type: string
+                  sentiment:
+                    type: number
+            count:
+              type: integer
+      400:
+        description: Invalid request payload
+      413:
+        description: Payload too large
     """
     data = request.get_json()
     

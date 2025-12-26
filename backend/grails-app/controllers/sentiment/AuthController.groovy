@@ -1,11 +1,15 @@
 package sentiment
 
 import grails.converters.JSON
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 
 /**
  * Controller for authentication endpoints
  * Handles login, registration, and token validation
  */
+@Tag(name = "Authentication", description = "User authentication and authorization")
 class AuthController {
 
     static responseFormats = ['json']
@@ -23,6 +27,10 @@ class AuthController {
      * POST /api/auth/login
      * Authenticate user and return JWT token
      */
+    @Operation(summary = "Login", description = "Authenticate user and return JWT token")
+    @ApiResponse(responseCode = "200", description = "Login successful")
+    @ApiResponse(responseCode = "400", description = "Missing credentials")
+    @ApiResponse(responseCode = "401", description = "Invalid credentials")
     def login() {
         def json = request.JSON
 
@@ -55,6 +63,10 @@ class AuthController {
      * POST /api/auth/register
      * Register a new user account
      */
+    @Operation(summary = "Register", description = "Register a new user account")
+    @ApiResponse(responseCode = "200", description = "Registration successful")
+    @ApiResponse(responseCode = "400", description = "Invalid input")
+    @ApiResponse(responseCode = "409", description = "Email already registered")
     def register() {
         def json = request.JSON
 
@@ -99,6 +111,9 @@ class AuthController {
      * GET /api/auth/me
      * Get current user info from JWT token
      */
+    @Operation(summary = "Get current user", description = "Get current user info from JWT token")
+    @ApiResponse(responseCode = "200", description = "User info")
+    @ApiResponse(responseCode = "401", description = "Invalid or missing token")
     def me() {
         def authHeader = request.getHeader('Authorization')
 
@@ -136,6 +151,8 @@ class AuthController {
      * POST /api/auth/logout
      * Logout (client-side token removal, server acknowledges)
      */
+    @Operation(summary = "Logout", description = "Logout (client-side token removal)")
+    @ApiResponse(responseCode = "200", description = "Logout successful")
     def logout() {
         respond([success: true, message: 'Logged out successfully'])
     }
@@ -144,6 +161,10 @@ class AuthController {
      * POST /api/auth/promote
      * Promote a user to admin role (admin only, or first user becomes admin)
      */
+    @Operation(summary = "Promote to admin", description = "Promote a user to admin role")
+    @ApiResponse(responseCode = "200", description = "User promoted")
+    @ApiResponse(responseCode = "403", description = "Admin access required")
+    @ApiResponse(responseCode = "404", description = "User not found")
     def promoteToAdmin() {
         def json = request.JSON
         def email = json?.email

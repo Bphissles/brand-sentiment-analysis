@@ -2,11 +2,16 @@ package sentiment
 
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 
 /**
  * REST controller for Cluster operations
  * Handles listing and retrieval of topic clusters
  */
+@Tag(name = "Clusters", description = "Topic cluster management")
 class ClusterController {
 
     static responseFormats = ['json']
@@ -16,6 +21,11 @@ class ClusterController {
      * GET /api/clusters
      * List all clusters with optional filtering
      */
+    @Operation(
+        summary = "List clusters",
+        description = "List all clusters with optional filtering by analysis run, sentiment, or source"
+    )
+    @ApiResponse(responseCode = "200", description = "List of clusters with sample posts")
     def index() {
         def analysisRunId = params.analysisRunId
         def sentimentLabel = params.sentimentLabel
@@ -73,7 +83,10 @@ class ClusterController {
      * GET /api/clusters/{id}
      * Get a single cluster with its posts
      */
-    def show(Long id) {
+    @Operation(summary = "Get cluster", description = "Get a single cluster with all its posts")
+    @ApiResponse(responseCode = "200", description = "Cluster details with posts")
+    @ApiResponse(responseCode = "404", description = "Cluster not found")
+    def show(@Parameter(description = "Cluster ID") Long id) {
         def cluster = Cluster.get(id)
         if (!cluster) {
             render status: 404, text: [error: 'Cluster not found'] as JSON
@@ -122,6 +135,11 @@ class ClusterController {
      * GET /api/clusters/summary
      * Get dashboard summary of all clusters
      */
+    @Operation(
+        summary = "Dashboard summary",
+        description = "Get dashboard summary with sentiment distribution and top clusters"
+    )
+    @ApiResponse(responseCode = "200", description = "Dashboard summary data")
     def summary() {
         def source = params.source
         

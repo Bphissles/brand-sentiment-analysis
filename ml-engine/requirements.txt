@@ -3,6 +3,7 @@
 # Web framework
 flask>=3.0.0
 gunicorn>=21.0.0
+flasgger>=0.9.7
 
 # ML/NLP
 scikit-learn>=1.4.0

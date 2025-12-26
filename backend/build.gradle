@@ -72,6 +72,9 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
     // BCrypt for password hashing
     implementation("org.mindrot:jbcrypt:0.4")
+    
+    // OpenAPI/Swagger documentation (1.x for Spring Boot 2.x / Spring 5.x compatibility)
+    implementation("org.springdoc:springdoc-openapi-ui:1.7.0")
 }
 
 application {
@@ -118,4 +121,6 @@ tasks.withType(War).configureEach { War war ->
 assets {
     minifyJs = true
     minifyCss = true
+    // Exclude Swagger UI from minification (uses ES6+ syntax incompatible with Closure Compiler)
+    excludes = ['**/swagger-ui*.js', '**/webjars/**']
 }

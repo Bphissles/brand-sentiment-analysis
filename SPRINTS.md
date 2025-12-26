@@ -81,7 +81,7 @@
 ### Deliverables
 - [x] Three project directories: `frontend/`, `backend/`, `ml-engine/`
 - [x] All dependencies installed
-- [ ] Gemini API key working (user to configure)
+- [x] Gemini API key working (user to configure)
 - [x] Supabase documented (user to configure)
 
 ### Definition of Done
@@ -130,7 +130,7 @@ Can run all three projects locally without errors
 - [x] Data models in all three projects
 - [x] Gemini service class (ready for real data)
 - [x] Taxonomy config file (config/taxonomy.yaml)
-- [ ] Database seeded with mock data (Sprint 3)
+- [x] Database seeded with mock data (Sprint 3)
 
 ### Definition of Done
 `grails run-app` serves mock data via REST endpoint
@@ -208,21 +208,22 @@ Can run all three projects locally without errors
   - Store results in PostgreSQL (Supabase)
   - Error handling
 
-- [ ] **3.4** Implement JWT authentication (deferred to Sprint 5)
+- [x] **3.4** Implement JWT authentication
   - User registration with email/password
   - Login returns JWT token
-  - Token validation middleware
-  - Refresh token flow
+  - Token validation via AuthInterceptor
+  - Custom JWT implementation (jjwt library)
 
 - [x] **3.5** Create Gemini integration service
   - `GeminiService` for cluster insights (stub ready)
   - Generate "Business Insight" summaries
   - Rate limiting configured
 
-- [ ] **3.6** Add API documentation (deferred)
-  - Swagger/OpenAPI spec
-  - Document all endpoints
-  - Example requests/responses
+- [x] **3.6** Add API documentation
+  - Swagger/OpenAPI spec via flasgger (ML Engine) and springdoc-openapi (Backend)
+  - Document all endpoints with OpenAPI annotations
+  - Interactive Swagger UI at `/apidocs/` (ML) and `/swagger-ui/index.html` (Backend)
+  - See `docs/API_DOCUMENTATION.md` for details
 
 ### Deliverables
 - [x] Grails API running on port 8080
@@ -501,7 +502,8 @@ sentiment-analyzer/
 │       └── forums.json       # 15 posts
 │
 ├── docs/
-│   └── ARCHITECTURE.md       # System diagrams
+│   ├── ARCHITECTURE.md       # System diagrams
+│   └── API_DOCUMENTATION.md  # OpenAPI/Swagger documentation guide
 │
 ├── logs/                     # Local dev logs
 ├── .pids/                    # Process IDs for local dev
@@ -532,9 +534,9 @@ sentiment-analyzer/
 {
   "dependencies": {
     "nuxt": "^3.x",
-    "@sidebase/nuxt-auth": "^0.6.x",
     "d3": "^7.x",
-    "@nuxtjs/tailwindcss": "^6.x"
+    "@nuxtjs/tailwindcss": "^6.x",
+    "@nuxtjs/color-mode": "^3.x"
   }
 }
 ```
@@ -543,7 +545,8 @@ sentiment-analyzer/
 ```groovy
 dependencies {
     implementation 'org.grails:grails-core:6.x'
-    implementation 'org.grails.plugins:spring-security-rest:3.x'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
     implementation 'org.postgresql:postgresql:42.x'
 }
 ```
@@ -551,6 +554,7 @@ dependencies {
 ### ML Engine (requirements.txt)
 ```
 flask>=3.0.0
+flasgger>=0.9.7
 scikit-learn>=1.4.0
 nltk>=3.8.0
 pandas>=2.1.0
