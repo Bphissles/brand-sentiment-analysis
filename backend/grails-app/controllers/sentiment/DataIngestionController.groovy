@@ -18,7 +18,6 @@ class DataIngestionController {
     ]
 
     WebScraperService webScraperService
-    GeminiService geminiService
 
     // Track scraping status
     private static Map scrapingStatus = [
@@ -70,11 +69,7 @@ class DataIngestionController {
         scrapingStatus.lastRun = new Date()
 
         try {
-            def results = [
-                twitter: [],
-                youtube: [],
-                forums: []
-            ]
+            def results = [twitter: [], youtube: [], forums: []]
             def imported = [twitter: 0, youtube: 0, forums: 0]
             def errors = []
 
@@ -82,23 +77,9 @@ class DataIngestionController {
             ['twitter', 'youtube', 'forums'].each { source ->
                 try {
                     log.info("Scraping ${source}...")
-                    def posts = []
-                    
-                    switch (source) {
-                        case 'twitter':
-                            posts = webScraperService.scrapeTwitter()
-                            break
-                        case 'youtube':
-                            posts = webScraperService.scrapeYouTube()
-                            break
-                        case 'forums':
-                            posts = webScraperService.scrapeForums()
-                            break
-                    }
-
-                    results[source] = posts
-                    imported[source] = importPostsList(posts)
-                    
+                    def scrapeResult = scrapeAndImportSource(source)
+                    results[source] = scrapeResult.posts
+                    imported[source] = scrapeResult.imported
                 } catch (Exception e) {
                     log.error("Error scraping ${source}", e)
                     errors << [source: source, error: e.message]
@@ -148,33 +129,44 @@ class DataIngestionController {
         }
 
         try {
-            def posts = []
-            
-            switch (source) {
-                case 'twitter':
-                    posts = webScraperService.scrapeTwitter()
-                    break
-                case 'youtube':
-                    posts = webScraperService.scrapeYouTube()
-                    break
-                case 'forums':
-                    posts = webScraperService.scrapeForums()
-                    break
-            }
-
-            def importedCount = importPostsList(posts)
+            def scrapeResult = scrapeAndImportSource(source)
 
             respond([
                 success: true,
                 source: source,
-                scraped: posts.size(),
-                imported: importedCount
+                scraped: scrapeResult.posts.size(),
+                imported: scrapeResult.imported
             ])
 
         } catch (Exception e) {
             log.error("Failed to scrape ${source}", e)
             render status: 500, text: [error: e.message] as JSON
         }
+    }
+
+    /**
+     * Scrape a specific source and import resulting posts.
+     * Returns a map containing the scraped posts and imported count.
+     */
+    private Map scrapeAndImportSource(String source) {
+        List<Map> posts
+
+        switch (source) {
+            case 'twitter':
+                posts = webScraperService.scrapeTwitter()
+                break
+            case 'youtube':
+                posts = webScraperService.scrapeYouTube()
+                break
+            case 'forums':
+                posts = webScraperService.scrapeForums()
+                break
+            default:
+                posts = []
+        }
+
+        def importedCount = importPostsList(posts)
+        [posts: posts, imported: importedCount]
     }
 
     /**

@@ -10,16 +10,21 @@ export const useServiceHealth = () => {
   const mlReady = ref(false)
   const error = ref<string | null>(null)
 
+  type HealthWithMl = {
+    status: 'healthy' | 'unhealthy' | 'ok'
+    mlEngineStatus?: 'healthy' | 'unhealthy'
+  }
+
   /**
    * Check if backend API is healthy
    */
   const checkBackendHealth = async (): Promise<boolean> => {
     try {
-      const response = await $fetch<any>(`${baseUrl}/api/health`, {
+      const response = await $fetch<HealthWithMl>(`${baseUrl}/api/health`, {
         timeout: 5000
       })
       return response.status === 'healthy' || response.status === 'ok'
-    } catch (e) {
+    } catch (_e) {
       return false
     }
   }
@@ -33,7 +38,7 @@ export const useServiceHealth = () => {
     while (attempts < maxAttempts) {
       try {
         // Check backend health
-        const response = await $fetch<any>(`${baseUrl}/api/health`, {
+        const response = await $fetch<HealthWithMl>(`${baseUrl}/api/health`, {
           timeout: 5000
         })
         
@@ -51,7 +56,7 @@ export const useServiceHealth = () => {
           // Continue waiting for ML engine
         }
         
-      } catch (e) {
+      } catch (_e) {
         // Services not ready yet, continue waiting
       }
       

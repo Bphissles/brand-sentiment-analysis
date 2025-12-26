@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { IngestionStatusResponse } from '~/types/models'
 const { user } = useAuth()
 const { 
   getIngestionStatus, 
@@ -13,7 +14,7 @@ const {
 // Check if user is admin
 const isAdmin = computed(() => user.value?.role === 'admin')
 
-const status = ref<any>(null)
+const status = ref<IngestionStatusResponse | null>(null)
 const loading = ref(false)
 const scraping = ref(false)
 const error = ref<string | null>(null)

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Cluster, Post } from '~/types/models'
+import type { Cluster, DashboardSummary, Insight, Post } from '~/types/models'
 
 const api = useApi()
 const { initAuth, user } = useAuth()
@@ -9,7 +9,7 @@ const isAdmin = computed(() => user.value?.role === 'admin')
 
 // State
 const clusters = ref<Cluster[]>([])
-const summary = ref<any>(null)
+const summary = ref<DashboardSummary | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const selectedCluster = ref<Cluster | null>(null)
@@ -29,7 +29,7 @@ const loadingSentimentPosts = ref(false)
 const sentimentPostsSort = ref<string>('strongest')
 
 // AI Insights state
-const aiInsights = ref<any>(null)
+const aiInsights = ref<Insight | null>(null)
 const loadingInsights = ref(false)
 const generatingInsights = ref(false)
 
