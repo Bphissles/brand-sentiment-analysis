@@ -1,4 +1,4 @@
-# Peterbilt "Voice of the Operator" Dashboard
+# Sentiment Analyzer Dashboard
 
 > AI-powered sentiment analysis dashboard visualizing fleet owner and driver feedback across public channels.
 
@@ -24,6 +24,7 @@ Aggregates and analyzes publicly available data from social media, forums, and c
 - ✅ Responsive dashboard UI with TailwindCSS + dark mode
 - ✅ Unified local dev scripts (`start-local.sh`, `stop-local.sh`)
 - ✅ Comprehensive testing framework (Spock, Vitest, pytest)
+- ✅ OpenAPI/Swagger documentation (flasgger + springdoc-openapi)
 - ✅ AI-powered insights (Gemini 2.0 Flash) — Trend Analysis, Recommendations, Executive Summary
 - ✅ JWT authentication with login/register/logout
 - ✅ Admin-only Data Management page
@@ -53,7 +54,7 @@ sentiment-analyzer/
 ├── ml-engine/          # Python Flask + scikit-learn + NLTK
 ├── config/             # Auditable taxonomy config
 ├── data/fixtures/      # Mock data (50 posts)
-├── docs/               # Architecture diagrams
+├── docs/               # Architecture diagrams & API docs
 ├── start-local.sh      # Start all services
 ├── stop-local.sh       # Stop all services
 ├── SPRINTS.md          # Sprint breakdown
@@ -216,17 +217,17 @@ FLASK_ENV=development
 
 - [Sprint Breakdown](SPRINTS.md) — Development roadmap (Sprints 0-5 complete)
 - [Architecture](docs/ARCHITECTURE.md) — System design diagrams
+- [API Documentation](docs/API_DOCUMENTATION.md) — OpenAPI/Swagger documentation guide
 - [Testing Guide](TESTING.md) — Testing setup and execution
 - [Testing Status](TESTING_STATUS.md) — Current test coverage and roadmap
 - [Implementation Summary](IMPLEMENTATION_SUMMARY.md) — Recent changes and configuration
 - [Code Review](CODE_REVIEW_v2.md) — Latest code review findings
 - [Taxonomy Config](config/taxonomy.yaml) — Auditable cluster categories
 
----
+### Interactive API Documentation
 
-## License
-
-Proprietary — Peterbilt POC
+- **ML Engine Swagger UI**: http://localhost:5000/apidocs/
+- **Backend Swagger UI**: http://localhost:8080/swagger-ui/index.html
 
 ---
 

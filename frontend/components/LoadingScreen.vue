@@ -16,7 +16,7 @@
 
       <!-- Title -->
       <h1 class="mb-4 text-3xl font-bold text-white">
-        Peterbilt Sentiment Analyzer
+        Sentiment Analyzer
       </h1>
 
       <!-- Loading Message -->
