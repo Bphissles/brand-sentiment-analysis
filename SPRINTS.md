@@ -533,10 +533,15 @@ sentiment-analyzer/
 ```json
 {
   "dependencies": {
-    "nuxt": "^3.x",
-    "d3": "^7.x",
-    "@nuxtjs/tailwindcss": "^6.x",
-    "@nuxtjs/color-mode": "^3.x"
+    "nuxt": "^4.2.2",
+    "vue": "^3.5.x",
+    "vue-router": "^4.6.x"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "d3": "^7.9.0",
+    "vitest": "^2.1.8",
+    "@vue/test-utils": "^2.4.6"
   }
 }
 ```

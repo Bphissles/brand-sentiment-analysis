@@ -55,6 +55,8 @@ sentiment-analyzer/
 ├── config/             # Auditable taxonomy config
 ├── data/fixtures/      # Mock data (50 posts)
 ├── docs/               # Architecture diagrams & API docs
+├── logs/               # Local dev logs
+├── .pids/              # Process IDs for local dev
 ├── start-local.sh      # Start all services
 ├── stop-local.sh       # Stop all services
 ├── SPRINTS.md          # Sprint breakdown
@@ -219,9 +221,9 @@ FLASK_ENV=development
 - [Architecture](docs/ARCHITECTURE.md) — System design diagrams
 - [API Documentation](docs/API_DOCUMENTATION.md) — OpenAPI/Swagger documentation guide
 - [Testing Guide](TESTING.md) — Testing setup and execution
-- [Testing Status](TESTING_STATUS.md) — Current test coverage and roadmap
-- [Implementation Summary](IMPLEMENTATION_SUMMARY.md) — Recent changes and configuration
-- [Code Review](CODE_REVIEW_v2.md) — Latest code review findings
+- [Code Review](CODE_REVIEW.md) — Code review guidelines
+- [Code Review Log](CODE_REVIEW_LOG.md) — Code review findings and status
+- [Agent Guidelines](AGENTS.md) — Development guidelines and conventions
 - [Taxonomy Config](config/taxonomy.yaml) — Auditable cluster categories
 
 ### Interactive API Documentation
