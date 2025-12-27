@@ -24,6 +24,7 @@ class UrlMappings {
         // Analysis API
         "/api/analysis"(controller: 'analysis', action: 'index', method: 'GET')
         "/api/analysis/trigger"(controller: 'analysis', action: 'trigger', method: 'POST')
+        "/api/analysis/fixture-count"(controller: 'analysis', action: 'fixtureCount', method: 'GET')
         "/api/analysis/load-fixtures"(controller: 'analysis', action: 'loadFixtures', method: 'POST')
         "/api/analysis/clear"(controller: 'analysis', action: 'clear', method: 'DELETE')
         "/api/analysis/$id"(controller: 'analysis', action: 'show', method: 'GET')
@@ -36,6 +37,7 @@ class UrlMappings {
         "/api/ingestion/scrapeAll"(controller: 'dataIngestion', action: 'scrapeAll')
         "/api/ingestion/scrape/$source"(controller: 'dataIngestion', action: 'scrapeSource')
         "/api/ingestion/import"(controller: 'dataIngestion', action: 'manualImport')
+        "/api/ingestion/clean-content"(controller: 'dataIngestion', action: 'cleanContent')
 
         // Authentication API
         "/api/auth/login"(controller: 'auth', action: 'login')

@@ -19,10 +19,12 @@ class DataIngestionController {
         scrapeAll: 'POST',
         scrapeSource: 'POST',
         manualImport: 'POST',
+        cleanContent: 'POST',
         status: 'GET'
     ]
 
     IngestionService ingestionService
+    DataLoaderService dataLoaderService
 
     // Track scraping status
     private static Map scrapingStatus = [
@@ -173,6 +175,26 @@ class DataIngestionController {
             ])
         } catch (Exception e) {
             log.error("Import failed", e)
+            render status: 500, text: [error: e.message] as JSON
+        }
+    }
+
+    /**
+     * POST /api/ingestion/clean-content
+     * Clean corrupted post content that contains embedded JSON metadata
+     */
+    @Operation(summary = "Clean content", description = "Clean corrupted post content that contains embedded JSON metadata")
+    @ApiResponse(responseCode = "200", description = "Cleanup completed")
+    def cleanContent() {
+        try {
+            def cleanedCount = dataLoaderService.cleanCorruptedPostContent()
+            respond([
+                success: true,
+                cleaned: cleanedCount,
+                message: "Cleaned ${cleanedCount} posts with corrupted content"
+            ])
+        } catch (Exception e) {
+            log.error("Content cleanup failed", e)
             render status: 500, text: [error: e.message] as JSON
         }
     }

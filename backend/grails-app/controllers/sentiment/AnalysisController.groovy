@@ -16,7 +16,7 @@ import java.time.Instant
 class AnalysisController {
 
     static responseFormats = ['json']
-    static allowedMethods = [index: 'GET', show: 'GET', trigger: 'POST', loadFixtures: 'POST']
+    static allowedMethods = [index: 'GET', show: 'GET', trigger: 'POST', loadFixtures: 'POST', fixtureCount: 'GET']
 
     AnalysisService analysisService
     DataLoaderService dataLoaderService
@@ -100,6 +100,25 @@ class AnalysisController {
             log.error("Analysis failed", e)
             analysisService.failAnalysisRun(run, e.message)
             render status: 500, text: [error: e.message, run: run] as JSON
+        }
+    }
+
+    /**
+     * GET /api/analysis/fixture-count
+     * Get count of available fixture posts without loading them
+     */
+    @Operation(summary = "Count fixtures", description = "Get count of available fixture posts")
+    @ApiResponse(responseCode = "200", description = "Fixture counts returned")
+    def fixtureCount() {
+        try {
+            def result = dataLoaderService.countFixtures()
+            respond([
+                total: result.total,
+                sources: result.sources
+            ])
+        } catch (Exception e) {
+            log.error("Failed to count fixtures", e)
+            render status: 500, text: [error: e.message] as JSON
         }
     }
 

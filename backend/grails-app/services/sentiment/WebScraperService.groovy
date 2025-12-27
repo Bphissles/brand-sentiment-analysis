@@ -294,22 +294,33 @@ class WebScraperService {
     }
     
     /**
-     * Find the end of a JSON string value by looking for closing patterns
+     * Find the end of a JSON string value by properly handling escaped quotes
+     * Scans character by character to find the actual closing quote
      */
     private int findFieldEnd(String text, int start) {
-        // Look for patterns that indicate end of this field value
-        // ", "fieldName" or "} or "]
-        def patterns = ['", "', '","', '"}', '"]']
-        def minEnd = text.length()
+        int i = start
+        int len = text.length()
         
-        patterns.each { pattern ->
-            def idx = text.indexOf(pattern, start)
-            if (idx > 0 && idx < minEnd) {
-                minEnd = idx
+        while (i < len) {
+            char c = text.charAt(i)
+            
+            // Check for escape sequence
+            if (c == '\\' as char && i + 1 < len) {
+                // Skip the escaped character
+                i += 2
+                continue
             }
+            
+            // Found unescaped closing quote
+            if (c == '"' as char) {
+                return i
+            }
+            
+            i++
         }
         
-        return minEnd
+        // Fallback: return end of text if no closing quote found
+        return len
     }
     
     /**
