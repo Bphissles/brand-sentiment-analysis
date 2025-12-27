@@ -1,127 +1,72 @@
-{
-  "source": "forums",
-  "description": "Mock forum posts from TruckersReport and Reddit trucking communities",
-  "generated": "2024-12-22",
-  "posts": [
-    {
-      "id": "forum-001",
-      "externalId": "ttr-thread-12345",
-      "content": "Been running my 579 with the MX-13 for 3 years now. Just rolled over 400k miles and haven't had a single major issue. Oil changes, filters, and one set of injectors at 350k. That's it. Best truck I've ever owned. The PACCAR powertrain is the real deal.",
-      "author": "RoadDog_Mike",
-      "postUrl": "https://thetruckersreport.com/forums/threads/12345",
-      "publishedAt": "2024-12-18T14:22:00Z"
-    },
-    {
-      "id": "forum-002",
-      "externalId": "ttr-thread-12346",
-      "content": "Thinking about ordering a 589 but the wait times are killing me. Dealer quoted 7-8 months. Is it worth waiting or should I look at what's on the lot? I really want the specific spec I designed but not sure I can wait that long.",
-      "author": "NewOwnerOp2024",
-      "postUrl": "https://thetruckersreport.com/forums/threads/12346",
-      "publishedAt": "2024-12-17T09:45:00Z"
-    },
-    {
-      "id": "forum-003",
-      "externalId": "reddit-abc123",
-      "content": "PSA for 579 owners: If you're getting random derate events, check your DEF quality sensor. It's a known issue on 2022-2023 models. Dealer tried to charge me $800 for diagnosis but it's a $50 sensor you can replace yourself. Saved me a ton of downtime once I figured it out.",
-      "author": "u/diesel_mechanic_tips",
-      "postUrl": "https://reddit.com/r/Truckers/comments/abc123",
-      "publishedAt": "2024-12-16T16:30:00Z"
-    },
-    {
-      "id": "forum-004",
-      "externalId": "ttr-thread-12347",
-      "content": "Just upgraded from a 2018 579 to a 2024 model. The difference in the sleeper is incredible. The new 80-inch UltraLoft has so much more usable space. The old truck felt cramped in comparison. Worth every penny of the upgrade.",
-      "author": "SleepWellTrucker",
-      "postUrl": "https://thetruckersreport.com/forums/threads/12347",
-      "publishedAt": "2024-12-15T20:15:00Z"
-    },
-    {
-      "id": "forum-005",
-      "externalId": "reddit-def456",
-      "content": "Anyone else having issues with Peterbilt dealers in the Midwest? I've been to three different locations and the service has been terrible at all of them. Long wait times, parts on backorder, and they never seem to fix the problem the first time. Starting to regret not going with Kenworth.",
-      "author": "u/frustrated_fleet_mgr",
-      "postUrl": "https://reddit.com/r/Truckers/comments/def456",
-      "publishedAt": "2024-12-14T11:00:00Z"
-    },
-    {
-      "id": "forum-006",
-      "externalId": "ttr-thread-12348",
-      "content": "For those asking about the 579EV - I've been running one for our SoCal port drayage operation for 6 months. It's perfect for short haul work. We charge overnight at the yard and get about 140-150 miles per charge loaded. The drivers love how quiet and smooth it is. ROI looks good with the HVIP rebate.",
-      "author": "PortTruckingPro",
-      "postUrl": "https://thetruckersreport.com/forums/threads/12348",
-      "publishedAt": "2024-12-13T13:45:00Z"
-    },
-    {
-      "id": "forum-007",
-      "externalId": "reddit-ghi789",
-      "content": "Hot take: The 389 is overrated. Yeah it looks cool but the 579 is a better truck in every measurable way. Better fuel economy, better visibility, more comfortable cab. The 389 is for people who care more about looks than running a business.",
-      "author": "u/unpopular_truck_opinions",
-      "postUrl": "https://reddit.com/r/Truckers/comments/ghi789",
-      "publishedAt": "2024-12-12T18:30:00Z"
-    },
-    {
-      "id": "forum-008",
-      "externalId": "ttr-thread-12349",
-      "content": "My 579 just hit 1 million miles. Original MX-13 engine, rebuilt transmission at 750k. This truck has paid for itself three times over. Peterbilt quality is real. Already ordered my next one - another 579 with the same spec.",
-      "author": "MillionMileVet",
-      "postUrl": "https://thetruckersreport.com/forums/threads/12349",
-      "publishedAt": "2024-12-11T07:20:00Z"
-    },
-    {
-      "id": "forum-009",
-      "externalId": "reddit-jkl012",
-      "content": "Question for 579EV owners: How's the range holding up in winter? I'm in Minnesota and worried about battery performance in -20F weather. Considering one for local delivery but range anxiety is real.",
-      "author": "u/minnesota_hauler",
-      "postUrl": "https://reddit.com/r/Truckers/comments/jkl012",
-      "publishedAt": "2024-12-10T15:00:00Z"
-    },
-    {
-      "id": "forum-010",
-      "externalId": "ttr-thread-12350",
-      "content": "The Platinum interior package is absolutely worth it. I spend 300 days a year in this truck and the upgraded seats, better materials, and premium sound system make a huge difference in quality of life. Don't cheap out on the interior - you'll regret it.",
-      "author": "ComfortFirst",
-      "postUrl": "https://thetruckersreport.com/forums/threads/12350",
-      "publishedAt": "2024-12-09T22:45:00Z"
-    },
-    {
-      "id": "forum-011",
-      "externalId": "reddit-mno345",
-      "content": "Dealer just told me my 589 order got pushed back AGAIN. Originally quoted 6 months, now looking at 10+. This is ridiculous. I understand supply chain issues but at some point you have to wonder if they're just taking orders they can't fulfill.",
-      "author": "u/still_waiting_589",
-      "postUrl": "https://reddit.com/r/Truckers/comments/mno345",
-      "publishedAt": "2024-12-08T10:30:00Z"
-    },
-    {
-      "id": "forum-012",
-      "externalId": "ttr-thread-12351",
-      "content": "SmartLINQ remote diagnostics saved my bacon last week. Got an alert about low coolant before it became a problem. Pulled into a dealer, they topped it off and found a small leak. Fixed in 2 hours instead of a roadside breakdown. The technology actually works.",
-      "author": "TechAdopter",
-      "postUrl": "https://thetruckersreport.com/forums/threads/12351",
-      "publishedAt": "2024-12-07T14:15:00Z"
-    },
-    {
-      "id": "forum-013",
-      "externalId": "reddit-pqr678",
-      "content": "Comparing the 579 to the Kenworth T680 - drove both for a week each. The Peterbilt interior feels more premium but the Kenworth has better tech integration. Both are solid trucks. Went with the 579 because of the dealer network in my area.",
-      "author": "u/truck_comparison_guy",
-      "postUrl": "https://reddit.com/r/Truckers/comments/pqr678",
-      "publishedAt": "2024-12-06T19:00:00Z"
-    },
-    {
-      "id": "forum-014",
-      "externalId": "ttr-thread-12352",
-      "content": "Warning to new buyers: Don't let the dealer talk you into unnecessary options. I got sold on a bunch of stuff I never use. The base 579 with a few key upgrades (air ride seat, good mattress, APU) is all you really need. Save your money.",
-      "author": "BuyerBeware",
-      "postUrl": "https://thetruckersreport.com/forums/threads/12352",
-      "publishedAt": "2024-12-05T08:30:00Z"
-    },
-    {
-      "id": "forum-015",
-      "externalId": "reddit-stu901",
-      "content": "The 567 is an underrated workhorse. Running one for concrete delivery and it handles the abuse like a champ. Not as flashy as the highway trucks but built like a tank. Perfect for vocational work.",
-      "author": "u/concrete_cowboy",
-      "postUrl": "https://reddit.com/r/Truckers/comments/stu901",
-      "publishedAt": "2024-12-04T12:45:00Z"
-    }
-  ]
-}
+[
+  {
+    "content": "Were these trucks worth a darn, looks aside? Always see them going real cheap and wasn't sure if it purely a cosmetic looks thing or if there was more...",
+    "author": "Unspecified",
+    "source": "forums",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF3UieaiyJTDKatwCxXBJDxYhbVmgAx-bu1QBYSL0VwUXhGDIXpExRkEorxDQRwUyXb_wgH5rrW0X9SuXUu1x-mxBb60aEtw9yb0Val0lIsMBkp8pE3mzbSC0tKw5GMgaylL_46xQfZJO7x_FUh9cYhqcYWXAKbZ75gjljQNsgew5SskZFKV_oLRqY06k8i-qzc",
+    "publishedAt": "2025-12-26T20:41:30Z"
+  },
+  {
+    "content": "I used to drive a 379EXHD with a 475 cummins and a 13spd and I averaged 6.8 to 7.5mpg loaded to the knats ass with pork bellies.",
+    "author": "Ironturkey",
+    "source": "forums",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG-ZgzOwTcxt4IPcJZB6fm7fKwL_tYEWzua46gsURbdvNhvHr_MK1uHZLhQJ4GJ0rD7zuE8jld4U3kXwd5cusUV1eUOyglnxDTDzhXvjqeZTfOYuxH02XtxNvuD2WzbrUFZv_-0j7TI0VRC71CWObwMG4FFD3jGgXV1TaGDVuLbLNq04R1jqmjdf6hqzivlMYivPog544aiWgk53v4EVmBEbelNJoV5d6Q0wYLnNIby4Q==",
+    "publishedAt": "2025-12-26T20:41:30Z"
+  },
+  {
+    "content": "Most trucking companies, regardless of make and model of truck, tend to spec the trucks with engines between 435 and 475 hp. A lot of this has to do with fuel economy. As mentioned before, when a truck is ordered, it can be done so with practically any HP engine you want as well as rear end and tranny combo that will work with that engine.",
+    "author": "Uturn2001",
+    "source": "forums",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG-ZgzOwTcxt4IPcJZB6fm7fKwL_tYEWzua46gsURbdvNhvHr_MK1uHZLhQJ4GJ0rD7zuE8jld4U3kXwd5cusUV1eUOyglnxDTDzhXvjqeZTfOYuxH02XtxNvuD2WzbrUFZv_-0j7TI0VRC71CWObwMG4FFD3jGgXV1TaGDVuLbLNq04R1jqmjdf6hqzivlMYivPog544aiWgk53v4EVmBEbelNJoV5d6Q0wYLnNIby4Q==",
+    "publishedAt": "2025-12-26T20:41:30Z"
+  },
+  {
+    "content": "Because it's like driving a building through the wind, no aerodynamics to it. You can spec. any make, model truck with any engine you want, depends what your needs are. These days with the price of fuel, aerodynamics and fuel economy are more important to companies and most O/OPs. The most expensive cost in trucking is fuel. Alot of Pete owners put unmuffled straight exhaust pipes on the trucks, hence the loudness.",
+    "author": "boneebone",
+    "source": "forums",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG-ZgzOwTcxt4IPcJZB6fm7fKwL_tYEWzua46gsURbdvNhvHr_MK1uHZLhQJ4GJ0rD7zuE8jld4U3kXwd5cusUV1eUOyglnxDTDzhXvjqeZTfOYuxH02XtxNvuD2WzbrUFZv_-0j7TI0VRC71CWObwMG4FFD3jGgXV1TaGDVuLbLNq04R1jqmjdf6hqzivlMYivPog544aiWgk53v4EVmBEbelNJoV5d6Q0wYLnNIby4Q==",
+    "publishedAt": "2025-12-26T20:41:30Z"
+  },
+  {
+    "content": "There's something I've been wondering about Peterbilt trucks. 1. It seems like all the trucks with the more powerful engines (over 500 hp) are box model trucks. http://www.peterbilt.bc.ca/froese.jpg and not the round model. http://www.peterbilt.bc.ca/s4702.jpg 2. Why is it that when I'm going down the road, the box model peterbilts are louder than h*ll?",
+    "author": "Douglas",
+    "source": "forums",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG-ZgzOwTcxt4IPcJZB6fm7fKwL_tYEWzua46gsURbdvNhvHr_MK1uHZLhQJ4GJ0rD7zuE8jld4U3kXwd5cusUV1eUOyglnxDTDzhXvjqeZTfOYuxH02XtxNvuD2WzbrUFZv_-0j7TI0VRC71CWObwMG4FFD3jGgXV1TaGDVuLbLNq04R1jqmjdf6hqzivlMYivPog544aiWgk53v4EVmBEbelNJoV5d6Q0wYLnNIby4Q==",
+    "publishedAt": "2025-12-26T20:41:30Z"
+  },
+  {
+    "content": "I don't know too much, but here's what my experience has shown me. To me, they (Peterbilts) are way overrated. We have a few in our fleet, along with a few Freightliner Classics, and now a couple Western Star 4900ex's. Doing mostly local work, climbing in and out of the truck multiple times a day, the Freightliners have held up really well, and are really driver friendly. Same goes for the Western Stars. The Peterbilts, which are 379's, have been the most troublesome. They all are 2000 or 2001 models.",
+    "author": "Unspecified",
+    "source": "forums",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE1GGLkR1yYyisvFad-eFtVAZcBk2CxxbjNKttAyFRyOwnIi5ud_Zv2TND9xCMpsbQafg_5tk2jHVdx4Xomvz7l_oT0waWQX4gvqkIfhI3SCqzxkw6bSmrcm9S2e266GYjN4uBKwOnb0jkDZ7EbxkWPfIWEW-WxKAd15u2Ihdt1KpSE-PJrzP-RR6_QxDwWP-3c3hHeIylw13Q_69QCDus=",
+    "publishedAt": "2025-12-26T20:41:30Z"
+  },
+  {
+    "content": "2004 379 Pete. Can't get fuel...",
+    "author": "drummroya768",
+    "source": "forums",
+    "postUrl": "https://www.truckersreport.com/threads/peterbilt-forum.6/",
+    "publishedAt": "2025-12-26T20:39:43Z"
+  },
+  {
+    "content": "Service brake wail sound.",
+    "author": "Rockhound11",
+    "source": "forums",
+    "postUrl": "https://www.truckersreport.com/threads/peterbilt-forum.6/",
+    "publishedAt": "2025-12-26T20:39:43Z"
+  },
+  {
+    "content": "Service brake pedal almost...",
+    "author": "Hulld",
+    "source": "forums",
+    "postUrl": "https://www.truckersreport.com/threads/peterbilt-forum.6/",
+    "publishedAt": "2025-12-26T20:39:43Z"
+  },
+  {
+    "content": "2015 Peterbilt 389 fuel pump...",
+    "author": "Jennyspete",
+    "source": "forums",
+    "postUrl": "https://www.truckersreport.com/threads/peterbilt-forum.6/",
+    "publishedAt": "2025-12-26T20:39:43Z"
+  }
+]

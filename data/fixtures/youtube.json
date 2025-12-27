@@ -1,127 +1,30 @@
-{
-  "source": "youtube",
-  "description": "Mock YouTube comments from Peterbilt rig reviews and walkaround videos",
-  "generated": "2024-12-22",
-  "posts": [
-    {
-      "id": "yt-001",
-      "externalId": "Ugw1234567890abcdef",
-      "content": "I've been driving Peterbilts for 20 years and the new 579 is the best one yet. The interior quality is leagues ahead of the competition. That Platinum package is worth every penny.",
-      "author": "TruckingVeteran",
-      "postUrl": "https://youtube.com/watch?v=abc123&lc=Ugw1234567890abcdef",
-      "publishedAt": "2024-12-19T10:30:00Z"
-    },
-    {
-      "id": "yt-002",
-      "externalId": "Ugw1234567890abcdeg",
-      "content": "Great walkaround video! Question - how's the visibility from the driver seat compared to the Kenworth T680? Thinking about switching brands.",
-      "author": "FleetDecisions",
-      "postUrl": "https://youtube.com/watch?v=abc123&lc=Ugw1234567890abcdeg",
-      "publishedAt": "2024-12-18T15:45:00Z"
-    },
-    {
-      "id": "yt-003",
-      "externalId": "Ugw1234567890abcdeh",
-      "content": "That 80 inch sleeper is HUGE. I could live in there full time. The storage cabinets and the fridge placement is perfect. Peterbilt really listened to drivers on this design.",
-      "author": "OTRLifestyle",
-      "postUrl": "https://youtube.com/watch?v=abc123&lc=Ugw1234567890abcdeh",
-      "publishedAt": "2024-12-17T22:15:00Z"
-    },
-    {
-      "id": "yt-004",
-      "externalId": "Ugw1234567890abcdei",
-      "content": "Waited 8 months for my 589 and it was worth every day. This truck turns heads at every truck stop. The chrome package is stunning.",
-      "author": "ShowTruckOwner",
-      "postUrl": "https://youtube.com/watch?v=abc123&lc=Ugw1234567890abcdei",
-      "publishedAt": "2024-12-16T08:00:00Z"
-    },
-    {
-      "id": "yt-005",
-      "externalId": "Ugw1234567890abcdej",
-      "content": "Nice video but you didn't mention the DEF system issues. My 2023 579 has been in the shop 4 times for DEF-related problems. Love the truck otherwise but this is killing my business.",
-      "author": "FrustratedOwnerOp",
-      "postUrl": "https://youtube.com/watch?v=abc123&lc=Ugw1234567890abcdej",
-      "publishedAt": "2024-12-15T14:30:00Z"
-    },
-    {
-      "id": "yt-006",
-      "externalId": "Ugw1234567890abcdek",
-      "content": "The 579EV review was great! I'm curious about real-world range in cold weather. Does anyone have experience running these in Minnesota winters?",
-      "author": "NorthernFleet",
-      "postUrl": "https://youtube.com/watch?v=def456&lc=Ugw1234567890abcdek",
-      "publishedAt": "2024-12-14T11:00:00Z"
-    },
-    {
-      "id": "yt-007",
-      "externalId": "Ugw1234567890abcdel",
-      "content": "PACCAR engines are the most reliable in the industry. My MX-13 has 650,000 miles and runs like new. Just follow the maintenance schedule and these things last forever.",
-      "author": "MaintenanceMatters",
-      "postUrl": "https://youtube.com/watch?v=ghi789&lc=Ugw1234567890abcdel",
-      "publishedAt": "2024-12-13T16:45:00Z"
-    },
-    {
-      "id": "yt-008",
-      "externalId": "Ugw1234567890abcdem",
-      "content": "The LED headlights on the new 579 are incredible. Night driving is so much safer now. Should have been standard years ago.",
-      "author": "NightOwlDriver",
-      "postUrl": "https://youtube.com/watch?v=jkl012&lc=Ugw1234567890abcdem",
-      "publishedAt": "2024-12-12T20:30:00Z"
-    },
-    {
-      "id": "yt-009",
-      "externalId": "Ugw1234567890abcden",
-      "content": "I switched from Freightliner to Peterbilt last year. The build quality difference is night and day. You get what you pay for.",
-      "author": "BrandConvert",
-      "postUrl": "https://youtube.com/watch?v=mno345&lc=Ugw1234567890abcden",
-      "publishedAt": "2024-12-11T09:15:00Z"
-    },
-    {
-      "id": "yt-010",
-      "externalId": "Ugw1234567890abcdeo",
-      "content": "Can you do a video on the 567 for vocational applications? I'm looking at one for dump truck work and there's not much content out there.",
-      "author": "ConstructionFleet",
-      "postUrl": "https://youtube.com/watch?v=pqr678&lc=Ugw1234567890abcdeo",
-      "publishedAt": "2024-12-10T13:00:00Z"
-    },
-    {
-      "id": "yt-011",
-      "externalId": "Ugw1234567890abcdep",
-      "content": "The Ionic Gray interior color is gorgeous but it shows every speck of dirt. Not practical for working trucks. Should have gone with black.",
-      "author": "PracticalDriver",
-      "postUrl": "https://youtube.com/watch?v=stu901&lc=Ugw1234567890abcdep",
-      "publishedAt": "2024-12-09T17:30:00Z"
-    },
-    {
-      "id": "yt-012",
-      "externalId": "Ugw1234567890abcdeq",
-      "content": "579EV is the future. Ran one for a week on a demo. The instant torque and quiet cab changed my perspective on electric trucks completely.",
-      "author": "EVSkepticConverted",
-      "postUrl": "https://youtube.com/watch?v=vwx234&lc=Ugw1234567890abcdeq",
-      "publishedAt": "2024-12-08T12:00:00Z"
-    },
-    {
-      "id": "yt-013",
-      "externalId": "Ugw1234567890abcder",
-      "content": "Dealer wanted $180k for a spec'd out 589. That's insane pricing. Ended up going with a used 389 for half the price. New truck prices are out of control.",
-      "author": "BudgetConscious",
-      "postUrl": "https://youtube.com/watch?v=yza567&lc=Ugw1234567890abcder",
-      "publishedAt": "2024-12-07T08:45:00Z"
-    },
-    {
-      "id": "yt-014",
-      "externalId": "Ugw1234567890abcdes",
-      "content": "The APU on my 579 sleeper is a lifesaver. No more idling overnight. Saves fuel and I sleep better without the engine running.",
-      "author": "RestAreaRegular",
-      "postUrl": "https://youtube.com/watch?v=bcd890&lc=Ugw1234567890abcdes",
-      "publishedAt": "2024-12-06T21:15:00Z"
-    },
-    {
-      "id": "yt-015",
-      "externalId": "Ugw1234567890abcdet",
-      "content": "Love the truck but the infotainment system is outdated. My phone has better navigation than the built-in system. Peterbilt needs to update their tech.",
-      "author": "TechSavvyTrucker",
-      "postUrl": "https://youtube.com/watch?v=efg123&lc=Ugw1234567890abcdet",
-      "publishedAt": "2024-12-05T14:30:00Z"
-    }
-  ]
-}
+[
+  {
+    "content": "Was left unimpressed with the interior of the 579 , kenworths t680 felt better interior wise.",
+    "author": "Jackhole",
+    "source": "youtube",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEK83mm-AqQnZrUnR7sGUZsAR3RVUSmmgbPNUDGZCDtVHmbd28Mr9o9NLSGfr3t0rC1B0GHSUWmPBbvI7UmUbaXe3pYe0g4zgMpliZNS2RfMYbIC3Wvo6rBWfbb7fJYbSMMg7_rorRM_1JdgqLtF2X2fr6nnE1ECEsIddFuro-MtoNuhYhijKeRY6IpUBpfOV72kae51ggxPw==",
+    "publishedAt": "2025-12-26T20:31:43Z"
+  },
+  {
+    "content": "Well my 403,000 mile 2015 579 just lost the EGR valve I believe. Had a big cough today. And than a bit later told me shut engine down immediately. I never did until I parked tonight. Diagnostics is showing code 1209 (EGR GAS PRESSURE). But it is running good. Had a hell of a time on US 259 in Smitheville,OK are on that Ozark path of a road. I call the boss tomorrow.",
+    "author": "TripleSix",
+    "source": "youtube",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEK83mm-AqQnZrUnR7sGUZsAR3RVUSmmgbPNUDGZCDtVHmbd28Mr9o9NLSGfr3t0rC1B0GHSUWmPBbvI7UmUbaXe3pYe0g4zgMpliZNS2RfMYbIC3Wvo6rBWfbb7fJYbSMMg7_rorRM_1JdgqLtF2X2fr6nnE1ECEsIddFuro-MtoNuhYhijKeRY6IpUBpfOV72kae51ggxPw==",
+    "publishedAt": "2025-12-26T20:31:43Z"
+  },
+  {
+    "content": "Does not seem very good in many ways. When they get 3 years old don't be surprised if the door key locks stop working. More will be noted as I find out.",
+    "author": "X1Heavy",
+    "source": "youtube",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEK83mm-AqQnZrUnR7sGUZsAR3RVUSmmgbPNUDGZCDtVHmbd28Mr9o9NLSGfr3t0rC1B0GHSUWmPBbvI7UmUbaXe3pYe0g4zgMpliZNS2RfMYbIC3Wvo6rBWfbb7fJYbSMMg7_rorRM_1JdgqLtF2X2fr6nnE1ECEsIddFuro-MtoNuhYhijKeRY6IpUBpfOV72kae51ggxPw==",
+    "publishedAt": "2025-12-26T20:31:43Z"
+  },
+  {
+    "content": "They didn't mention the best feature of all on this truck. Why not talk about the AI camera, and the points system, and all the micromanage that will occur?",
+    "author": "DarthVader",
+    "source": "youtube",
+    "postUrl": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGfmeIwEWx8Tavv8J2RZZDT-8E1iodIytmF10KIsADj5t_W5XG9wDJI0l7FerGFp4Ovv9hUfzgCkVIbjDLkcxX-U7ZUjemlVyEZ85yhUfdCp-1QGKHDZ6neAmbWzgKY8pSjMVf8yRs=",
+    "publishedAt": "2025-12-26T20:31:43Z"
+  }
+]
