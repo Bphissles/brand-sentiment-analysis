@@ -183,6 +183,11 @@ export interface LoadFixturesResponse {
   sources: Record<string, number>;
 }
 
+export interface FixtureCountResponse {
+  total: number;
+  sources: Record<string, number>;
+}
+
 export interface HealthResponse {
   status: 'healthy' | 'unhealthy';
   service: string;

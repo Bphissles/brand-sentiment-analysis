@@ -10,6 +10,7 @@ import type {
   PostsResponse,
   AnalysisTriggerResponse,
   LoadFixturesResponse,
+  FixtureCountResponse,
   HealthResponse,
   IngestionStatusResponse,
   ScrapeResponse,
@@ -76,6 +77,16 @@ export const useApi = () => {
   const triggerAnalysis = async (): Promise<AnalysisTriggerResponse> => {
     const response = await $fetch<AnalysisTriggerResponse>(`${baseUrl}/api/analysis/trigger`, {
       method: 'POST',
+      headers: getAuthHeader()
+    })
+    return response
+  }
+
+  /**
+   * Get fixture count without loading (admin only)
+   */
+  const getFixtureCount = async (): Promise<FixtureCountResponse> => {
+    const response = await $fetch<FixtureCountResponse>(`${baseUrl}/api/analysis/fixture-count`, {
       headers: getAuthHeader()
     })
     return response
@@ -172,6 +183,7 @@ export const useApi = () => {
     fetchCluster,
     fetchPosts,
     triggerAnalysis,
+    getFixtureCount,
     loadFixtures,
     checkHealth,
     getIngestionStatus,

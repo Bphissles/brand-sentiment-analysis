@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { IngestionStatusResponse } from '~/types/models'
+import type { IngestionStatusResponse, FixtureCountResponse } from '~/types/models'
 const { user } = useAuth()
 const { 
   getIngestionStatus, 
   scrapeAllSources, 
   scrapeSource, 
+  getFixtureCount,
   loadFixtures, 
   clearAllData,
   triggerAnalysis,
@@ -15,12 +16,13 @@ const {
 const isAdmin = computed(() => user.value?.role === 'admin')
 
 const status = ref<IngestionStatusResponse | null>(null)
+const fixtureCount = ref<FixtureCountResponse | null>(null)
 const loading = ref(false)
 const scraping = ref(false)
 const error = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
 
-// Fetch status on mount
+// Fetch status and fixture count on mount
 const fetchStatus = async () => {
   try {
     status.value = await getIngestionStatus()
@@ -29,7 +31,18 @@ const fetchStatus = async () => {
   }
 }
 
-onMounted(fetchStatus)
+const fetchFixtureCount = async () => {
+  try {
+    fixtureCount.value = await getFixtureCount()
+  } catch (e: any) {
+    console.error('Failed to fetch fixture count:', e)
+  }
+}
+
+onMounted(() => {
+  fetchStatus()
+  fetchFixtureCount()
+})
 
 // Scrape all sources
 const handleScrapeAll = async () => {
@@ -247,10 +260,7 @@ const handleRunAnalysis = async () => {
               :disabled="scraping || !status?.geminiConfigured"
               class="w-full px-4 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-medium rounded-lg hover:from-cyan-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
             >
-              <svg v-if="scraping" class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
+              <LoadingSpinner v-if="scraping" size="sm" color="text-white" />
               <span>{{ scraping ? 'Searching...' : 'Search All Sources' }}</span>
             </button>
             
@@ -301,16 +311,22 @@ const handleRunAnalysis = async () => {
             Load pre-defined fixture data for testing and demonstration purposes.
           </p>
           
+          <div v-if="fixtureCount" class="mb-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+            <div class="text-sm text-slate-600 dark:text-slate-400">
+              <span class="font-medium text-slate-800 dark:text-slate-200">{{ fixtureCount.total }}</span> posts available:
+              <span v-for="(count, source) in fixtureCount.sources" :key="source" class="ml-2">
+                {{ source }}: {{ count }}
+              </span>
+            </div>
+          </div>
+          
           <button
             @click="handleLoadFixtures"
-            :disabled="loading"
+            :disabled="loading || !fixtureCount?.total"
             class="w-full px-4 py-3 bg-slate-600 text-white font-medium rounded-lg hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
           >
-            <svg v-if="loading" class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>Load Fixture Data (50 posts)</span>
+            <LoadingSpinner v-if="loading" size="sm" color="text-white" />
+            <span>{{ fixtureCount?.total ? `Load Fixture Data (${fixtureCount.total} posts)` : 'No fixtures available' }}</span>
           </button>
         </div>
 
