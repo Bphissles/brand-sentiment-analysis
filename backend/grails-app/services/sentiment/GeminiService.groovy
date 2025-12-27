@@ -55,23 +55,42 @@ class GeminiService {
                 platformContext = 'social media posts'
         }
         
-        return """Search the web for recent ${platformContext} about: ${searchQuery}
+        return """Search the web for: ${searchQuery}
 
-Find REAL posts from REAL users discussing this topic. Focus on:
-- Actual user opinions and experiences  
-- Recent discussions (within the last few months)
-- Varied sentiments (positive, negative, neutral)
+CRITICAL: You MUST find and extract USER-GENERATED CONTENT ONLY from ${platformContext}.
+
+What to extract:
+- Individual user posts, tweets, comments, or forum messages
+- Direct quotes from real people sharing opinions/experiences
+- User discussions, not news articles or marketing content
+- Look for conversational language, personal experiences, complaints, praise
+
+What to IGNORE:
+- News articles, press releases, marketing pages
+- Product descriptions, spec sheets, dealer websites
+- Any content not written by actual truck owners/drivers/users/fleet managers/fleet operators/contractors
+
+REQUIRED FIELDS for each post:
+- content: ONLY the user's actual comment text - nothing else, no JSON, no metadata
+- author: Username or name of the person who wrote it
+- publishedAt: Date posted (YYYY-MM-DD format)
+- postUrl: Direct link to the post
+- sourceSite: Domain name (e.g., "twitter.com", "reddit.com", "thetruckersreport.com")
 
 CRITICAL JSON FORMATTING RULES:
-1. Return ONLY a valid JSON array - no markdown, no explanation
+1. Return ONLY a valid JSON array - no markdown, no explanation, no preamble
 2. Use straight double quotes for JSON structure: "
-3. Inside content strings, replace any quotes with single quotes or remove them
-4. Do not use curly/smart quotes anywhere
+3. Inside content strings, replace quotes with single quotes
+4. Each post must have all 5 fields
+5. NEVER nest JSON objects inside the content field - content must be plain text only
 
-Example format:
-[{"content":"User said this truck is great and they love it","author":"username","publishedAt":"2024-12-20","postUrl":"https://example.com","sourceSite":"reddit.com"}]
+CORRECT Example:
+[{"content":"I love my 579, best truck I ever owned. Fuel economy is great and the ride is smooth","author":"TruckerJoe","publishedAt":"2024-12-15","postUrl":"https://reddit.com/r/trucking/comments/abc123","sourceSite":"reddit.com"}]
 
-Find up to ${maxResults} real posts. Only return actual content found on the web."""
+WRONG Example (DO NOT DO THIS):
+[{"content":"{\\"author\\":\\"TruckerJoe\\",\\"content\\":\\"I love my 579\\"...}","author":"TruckerJoe"...}]
+
+Extract up to ${maxResults} USER POSTS with actual user opinions. If you cannot find user-generated content, return an empty array []."""
     }
 
     /**

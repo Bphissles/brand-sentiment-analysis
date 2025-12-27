@@ -15,41 +15,67 @@ class WebScraperService {
     GeminiService geminiService
 
     // Default search queries for different platforms - more queries = more data
+    // Approach 1: Broad search without site restrictions - let Gemini find relevant content
     private static final Map<String, List<String>> SEARCH_QUERIES = [
         twitter: [
-            'Peterbilt truck driver opinion site:twitter.com OR site:x.com',
-            'Peterbilt 579 OR 589 trucker review',
-            'Peterbilt problems issues complaints',
-            'Peterbilt love best truck',
-            'Peterbilt 579EV electric semi'
+            'Peterbilt truck owner opinion 2024',
+            'Peterbilt driver review experience',
+            'Peterbilt 579 589 problems complaints',
+            'best Peterbilt truck model',
+            'Peterbilt vs Kenworth driver opinion',
+            'love my Peterbilt truck',
+            'regret buying Peterbilt',
+            'Peterbilt reliability issues',
+            'Peterbilt 579EV electric truck review',
+            'Peterbilt fuel economy real world'
         ],
         youtube: [
-            'Peterbilt truck review owner opinion',
+            'Peterbilt truck review owner experience',
             'Peterbilt 579 walkaround tour',
+            'Peterbilt driver opinion honest review',
             'Peterbilt vs Kenworth comparison',
-            'Peterbilt 579EV electric truck review',
-            'Peterbilt sleeper cab tour trucker'
+            'Peterbilt problems issues',
+            'Peterbilt 579EV electric semi',
+            'Peterbilt sleeper cab tour',
+            'Peterbilt maintenance costs',
+            'best semi truck Peterbilt',
+            'Peterbilt long haul review'
         ],
         reddit: [
-            'Peterbilt owner review site:reddit.com/r/Truckers',
-            'Peterbilt 579 589 site:reddit.com/r/trucking',
-            'Peterbilt problems complaints site:reddit.com',
-            'Peterbilt vs Kenworth site:reddit.com',
-            'Peterbilt dealer experience site:reddit.com'
+            'Peterbilt owner operator review',
+            'Peterbilt 579 589 experience',
+            'Peterbilt problems complaints',
+            'Peterbilt vs Kenworth reliability',
+            'Peterbilt dealer service experience',
+            'Peterbilt truck worth it',
+            'Peterbilt maintenance issues',
+            'Peterbilt driver comfort',
+            'Peterbilt resale value',
+            'Peterbilt fuel economy discussion'
         ],
         forums: [
-            'Peterbilt problems site:thetruckersreport.com',
-            'Peterbilt 579 589 experience forum',
-            'Peterbilt reliability issues trucking forum',
-            'Peterbilt dealer service experience forum',
-            'Peterbilt owner feedback site:truckingtruth.com'
+            'Peterbilt owner review forum',
+            'Peterbilt 579 589 experience',
+            'Peterbilt reliability issues discussion',
+            'Peterbilt dealer service feedback',
+            'Peterbilt truck problems',
+            'Peterbilt maintenance cost forum',
+            'Peterbilt vs competitors',
+            'Peterbilt driver satisfaction',
+            'Peterbilt long term ownership',
+            'Peterbilt trucking forum discussion'
         ],
         news: [
-            'Peterbilt truck news site:fleetowner.com OR site:transporttopics.com',
-            'Peterbilt electric truck 579EV news',
-            'Peterbilt autonomous truck technology news',
-            'Peterbilt dealer network expansion news',
-            'Peterbilt awards recognition industry news'
+            'Peterbilt truck news 2024',
+            'Peterbilt electric truck 579EV',
+            'Peterbilt autonomous technology',
+            'Peterbilt dealer network',
+            'Peterbilt industry awards',
+            'Peterbilt new model announcement',
+            'Peterbilt fleet management',
+            'Peterbilt sustainability initiatives',
+            'Peterbilt market share trucking',
+            'Peterbilt innovation technology'
         ]
     ]
 

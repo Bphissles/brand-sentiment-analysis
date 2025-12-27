@@ -12,8 +12,13 @@
         </encoder>
     </appender>
 
-    <root level="error">
+    <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
+    
+    <!-- Detailed logging for sentiment services -->
+    <logger name="sentiment" level="info" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
 
 </configuration>

@@ -53,7 +53,8 @@ class DataLoaderService {
 
         def jsonSlurper = new JsonSlurper()
         def data = jsonSlurper.parse(file)
-        def posts = data.posts ?: []
+        // Support both array format and object with posts property
+        def posts = (data instanceof List) ? data : (data.posts ?: [])
         def count = 0
 
         posts.each { postData ->
