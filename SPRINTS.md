@@ -450,9 +450,14 @@ sentiment-analyzer/
 │   │   ├── ClusterCard.vue   # Cluster summary card
 │   │   ├── ClusterDetail.vue # Detail modal
 │   │   ├── SentimentBadge.vue # Sentiment indicator
-│   │   └── StatsCard.vue     # Dashboard stat card
+│   │   ├── StatsCard.vue     # Dashboard stat card
+│   │   ├── LoadingScreen.vue # Loading state component
+│   │   ├── ThemeToggle.vue   # Dark/light mode toggle
+│   │   └── UserMenu.vue      # User authentication menu
 │   ├── pages/
-│   │   └── index.vue         # Main dashboard
+│   │   ├── index.vue         # Main dashboard
+│   │   ├── data.vue          # Data management page
+│   │   └── login.vue         # Login page
 │   ├── composables/
 │   │   ├── useApi.ts         # API client
 │   │   └── useAuth.ts        # Authentication composable
@@ -467,7 +472,11 @@ sentiment-analyzer/
 │   │   │   ├── PostController.groovy
 │   │   │   ├── ClusterController.groovy
 │   │   │   ├── AnalysisController.groovy
-│   │   │   └── HealthController.groovy
+│   │   │   ├── HealthController.groovy
+│   │   │   ├── AiInsightController.groovy
+│   │   │   ├── AuthController.groovy
+│   │   │   ├── AuthInterceptor.groovy
+│   │   │   └── DataIngestionController.groovy  # Gemini web scraping
 │   │   ├── domain/sentiment/
 │   │   │   ├── Post.groovy
 │   │   │   ├── Cluster.groovy
@@ -478,7 +487,9 @@ sentiment-analyzer/
 │   │       ├── GeminiService.groovy      # AI insights generation
 │   │       ├── MlEngineService.groovy
 │   │       ├── AiInsightService.groovy   # Insight caching
-│   │       └── DataLoaderService.groovy
+│   │       ├── DataLoaderService.groovy
+│   │       ├── AuthService.groovy
+│   │       └── WebScraperService.groovy  # Gemini web search
 │   └── grails-app/conf/application.yml
 │
 ├── ml-engine/                # Python ML service

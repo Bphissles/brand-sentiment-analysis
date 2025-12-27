@@ -17,7 +17,8 @@ Aggregates and analyzes publicly available data from social media, forums, and c
 
 ## Features
 
-- ✅ Multi-channel data ingestion (Twitter, YouTube, Forums)
+- ✅ Multi-channel data ingestion (Twitter, YouTube, Reddit, Forums, News)
+- ✅ Gemini-powered web scraping with Google Search grounding
 - ✅ ML clustering with K-Means + TF-IDF (Python/scikit-learn)
 - ✅ Sentiment analysis (NLTK VADER + Gemini 2.0 Flash)
 - ✅ Interactive D3.js bubble chart visualization
@@ -162,22 +163,38 @@ python app/api.py
 
 ## Environment Variables
 
-### Frontend (.env)
+Copy `.env.example` to `.env` at the project root and configure:
+
+### Root .env (Shared Configuration)
+```bash
+# Gemini API (for web scraping and AI insights)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Supabase (Database)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_KEY=your_supabase_service_key
+SUPABASE_DB_PASSWORD=your_database_password
+
+# Service URLs
+NUXT_PUBLIC_API_URL=http://localhost:8080
+ML_ENGINE_URL=http://localhost:5000
+
+# JWT Secret (min 32 characters)
+JWT_SECRET=your_jwt_secret_here_min_32_chars
 ```
+
+### Frontend (.env)
+```bash
 NUXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
-### Backend (application.yml)
-```yaml
-gemini:
-  apiKey: ${GEMINI_API_KEY}
-mlEngine:
-  url: http://localhost:5000
-```
-
 ### ML Engine (.env)
-```
+```bash
 FLASK_ENV=development
+FLASK_DEBUG=1
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_KEY=your_supabase_service_key
 ```
 
 ---
@@ -200,6 +217,10 @@ FLASK_ENV=development
 | DELETE | `/api/analysis/clear` | Clear all data (admin only) |
 | GET | `/api/insights` | Get cached AI insights |
 | POST | `/api/insights/generate` | Generate new AI insights (Gemini) |
+| GET | `/api/ingestion/status` | Get data ingestion status |
+| POST | `/api/ingestion/scrapeAll` | Scrape all sources (Gemini web search) |
+| POST | `/api/ingestion/scrape/{source}` | Scrape specific source (twitter, youtube, reddit, forums, news) |
+| POST | `/api/ingestion/import` | Manual import posts from JSON |
 | POST | `/api/auth/login` | User login, returns JWT |
 | POST | `/api/auth/register` | User registration |
 | GET | `/api/auth/me` | Get current user info |
