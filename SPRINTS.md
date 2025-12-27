@@ -13,7 +13,7 @@
 **Tech Stack:**
 | Layer | Technology | Deployment |
 |-------|------------|------------|
-| Frontend | Nuxt 3 + TailwindCSS + D3.js | Netlify |
+| Frontend | Nuxt 4 + TailwindCSS + D3.js | Netlify |
 | API | Grails (Spring Boot) | Render |
 | ML Engine | Python (scikit-learn, NLTK/VADER, Gemini) | Render |
 | AI Insights | Gemini 2.0 Flash API | Called from Grails + Python |
@@ -444,7 +444,7 @@ Can demo full application to stakeholders
 
 ```
 sentiment-analyzer/
-├── frontend/                 # Nuxt 3 application
+├── frontend/                 # Nuxt 4 application
 │   ├── components/
 │   │   ├── BubbleChart.vue   # D3.js bubble visualization
 │   │   ├── ClusterCard.vue   # Cluster summary card
@@ -460,7 +460,9 @@ sentiment-analyzer/
 │   │   └── login.vue         # Login page
 │   ├── composables/
 │   │   ├── useApi.ts         # API client
-│   │   └── useAuth.ts        # Authentication composable
+│   │   ├── useAuth.ts        # Authentication composable
+│   │   ├── useColorMode.ts   # Dark/light mode toggle
+│   │   └── useServiceHealth.ts # Service health checks
 │   ├── types/
 │   │   └── models.ts         # TypeScript interfaces
 │   ├── app.vue
@@ -487,7 +489,9 @@ sentiment-analyzer/
 │   │       ├── GeminiService.groovy      # AI insights generation
 │   │       ├── MlEngineService.groovy
 │   │       ├── AiInsightService.groovy   # Insight caching
+│   │       ├── AnalysisService.groovy    # ML analysis orchestration
 │   │       ├── DataLoaderService.groovy
+│   │       ├── IngestionService.groovy   # Data import with batching
 │   │       ├── AuthService.groovy
 │   │       └── WebScraperService.groovy  # Gemini web search
 │   └── grails-app/conf/application.yml
@@ -514,7 +518,8 @@ sentiment-analyzer/
 │
 ├── docs/
 │   ├── ARCHITECTURE.md       # System diagrams
-│   └── API_DOCUMENTATION.md  # OpenAPI/Swagger documentation guide
+│   ├── API_DOCUMENTATION.md  # OpenAPI/Swagger documentation guide
+│   └── SEARCH_STRATEGY.md    # Gemini search strategy documentation
 │
 ├── logs/                     # Local dev logs
 ├── .pids/                    # Process IDs for local dev
@@ -545,14 +550,17 @@ sentiment-analyzer/
 {
   "dependencies": {
     "nuxt": "^4.2.2",
-    "vue": "^3.5.x",
-    "vue-router": "^4.6.x"
+    "vue": "^3.5.26",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
+    "@types/d3": "^7.4.3",
+    "@vue/test-utils": "^2.4.6",
+    "@vitest/coverage-v8": "^2.1.8",
     "d3": "^7.9.0",
-    "vitest": "^2.1.8",
-    "@vue/test-utils": "^2.4.6"
+    "happy-dom": "^15.11.7",
+    "vitest": "^2.1.8"
   }
 }
 ```
@@ -577,6 +585,9 @@ pandas>=2.1.0
 gunicorn>=21.0.0
 google-genai>=1.0.0
 python-dotenv>=1.0.0
+supabase>=2.0.0
+pytest>=7.4.0
+pytest-cov>=4.1.0
 ```
 
 ---

@@ -37,7 +37,7 @@ Aggregates and analyzes publicly available data from social media, forums, and c
 
 | Layer | Technology | Deployment |
 |-------|------------|------------|
-| Frontend | Nuxt 3 + TailwindCSS + D3.js | Netlify |
+| Frontend | Nuxt 4 + TailwindCSS + D3.js | Netlify |
 | API | Grails 6 (Spring Boot) | Render |
 | ML Engine | Python (scikit-learn, NLTK/VADER, Flask) | Render |
 | AI/NLP | Google Gemini 2.0 Flash | API (Grails + Python) |
@@ -225,6 +225,7 @@ SUPABASE_SERVICE_KEY=your_supabase_service_key
 | POST | `/api/auth/register` | User registration |
 | GET | `/api/auth/me` | Get current user info |
 | POST | `/api/auth/logout` | User logout |
+| POST | `/api/auth/promote` | Promote user to admin (bootstrap only) |
 
 ### ML Engine (Python) - Port 5000
 

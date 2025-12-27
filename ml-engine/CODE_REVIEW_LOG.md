@@ -68,3 +68,17 @@
 - Created 70 unit tests covering preprocessing, sentiment, clustering, and API endpoints
 
 **Tests:** All 70 tests passing (`pytest -v`)
+
+---
+
+## 2025-12-27 – Code review workflow execution
+
+**Changes:**
+- Fixed 2 failing tests in `test_clustering.py` that expected "general" fallback but implementation now generates meaningful custom labels from keywords
+- Updated `test_no_match_returns_general` → `test_no_match_returns_custom_label` to verify custom label generation
+- Updated `test_multiple_excludes` to verify excluded IDs are not returned
+
+**Remaining Low priority item (deferred):**
+- Response serialization alignment with `app/models.py` dataclasses - marked as optional refactor, not blocking
+
+**Tests:** All 70 tests passing (`pytest -v`)

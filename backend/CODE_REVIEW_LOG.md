@@ -74,3 +74,76 @@
 - Removed flush:true from importPostsList loop for better bulk import performance
 
 **Note:** Backend tests could not be run due to Java version mismatch (Java 23 installed, Grails 6 requires Java 17). Code changes are syntactically correct.
+
+---
+
+## 2025-12-26 – High priority transaction scope fixes completed
+
+**Changes implemented:**
+
+1. **Created AnalysisService** (`grails-app/services/sentiment/AnalysisService.groovy`)
+   - Extracted ML analysis orchestration from AnalysisController
+   - Separated transaction boundaries: create run → call ML (no transaction) → save results → complete run
+   - Each method has focused, short transactions instead of one long transaction holding DB locks during HTTP calls
+   - Methods: `createAnalysisRun()`, `callMlEngine()`, `saveAnalysisResults()`, `completeAnalysisRun()`, `failAnalysisRun()`, `completeEmptyAnalysisRun()`
+
+2. **Refactored AnalysisController.trigger()**
+   - Removed `@Transactional` annotation from controller method
+   - Now uses AnalysisService with proper transaction boundaries
+   - No longer holds open DB transaction during external ML Engine HTTP calls
+   - Fixes High priority issue: "Long-running external HTTP calls inside a single controller transaction"
+
+3. **Created IngestionService** (`grails-app/services/sentiment/IngestionService.groovy`)
+   - Extracted scraping and import logic from DataIngestionController
+   - Separated network I/O (scraping) from database operations (import)
+   - Implements batch processing for imports (50 records per batch with flush/clear)
+   - Methods: `scrapeSource()`, `importPosts()`, `scrapeAndImport()`, `scrapeAndImportAll()`
+
+4. **Refactored DataIngestionController**
+   - Removed `@Transactional` annotations from `scrapeAll()`, `scrapeSource()`, and `manualImport()`
+   - Removed `scrapeAndImportSource()` and `importPostsList()` private methods
+   - Now uses IngestionService for all scraping and import operations
+   - Fixes High priority issue: "Controller methods perform network I/O plus large loops of inserts in a single transaction"
+
+**Benefits:**
+- Eliminates long-held DB transactions during external HTTP calls
+- Reduces lock contention and improves concurrency
+- Prevents timeout issues from slow external services affecting DB connections
+- Batch processing reduces memory usage for large imports
+- Controllers are now thin orchestrators, business logic in services
+- Follows Grails best practices: service-layer transactions, thin controllers
+
+**Testing:** Code changes follow Grails conventions. Backend tests require Java 17 (currently Java 23 installed).
+
+---
+
+## 2025-12-27 – Ingestion and fixture regressions identified
+
+**Issues discovered:**
+
+- **[P1] Manual ingestion rejects posts missing `externalId` and non-`Instant` dates**  
+  - File: `grails-app/services/sentiment/IngestionService.groovy` (around `importPosts` implementation)  
+  - Behavior: `importPosts` now passes `postData.externalId` and `postData.publishedAt` straight into the `Post` constructor without defaults or type coercion. Manual imports and upstream data frequently omit `externalId` or provide `publishedAt` as strings/epoch numbers, which previously were converted and defaulted. With the current implementation, those records fail validation/persistence silently, so `/api/ingestion/import` can report success while importing 0 rows when payloads lack `externalId` or use non-`Instant` date formats.
+
+- **[P1] Fixture loader returns zero posts due to format mismatch**  
+  - Files: `grails-app/services/sentiment/DataLoaderService.groovy`, `data/fixtures/*.json`  
+  - Behavior: Fixture files have been updated to use a top-level JSON array of posts, but `DataLoaderService.loadFixtureFile` still expects an object with a `posts` property (e.g., `{ "posts": [...] }`). As a result, `posts` is always empty and `/api/analysis/loadFixtures` (and any test/bootstrap code using this service) now seeds zero records despite valid fixture contents, breaking local/dev data loading.
+
+These items should be addressed in a follow-up change set and re-verified with the ingestion and fixture loading endpoints once fixed.
+
+---
+
+## 2025-12-27 – P1 regression fixes completed
+
+**Changes implemented:**
+
+1. **Fixed fixture loader format mismatch** (`DataLoaderService.groovy:55-57`)
+   - `loadFixtureFile` now supports both JSON array format and object with `posts` property
+   - Changed: `def posts = (data instanceof List) ? data : (data.posts ?: [])`
+
+2. **Fixed IngestionService missing defaults and date coercion** (`IngestionService.groovy`)
+   - Added `externalId` fallback: uses `postData.id` or generates hash-based ID if missing
+   - Added `parsePublishedAt()` helper method to handle ISO 8601 strings, epoch milliseconds, Instant objects, or null
+   - Import now properly handles posts without `externalId` and with various date formats
+
+**Testing:** Backend tests require Java 17 (currently Java 23 installed). Code changes follow Grails conventions and are syntactically correct.
