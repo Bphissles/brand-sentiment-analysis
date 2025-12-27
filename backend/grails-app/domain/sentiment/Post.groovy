@@ -9,7 +9,7 @@ import java.time.Instant
 class Post {
 
     String externalId          // Original platform ID
-    String source              // twitter, youtube, forums
+    String source              // twitter, youtube, reddit, forums, news
     String content             // Raw text content
     String author              // Username or handle
     String authorUrl           // Link to author profile
@@ -32,7 +32,7 @@ class Post {
 
     static constraints = {
         externalId nullable: false, blank: false, maxSize: 255
-        source nullable: false, inList: ['twitter', 'youtube', 'forums']
+        source nullable: false, inList: ['twitter', 'youtube', 'reddit', 'forums', 'news']
         content nullable: false, blank: false, maxSize: 10000
         author nullable: true, maxSize: 255
         authorUrl nullable: true, maxSize: 500

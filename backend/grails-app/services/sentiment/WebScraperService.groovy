@@ -30,12 +30,26 @@ class WebScraperService {
             'Peterbilt 579EV electric truck review',
             'Peterbilt sleeper cab tour trucker'
         ],
+        reddit: [
+            'Peterbilt owner review site:reddit.com/r/Truckers',
+            'Peterbilt 579 589 site:reddit.com/r/trucking',
+            'Peterbilt problems complaints site:reddit.com',
+            'Peterbilt vs Kenworth site:reddit.com',
+            'Peterbilt dealer experience site:reddit.com'
+        ],
         forums: [
-            'Peterbilt owner review site:reddit.com',
             'Peterbilt problems site:thetruckersreport.com',
             'Peterbilt 579 589 experience forum',
-            'Peterbilt reliability issues trucking',
-            'Peterbilt dealer service experience'
+            'Peterbilt reliability issues trucking forum',
+            'Peterbilt dealer service experience forum',
+            'Peterbilt owner feedback site:truckingtruth.com'
+        ],
+        news: [
+            'Peterbilt truck news site:fleetowner.com OR site:transporttopics.com',
+            'Peterbilt electric truck 579EV news',
+            'Peterbilt autonomous truck technology news',
+            'Peterbilt dealer network expansion news',
+            'Peterbilt awards recognition industry news'
         ]
     ]
 
@@ -63,7 +77,7 @@ class WebScraperService {
                 }
                 
                 log.info("Searching: ${query}")
-                def searchResult = geminiService.searchWebForPosts(query, sourceType, 10)
+                def searchResult = geminiService.searchWebForPosts(query, sourceType, 100)
                 def posts = parseExtractedPosts(searchResult, sourceType)
                 allPosts.addAll(posts)
                 log.info("Found ${posts.size()} posts for query: ${query}")
@@ -89,7 +103,7 @@ class WebScraperService {
      * @param maxPosts Maximum posts to return
      * @return List of real post maps
      */
-    List<Map> scrapeTwitter(String searchQuery = "peterbilt", int maxPosts = 30) {
+    List<Map> scrapeTwitter(String searchQuery = "peterbilt", int maxPosts = 200) {
         return searchForRealPosts("twitter", maxPosts)
     }
 
@@ -101,8 +115,19 @@ class WebScraperService {
      * @param maxPosts Maximum posts to return
      * @return List of real post maps
      */
-    List<Map> scrapeYouTube(String searchQuery = "peterbilt truck review", int maxPosts = 30) {
+    List<Map> scrapeYouTube(String searchQuery = "peterbilt truck review", int maxPosts = 200) {
         return searchForRealPosts("youtube", maxPosts)
+    }
+
+    /**
+     * Search Reddit for real posts about Peterbilt
+     * Uses Gemini Google Search grounding to find actual Reddit discussions
+     * 
+     * @param maxPosts Maximum posts to return
+     * @return List of real post maps
+     */
+    List<Map> scrapeReddit(int maxPosts = 200) {
+        return searchForRealPosts("reddit", maxPosts)
     }
 
     /**
@@ -112,8 +137,19 @@ class WebScraperService {
      * @param maxPosts Maximum posts to return
      * @return List of real post maps
      */
-    List<Map> scrapeForums(int maxPosts = 30) {
+    List<Map> scrapeForums(int maxPosts = 200) {
         return searchForRealPosts("forums", maxPosts)
+    }
+
+    /**
+     * Search news sources for articles about Peterbilt
+     * Uses Gemini Google Search grounding to find actual news articles
+     * 
+     * @param maxPosts Maximum posts to return
+     * @return List of real post maps
+     */
+    List<Map> scrapeNews(int maxPosts = 200) {
+        return searchForRealPosts("news", maxPosts)
     }
 
     /**

@@ -25,7 +25,7 @@ class GeminiService {
      * @param maxResults Approximate number of posts to find
      * @return JSON string with extracted posts from real web sources
      */
-    String searchWebForPosts(String searchQuery, String sourceType, int maxResults = 15) {
+    String searchWebForPosts(String searchQuery, String sourceType, int maxResults = 500) {
         def prompt = buildSearchPrompt(searchQuery, sourceType, maxResults)
         return callGeminiApiWithSearch(prompt)
     }
@@ -42,8 +42,14 @@ class GeminiService {
             case 'youtube':
                 platformContext = 'YouTube video comments and descriptions'
                 break
+            case 'reddit':
+                platformContext = 'Reddit posts and comments from r/Truckers, r/trucking, r/Peterbilt, and other trucking-related subreddits'
+                break
             case 'forums':
-                platformContext = 'trucking forum posts from sites like TruckersReport, Reddit r/Truckers, TheTruckersReport.com'
+                platformContext = 'trucking forum posts from sites like TruckersReport, TheTruckersReport.com, TruckingTruth, and other trucking community forums'
+                break
+            case 'news':
+                platformContext = 'news articles and press releases from trucking industry sources like FleetOwner, Transport Topics, Commercial Carrier Journal, Trucking Info, and general news outlets'
                 break
             default:
                 platformContext = 'social media posts'

@@ -80,12 +80,12 @@ class DataIngestionController {
         scrapingStatus.lastRun = new Date()
 
         try {
-            def results = [twitter: [], youtube: [], forums: []]
-            def imported = [twitter: 0, youtube: 0, forums: 0]
+            def results = [twitter: [], youtube: [], reddit: [], forums: [], news: []]
+            def imported = [twitter: 0, youtube: 0, reddit: 0, forums: 0, news: 0]
             def errors = []
 
             // Scrape each source
-            ['twitter', 'youtube', 'forums'].each { source ->
+            ['twitter', 'youtube', 'reddit', 'forums', 'news'].each { source ->
                 try {
                     log.info("Scraping ${source}...")
                     def scrapeResult = scrapeAndImportSource(source)
@@ -125,12 +125,12 @@ class DataIngestionController {
      * POST /api/ingestion/scrape/{source}
      * Scrape a specific source
      */
-    @Operation(summary = "Scrape source", description = "Scrape a specific source (twitter, youtube, forums)")
+    @Operation(summary = "Scrape source", description = "Scrape a specific source (twitter, youtube, reddit, forums, news)")
     @ApiResponse(responseCode = "200", description = "Scraping completed")
     @ApiResponse(responseCode = "400", description = "Invalid source or Gemini not configured")
     @Transactional
     def scrapeSource(@Parameter(description = "Source name") String source) {
-        if (!['twitter', 'youtube', 'forums'].contains(source)) {
+        if (!['twitter', 'youtube', 'reddit', 'forums', 'news'].contains(source)) {
             render status: 400, text: [error: "Invalid source: ${source}"] as JSON
             return
         }
@@ -172,8 +172,14 @@ class DataIngestionController {
             case 'youtube':
                 posts = webScraperService.scrapeYouTube()
                 break
+            case 'reddit':
+                posts = webScraperService.scrapeReddit()
+                break
             case 'forums':
                 posts = webScraperService.scrapeForums()
+                break
+            case 'news':
+                posts = webScraperService.scrapeNews()
                 break
             default:
                 posts = []
