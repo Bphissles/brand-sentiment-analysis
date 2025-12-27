@@ -58,6 +58,7 @@ The API documentation is configured as follows:
 | `/api/analysis` | GET | List analysis runs |
 | `/api/analysis/{id}` | GET | Get analysis run details |
 | `/api/analysis/trigger` | POST | Trigger ML analysis |
+| `/api/analysis/fixture-count` | GET | Get available fixture count |
 | `/api/analysis/load-fixtures` | POST | Load sample data |
 | `/api/analysis/clear` | DELETE | Clear all data |
 
@@ -77,6 +78,7 @@ The API documentation is configured as follows:
 | `/api/ingestion/scrapeAll` | POST | Scrape all sources |
 | `/api/ingestion/scrape/{source}` | POST | Scrape specific source |
 | `/api/ingestion/import` | POST | Manual JSON import |
+| `/api/ingestion/clean-content` | POST | Clean corrupted post content |
 
 ### AI Insights
 | Endpoint | Method | Description |

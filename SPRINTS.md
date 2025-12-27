@@ -452,6 +452,7 @@ sentiment-analyzer/
 │   │   ├── SentimentBadge.vue # Sentiment indicator
 │   │   ├── StatsCard.vue     # Dashboard stat card
 │   │   ├── LoadingScreen.vue # Loading state component
+│   │   ├── LoadingSpinner.vue # Spinner component
 │   │   ├── ThemeToggle.vue   # Dark/light mode toggle
 │   │   └── UserMenu.vue      # User authentication menu
 │   ├── pages/
@@ -511,10 +512,10 @@ sentiment-analyzer/
 │   └── taxonomy.yaml         # Auditable cluster taxonomy
 │
 ├── data/
-│   └── fixtures/             # Mock data (50 posts)
-│       ├── twitter.json      # 20 posts
-│       ├── youtube.json      # 15 posts
-│       └── forums.json       # 15 posts
+│   └── fixtures/             # Mock data (90 posts)
+│       ├── twitter.json      # 30 posts
+│       ├── youtube.json      # 25 posts
+│       └── forums.json       # 35 posts
 │
 ├── docs/
 │   ├── ARCHITECTURE.md       # System diagrams
@@ -556,10 +557,14 @@ sentiment-analyzer/
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@types/d3": "^7.4.3",
-    "@vue/test-utils": "^2.4.6",
+    "@types/node": "^25.0.3",
+    "@vitejs/plugin-vue": "^6.0.3",
     "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/ui": "^2.1.8",
+    "@vue/test-utils": "^2.4.6",
     "d3": "^7.9.0",
     "happy-dom": "^15.11.7",
+    "jsdom": "^25.0.1",
     "vitest": "^2.1.8"
   }
 }
@@ -568,25 +573,37 @@ sentiment-analyzer/
 ### Backend (build.gradle)
 ```groovy
 dependencies {
-    implementation 'org.grails:grails-core:6.x'
+    implementation 'org.grails:grails-core'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation 'org.mindrot:jbcrypt:0.4'
     implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
-    implementation 'org.postgresql:postgresql:42.x'
+    runtimeOnly 'org.postgresql:postgresql'
 }
 ```
 
 ### ML Engine (requirements.txt)
 ```
+# Web framework
 flask>=3.0.0
+gunicorn>=21.0.0
 flasgger>=0.9.7
+
+# ML/NLP
 scikit-learn>=1.4.0
 nltk>=3.8.0
 pandas>=2.1.0
-gunicorn>=21.0.0
 google-genai>=1.0.0
+
+# Environment
 python-dotenv>=1.0.0
+
+# Database (Supabase)
 supabase>=2.0.0
-pytest>=7.4.0
+
+# Testing
+pytest>=7.0.0
 pytest-cov>=4.1.0
 ```
 

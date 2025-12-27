@@ -10,17 +10,19 @@ flowchart TB
         S3[Forums<br/>TruckersReport, Reddit]
     end
 
-    subgraph Gemini["🤖 Gemini API"]
-        GEM[Content Extraction<br/>& Enrichment]
+    subgraph Gemini["🤖 Gemini 2.0 Flash API"]
+        GEM[Web search grounding<br/>& AI insights]
     end
 
     subgraph Backend["☕ Grails API (Render)"]
         direction TB
         AUTH[AuthController<br/>JWT Auth]
-        POST[PostController<br/>CRUD]
-        CLUSTER[ClusterController<br/>Cluster data]
+        POST[PostController<br/>Posts + sources]
+        CLUSTER[ClusterController<br/>Clusters + summary]
         ANALYSIS[AnalysisController<br/>Trigger ML]
-        GEMINI_SVC[GeminiService<br/>AI insights]
+        INGEST[DataIngestionController<br/>Web scraping/import]
+        INSIGHTS[AiInsightController<br/>AI insights]
+        GEMINI_SVC[GeminiService<br/>Gemini search + insights]
         ML_SVC[MlEngineService<br/>HTTP client]
     end
 
@@ -36,7 +38,7 @@ flowchart TB
         DB[(Posts, Clusters,<br/>Users, Insights)]
     end
 
-    subgraph Frontend["⚡ Nuxt 3 (Netlify)"]
+    subgraph Frontend["⚡ Nuxt 4 (Netlify)"]
         direction TB
         LOGIN[Login/Register]
         DASHBOARD[Dashboard]
@@ -46,7 +48,8 @@ flowchart TB
 
     %% Data flow
     Sources --> GEM
-    GEM --> Backend
+    GEM --> GEMINI_SVC
+    Backend --> DB
     Backend --> DB
     Backend <--> MLEngine
     Frontend <--> Backend
@@ -58,8 +61,10 @@ flowchart TB
     PREPROCESS --> KMEANS
     KMEANS --> SENTIMENT
 
-    CLUSTER --> GEMINI_SVC
+    INGEST --> GEMINI_SVC
+    INSIGHTS --> GEMINI_SVC
     GEMINI_SVC --> GEM
+    SENTIMENT --> GEM
 
     %% Styling
     classDef source fill:#e3f2fd,stroke:#1565c0
@@ -68,8 +73,8 @@ flowchart TB
     classDef frontend fill:#fce4ec,stroke:#c2185b
     classDef db fill:#f3e5f5,stroke:#7b1fa2
 
-    class S1,S2,S3,S4 source
-    class AUTH,POST,CLUSTER,ANALYSIS,GEMINI_SVC,ML_SVC backend
+    class S1,S2,S3 source
+    class AUTH,POST,CLUSTER,ANALYSIS,INGEST,INSIGHTS,GEMINI_SVC,ML_SVC backend
     class FLASK,PREPROCESS,KMEANS,SENTIMENT ml
     class LOGIN,DASHBOARD,D3,DETAIL frontend
     class DB db
@@ -121,9 +126,9 @@ sequenceDiagram
     participant DB as PostgreSQL
 
     Admin->>Nuxt: Trigger Analysis
-    Nuxt->>Grails: POST /api/analysis/run
+    Nuxt->>Grails: POST /api/analysis/trigger
 
-    Grails->>DB: Fetch unprocessed posts
+    Grails->>DB: Fetch posts
     DB-->>Grails: Raw posts
 
     Grails->>ML: POST /api/analyze (posts batch)
@@ -158,9 +163,9 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph frontend["frontend/"]
-        PAGES[pages/<br/>index.vue, data.vue,<br/>login.vue, register.vue]
-        COMPONENTS[components/<br/>BubbleChart, ClusterDetail,<br/>UserMenu, ThemeToggle]
-        COMPOSABLES[composables/<br/>useApi, useAuth]
+        PAGES[pages/<br/>index.vue, data.vue,<br/>login.vue]
+        COMPONENTS[components/<br/>BubbleChart, ClusterDetail,<br/>UserMenu, ThemeToggle,<br/>StatsCard, SentimentBadge]
+        COMPOSABLES[composables/<br/>useApi, useAuth,<br/>useColorMode, useServiceHealth]
     end
 
     subgraph backend["backend/"]
@@ -220,7 +225,7 @@ graph TD
 
     subgraph Interaction["User Interactions"]
         HOVER["Hover → Highlight"]
-        CLICK["Click → Detail Modal"]
+        CLICK["Click → Detail Panel"]
     end
 ```
 
@@ -240,8 +245,8 @@ sequenceDiagram
     Grails->>DB: Validate user
     DB-->>Grails: User record
     Grails->>Grails: Generate JWT
-    Grails-->>Nuxt: { token, refreshToken }
-    Nuxt->>Nuxt: Store in localStorage
+    Grails-->>Nuxt: { success, token, user }
+    Nuxt->>Nuxt: Store token + user in localStorage
 
     Note over Nuxt: Subsequent requests
 
@@ -249,10 +254,10 @@ sequenceDiagram
     Grails->>Grails: Validate JWT
     Grails-->>Nuxt: Protected data
 
-    Note over Nuxt: Token refresh
+    Note over Nuxt: Optional user refresh
 
-    Nuxt->>Grails: POST /api/auth/refresh<br/>{ refreshToken }
-    Grails-->>Nuxt: { newToken }
+    Nuxt->>Grails: GET /api/auth/me<br/>Authorization: Bearer {token}
+    Grails-->>Nuxt: { user }
 ```
 
 ---
@@ -262,7 +267,7 @@ sequenceDiagram
 ```mermaid
 flowchart LR
     subgraph Netlify["Netlify (Frontend)"]
-        NUXT[Nuxt 3 SSR/Static]
+        NUXT[Nuxt 4 SSR/Static]
     end
 
     subgraph Render["Render (Backend)"]
@@ -299,15 +304,27 @@ flowchart LR
 ```
 Post {
   id: Long
-  source: String          // twitter, youtube, forum, smartlinq
-  externalId: String      // Original platform ID
-  content: String         // Raw text
-  author: String
-  publishedAt: DateTime
-  url: String
-  sentiment: Float        // -1.0 to 1.0
-  clusterId: Long?        // FK to Cluster
+  externalId: String       // Original platform ID
+  source: String           // twitter, youtube, reddit, forums, news
+  content: String          // Raw text content
+  author: String?
+  authorUrl: String?
+  postUrl: String?
+  publishedAt: DateTime?
+  fetchedAt: DateTime?
+
+  // ML-generated fields
+  sentimentCompound: Float?   // -1.0 to 1.0
+  sentimentPositive: Float?
+  sentimentNegative: Float?
+  sentimentNeutral: Float?
+  sentimentLabel: String?     // positive, negative, neutral
+
+  clusterId: String?          // FK to Cluster
+  keywords: String[]?         // Comma-separated keywords
+
   createdAt: DateTime
+  updatedAt: DateTime
 }
 ```
 
@@ -315,13 +332,22 @@ Post {
 ```
 Cluster {
   id: Long
-  label: String           // AI-generated label
-  keywords: String[]      // Top keywords
-  sentiment: Float        // Aggregate sentiment
-  postCount: Integer
-  insight: String         // Gemini-generated insight
-  analysisRunId: Long     // FK to AnalysisRun
+  taxonomyId: String         // Maps to config/taxonomy.yaml
+  label: String              // Human-readable label
+  description: String?
+
+  // Aggregated data
+  keywords: String[]?        // Top keywords
+  sentiment: Float?          // Average sentiment (-1 to 1)
+  sentimentLabel: String?    // positive, negative, neutral
+  postCount: Integer?
+
+  // AI-generated insight
+  insight: String?           // Gemini-generated insight text
+
+  analysisRunId: String?     // Analysis run that created this cluster
   createdAt: DateTime
+  updatedAt: DateTime
 }
 ```
 
@@ -331,9 +357,59 @@ User {
   id: Long
   email: String
   passwordHash: String
-  role: String            // admin, viewer
+  role: String               // admin, viewer
+
+  enabled: Boolean
+  accountExpired: Boolean
+  accountLocked: Boolean
+  passwordExpired: Boolean
+
+  lastLoginAt: DateTime?
   createdAt: DateTime
-  lastLoginAt: DateTime
+  updatedAt: DateTime
+}
+```
+
+### AnalysisRun
+```
+AnalysisRun {
+  id: Long
+  status: String              // pending, processing, completed, failed
+
+  // Counts
+  postsAnalyzed: Integer?
+  clustersCreated: Integer?
+  insightsGenerated: Integer?
+
+  // Timing
+  startedAt: DateTime?
+  completedAt: DateTime?
+  durationMs: Long?
+
+  // Error tracking
+  error: String?
+
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+```
+
+### AiInsight
+```
+AiInsight {
+  id: Long
+  type: String               // trend_analysis, recommendations, executive_summary
+  content: String            // Generated insight text
+  source: String?            // all, twitter, youtube, forums, reddit, news
+
+  analysisRunId: Long?       // AnalysisRun that generated this insight
+
+  // Metadata at generation time
+  postsAnalyzed: Integer?
+  clustersCount: Integer?
+
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 ```
 

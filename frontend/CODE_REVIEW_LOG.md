@@ -47,3 +47,14 @@
 - Refine auth middleware / composable interaction to avoid duplicate localStorage checks - marked as optional cleanup
 
 **Tests:** All 39 tests passing (`npm test`)
+
+---
+
+## 2025-12-27 – Orchestration audit fixes (process & LoadingSpinner)
+
+- [x] P1: Test setup overrides Node process object (`tests/setup.ts`)
+- [x] P1: `LoadingSpinner` uses `computed` without importing it (`components/LoadingSpinner.vue`)
+
+**Notes:**
+- Updated `tests/setup.ts` to set `process.client = true` on the existing Node `process` object (or create it if missing) instead of redefining `global.process`, preserving `process.env` and other standard APIs.
+- Updated `components/LoadingSpinner.vue` to import `computed` from `vue` so the size class computation works at build/runtime without `computed is not defined` errors.

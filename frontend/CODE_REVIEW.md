@@ -223,6 +223,7 @@ After producing the review output above, append a new section to `CODE_REVIEW_LO
 - A heading including the date and PR identifier or short description.
 - A checklist of **Medium/Low** issues and **Test follow-ups** that can be actioned later (one checkbox per item).
 - File paths for each item (e.g., `components/UserMenu.vue`) so contributors can quickly navigate to fix them.
+- Any **P1/P0 issues discovered by orchestration or cross-cutting audits** (e.g., broken test setup, missing imports) must also be logged, with their final status (`[x]` when fixed) and file paths.
 
 ---
 

@@ -17,7 +17,7 @@ Aggregates and analyzes publicly available data from social media, forums, and c
 
 ## Features
 
-- ✅ Multi-channel data ingestion (Twitter, YouTube, Reddit, Forums, News)
+- ✅ Multi-channel data ingestion (Twitter, YouTube, Forums, Reddit, News)
 - ✅ Gemini-powered web scraping with Google Search grounding
 - ✅ ML clustering with K-Means + TF-IDF (Python/scikit-learn)
 - ✅ Sentiment analysis (NLTK VADER + Gemini 2.0 Flash)
@@ -54,7 +54,7 @@ sentiment-analyzer/
 ├── backend/            # Grails 6 REST API (Java 17)
 ├── ml-engine/          # Python Flask + scikit-learn + NLTK
 ├── config/             # Auditable taxonomy config
-├── data/fixtures/      # Mock data (50 posts)
+├── data/fixtures/      # Mock data (90 posts)
 ├── docs/               # Architecture diagrams & API docs
 ├── logs/               # Local dev logs
 ├── .pids/              # Process IDs for local dev
@@ -213,6 +213,7 @@ SUPABASE_SERVICE_KEY=your_supabase_service_key
 | GET | `/api/clusters/{id}` | Get cluster with all posts |
 | GET | `/api/clusters/summary` | Dashboard summary stats |
 | POST | `/api/analysis/trigger` | Run ML analysis on all posts |
+| GET | `/api/analysis/fixture-count` | Get available fixture count |
 | POST | `/api/analysis/load-fixtures` | Load mock data into database |
 | DELETE | `/api/analysis/clear` | Clear all data (admin only) |
 | GET | `/api/insights` | Get cached AI insights |
