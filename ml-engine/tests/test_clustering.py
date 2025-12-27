@@ -167,12 +167,14 @@ class TestMatchClusterToTaxonomy:
         assert label == "Model Demand"
     
     @pytest.mark.unit
-    def test_no_match_returns_general(self):
-        """Unmatched keywords should return general"""
+    def test_no_match_returns_custom_label(self):
+        """Unmatched keywords should return a custom label derived from keywords"""
         keywords = ["random", "words", "nothing", "related"]
         taxonomy_id, label = match_cluster_to_taxonomy(keywords)
-        assert "general" in taxonomy_id
-        assert label == "General Discussion"
+        # Implementation generates custom labels from keywords when no taxonomy match
+        assert taxonomy_id.startswith("custom_")
+        # Label should be derived from the input keywords
+        assert "Random" in label or "Words" in label or "Nothing" in label
     
     @pytest.mark.unit
     def test_exclude_prevents_match(self):
@@ -187,4 +189,5 @@ class TestMatchClusterToTaxonomy:
         keywords = ["electric", "sleeper", "engine"]
         exclude = {"ev_adoption", "driver_comfort", "uptime_reliability", "model_demand"}
         taxonomy_id, label = match_cluster_to_taxonomy(keywords, exclude=exclude)
-        assert "general" in taxonomy_id
+        # With main matches excluded, should fall back to another taxonomy or custom
+        assert taxonomy_id not in exclude

@@ -234,13 +234,33 @@ def match_cluster_to_taxonomy(keywords: List[str], exclude: set = None) -> Tuple
     if best_match and best_score > 0.5:
         return best_match
     
-    # Default if no strong match found - make unique by adding cluster number
-    general_key = 'general'
+    # No strong taxonomy match - generate descriptive label from actual keywords
+    # Use top keywords to create a meaningful label instead of generic "General Discussion"
+    label_keywords = []
+    for kw in keywords_lower[:8]:  # Check top 8 keywords
+        # Skip common/generic words and site names
+        if kw not in ['peterbilt', 'truck', 'trucks', 'driver', 'drivers', 'good', 'bad', 'great', 
+                      'reddit', 'com', 'sourcesite', '2019', 'posturl', 'publishedat']:
+            label_keywords.append(kw.title())
+        if len(label_keywords) >= 3:
+            break
+    
+    # Create descriptive label from keywords
+    if len(label_keywords) >= 2:
+        label = ' & '.join(label_keywords[:3])
+    elif len(label_keywords) == 1:
+        label = f'{label_keywords[0]} Discussion'
+    else:
+        # Absolute fallback - use first non-generic keyword
+        fallback_kw = next((kw.title() for kw in keywords_lower[:10] 
+                           if kw not in ['peterbilt', 'truck', 'reddit', 'com']), 'General')
+        label = f'{fallback_kw} Discussion'
+    
+    # Create unique key
+    custom_key = f'custom_{label.lower().replace(" ", "_").replace("&", "and")}'
     counter = 1
-    while general_key in exclude:
-        general_key = f'general_{counter}'
+    while custom_key in exclude:
+        custom_key = f'custom_{label.lower().replace(" ", "_").replace("&", "and")}_{counter}'
         counter += 1
     
-    # Make label unique too if this isn't the first general cluster
-    label = 'General Discussion' if general_key == 'general' else f'General Discussion {counter}'
-    return (general_key, label)
+    return (custom_key, label)

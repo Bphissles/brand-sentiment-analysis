@@ -3,6 +3,7 @@ Flask API for ML Engine
 Provides endpoints for clustering and sentiment analysis
 """
 import os
+import sys
 import time
 import math
 import logging
@@ -15,6 +16,16 @@ from sentiment import analyze_posts_sentiment, aggregate_cluster_sentiment, clas
 from clustering import cluster_posts
 
 load_dotenv()
+
+# Configure logging with detailed format
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s.%(msecs)03d %(levelname)-5s [%(name)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 
 logger = logging.getLogger(__name__)
 
@@ -280,6 +291,7 @@ def analyze():
     data = request.get_json()
     
     if not data or 'posts' not in data:
+        logger.warning("Analyze request missing 'posts' field")
         return make_error_response(
             'MISSING_FIELD',
             'Missing posts in request body',
@@ -287,13 +299,16 @@ def analyze():
         )
     
     posts = data['posts']
+    logger.info(f"Starting analysis for {len(posts)} posts")
     
     # Validate posts structure and limits
     is_valid, error_response = validate_posts(posts)
     if not is_valid:
+        logger.warning(f"Post validation failed: {error_response}")
         return error_response
     
     if len(posts) == 0:
+        logger.info("Empty post list, returning empty result")
         return jsonify({
             'clusters': [],
             'posts': [],
@@ -302,9 +317,11 @@ def analyze():
         })
     
     # Step 1: Preprocess posts (clean text, tokenize)
+    logger.info("Step 1: Preprocessing posts...")
     preprocessed = preprocess_posts(posts)
     
     # Step 2: Analyze sentiment for each post
+    logger.info("Step 2: Analyzing sentiment...")
     with_sentiment = analyze_posts_sentiment(preprocessed)
     
     # Step 3: Cluster posts by topic
@@ -312,9 +329,11 @@ def analyze():
     # Formula: sqrt(n/2), clamped between 3 and 10
     n_clusters = max(3, min(10, int(math.sqrt(len(posts) / 2))))
     n_clusters = min(n_clusters, len(posts))  # Don't create more clusters than posts
+    logger.info(f"Step 3: Clustering into {n_clusters} clusters...")
     clusters, clustered_posts = cluster_posts(with_sentiment, n_clusters=n_clusters)
     
     # Step 4: Calculate aggregate sentiment per cluster
+    logger.info("Step 4: Calculating cluster sentiments...")
     for cluster in clusters:
         cluster_post_ids = set(cluster.get('postIds', []))
         cluster_posts_list = [p for p in clustered_posts if p.get('id') in cluster_post_ids]
@@ -325,6 +344,7 @@ def analyze():
     
     # Calculate processing time
     processing_time_ms = int((time.time() - start_time) * 1000)
+    logger.info(f"Analysis complete: {len(clusters)} clusters, {len(clustered_posts)} posts, {processing_time_ms}ms")
     
     # Prepare response (clean up internal fields from posts)
     response_posts = []
@@ -406,9 +426,11 @@ def sentiment_only():
       413:
         description: Payload too large
     """
+    start_time = time.time()
     data = request.get_json()
     
     if not data or 'posts' not in data:
+        logger.warning("Sentiment request missing 'posts' field")
         return make_error_response(
             'MISSING_FIELD',
             'Missing posts in request body',
@@ -416,19 +438,24 @@ def sentiment_only():
         )
     
     posts = data['posts']
+    logger.info(f"Analyzing sentiment for {len(posts)} posts")
     
     # Validate posts structure and limits
     is_valid, error_response = validate_posts(posts)
     if not is_valid:
+        logger.warning(f"Post validation failed: {error_response}")
         return error_response
     
     if len(posts) == 0:
+        logger.info("Empty post list, returning empty result")
         return jsonify({
             'posts': [],
             'count': 0
         })
     
     results = analyze_posts_sentiment(posts)
+    processing_time_ms = int((time.time() - start_time) * 1000)
+    logger.info(f"Sentiment analysis complete: {len(results)} posts, {processing_time_ms}ms")
     
     return jsonify({
         'posts': results,

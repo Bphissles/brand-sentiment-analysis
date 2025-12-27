@@ -251,19 +251,43 @@ Guidelines:
         
         sentiments = json.loads(result_text)
         
-        if len(sentiments) != len(posts):
+        # Handle case where Gemini returns nested structure
+        if isinstance(sentiments, list) and len(sentiments) > 0:
+            # Flatten if nested
+            if isinstance(sentiments[0], list):
+                sentiments = sentiments[0]
+        
+        # Validate structure
+        if not isinstance(sentiments, list):
+            logger.warning(f"Invalid sentiment response structure: {type(sentiments)}")
+            return None
+            
+        # Use only the first N results matching post count
+        if len(sentiments) > len(posts):
+            logger.warning(f"Batch size mismatch: expected {len(posts)}, got {len(sentiments)}, using first {len(posts)}")
+            sentiments = sentiments[:len(posts)]
+        elif len(sentiments) < len(posts):
             logger.warning(f"Batch size mismatch: expected {len(posts)}, got {len(sentiments)}")
             return None
         
         results = []
         for post, sentiment in zip(posts, sentiments):
+            # Handle both dict and list formats
+            if isinstance(sentiment, dict):
+                sentiment_data = sentiment
+            elif isinstance(sentiment, list) and len(sentiment) > 0 and isinstance(sentiment[0], dict):
+                sentiment_data = sentiment[0]
+            else:
+                logger.warning(f"Invalid sentiment format: {type(sentiment)}")
+                return None
+                
             results.append({
                 **post,
                 'sentiment': {
-                    'compound': float(sentiment.get('compound', 0.0)),
-                    'positive': float(sentiment.get('positive', 0.0)),
-                    'negative': float(sentiment.get('negative', 0.0)),
-                    'neutral': float(sentiment.get('neutral', 0.0))
+                    'compound': float(sentiment_data.get('compound', 0.0)),
+                    'positive': float(sentiment_data.get('positive', 0.0)),
+                    'negative': float(sentiment_data.get('negative', 0.0)),
+                    'neutral': float(sentiment_data.get('neutral', 0.0))
                 }
             })
         
