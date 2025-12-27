@@ -124,7 +124,7 @@ export const useApi = () => {
   /**
    * Scrape a specific source (admin only)
    */
-  const scrapeSource = async (source: 'twitter' | 'youtube' | 'forums'): Promise<ScrapeResponse> => {
+  const scrapeSource = async (source: 'twitter' | 'youtube' | 'reddit' | 'forums' | 'news'): Promise<ScrapeResponse> => {
     const response = await $fetch<ScrapeResponse>(`${baseUrl}/api/ingestion/scrape/${source}`, {
       method: 'POST',
       headers: getAuthHeader()

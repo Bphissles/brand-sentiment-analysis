@@ -83,10 +83,18 @@ const emit = defineEmits<{
                 :class="{
                   'bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400': post.source === 'twitter',
                   'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400': post.source === 'youtube',
-                  'bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400': post.source === 'forums'
+                  'bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400': post.source === 'reddit',
+                  'bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400': post.source === 'forums',
+                  'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400': post.source === 'news'
                 }"
               >
-                {{ post.source === 'twitter' ? 'Twitter/X' : post.source === 'youtube' ? 'YouTube' : 'Forum' }}
+                {{ 
+                  post.source === 'twitter' ? 'Twitter/X' : 
+                  post.source === 'youtube' ? 'YouTube' : 
+                  post.source === 'reddit' ? 'Reddit' :
+                  post.source === 'news' ? 'News' :
+                  'Forum' 
+                }}
               </span>
             </div>
             <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">{{ post.content }}</p>

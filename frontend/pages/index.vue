@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Cluster, DashboardSummary, Insight, Post } from '~/types/models'
+import type { Cluster, DashboardSummary, InsightsResponse, Post } from '~/types/models'
 
 const api = useApi()
 const { initAuth, user } = useAuth()
@@ -29,7 +29,7 @@ const loadingSentimentPosts = ref(false)
 const sentimentPostsSort = ref<string>('strongest')
 
 // AI Insights state
-const aiInsights = ref<Insight | null>(null)
+const aiInsights = ref<InsightsResponse | null>(null)
 const loadingInsights = ref(false)
 const generatingInsights = ref(false)
 
@@ -266,7 +266,9 @@ onUnmounted(() => {
               <option value="all">All Sources</option>
               <option value="twitter">Twitter/X</option>
               <option value="youtube">YouTube</option>
+              <option value="reddit">Reddit</option>
               <option value="forums">Forums</option>
+              <option value="news">News</option>
             </select>
             <NuxtLink 
               v-if="isAdmin"
@@ -305,6 +307,51 @@ onUnmounted(() => {
 
       <!-- Dashboard Content -->
       <template v-else>
+        
+        <!-- Executive Summary Section -->
+        <div class="bg-slate-700/50 rounded-xl shadow-lg p-6 mb-6 border border-slate-600/50">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-white">Executive Summary</h3>
+                <p class="text-sm text-slate-400">AI-generated narrative for stakeholder reporting</p>
+              </div>
+            </div>
+            <span 
+              v-if="aiInsights?.cached && aiInsights?.executiveSummary"
+              class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full border border-emerald-500/30"
+            >
+              AI Generated
+            </span>
+          </div>
+          
+          <div class="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50">
+            <p class="text-slate-300 text-sm leading-relaxed">
+              <template v-if="loadingInsights">
+                <span class="text-slate-400 italic">Loading executive summary...</span>
+              </template>
+              <template v-else-if="aiInsights?.executiveSummary">
+                {{ aiInsights.executiveSummary }}
+              </template>
+              <template v-else-if="clusters.length > 0">
+                <span class="text-white font-medium">Summary:</span> Analysis of {{ summary?.totalPosts || 0 }} social media posts reveals {{ clusters.length }} distinct topic clusters. 
+                The overall brand sentiment is <span :class="{'text-emerald-400': (summary?.averageSentiment || 0) >= 0.1, 'text-rose-400': (summary?.averageSentiment || 0) <= -0.1, 'text-amber-400': Math.abs(summary?.averageSentiment || 0) < 0.1}">{{ (summary?.averageSentiment || 0) >= 0.1 ? 'positive' : (summary?.averageSentiment || 0) <= -0.1 ? 'negative' : 'neutral' }}</span> 
+                with a compound score of {{ (summary?.averageSentiment || 0).toFixed(2) }}. 
+                Key discussion topics include {{ clusters.slice(0, 3).map(c => c.label).join(', ') || 'various themes' }}.
+                <span class="text-slate-400 italic"> Run analysis from the Data page for enhanced AI narrative.</span>
+              </template>
+              <template v-else>
+                <span class="text-slate-400 italic">Load data and run analysis to generate an executive summary. This section will provide a comprehensive AI-generated narrative suitable for stakeholder presentations and reports.</span>
+              </template>
+            </p>
+          </div>
+        </div>
+
         <!-- Stats Row -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <StatsCard 
@@ -559,53 +606,9 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- Executive Summary Section -->
-        <div class="bg-gradient-to-r from-slate-800 to-slate-900 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-lg p-6 mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <div>
-                <h3 class="text-lg font-semibold text-white">Executive Summary</h3>
-                <p class="text-sm text-slate-400">AI-generated narrative for stakeholder reporting</p>
-              </div>
-            </div>
-            <span 
-              v-if="aiInsights?.cached && aiInsights?.executiveSummary"
-              class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full border border-emerald-500/30"
-            >
-              AI Generated
-            </span>
-          </div>
-          
-          <div class="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50">
-            <p class="text-slate-300 text-sm leading-relaxed">
-              <template v-if="loadingInsights">
-                <span class="text-slate-400 italic">Loading executive summary...</span>
-              </template>
-              <template v-else-if="aiInsights?.executiveSummary">
-                {{ aiInsights.executiveSummary }}
-              </template>
-              <template v-else-if="clusters.length > 0">
-                <span class="text-white font-medium">Summary:</span> Analysis of {{ summary?.totalPosts || 0 }} social media posts reveals {{ clusters.length }} distinct topic clusters. 
-                The overall brand sentiment is <span :class="{'text-emerald-400': (summary?.averageSentiment || 0) >= 0.1, 'text-rose-400': (summary?.averageSentiment || 0) <= -0.1, 'text-amber-400': Math.abs(summary?.averageSentiment || 0) < 0.1}">{{ (summary?.averageSentiment || 0) >= 0.1 ? 'positive' : (summary?.averageSentiment || 0) <= -0.1 ? 'negative' : 'neutral' }}</span> 
-                with a compound score of {{ (summary?.averageSentiment || 0).toFixed(2) }}. 
-                Key discussion topics include {{ clusters.slice(0, 3).map(c => c.label).join(', ') || 'various themes' }}.
-                <span class="text-slate-400 italic"> Run analysis from the Data page for enhanced AI narrative.</span>
-              </template>
-              <template v-else>
-                <span class="text-slate-400 italic">Load data and run analysis to generate an executive summary. This section will provide a comprehensive AI-generated narrative suitable for stakeholder presentations and reports.</span>
-              </template>
-            </p>
-          </div>
-        </div>
-
         <!-- Footer Info -->
         <div class="flex justify-between items-center text-xs text-slate-400 dark:text-slate-500 pt-4 border-t border-slate-200 dark:border-slate-700">
-          <span>Data sources: Twitter/X, YouTube, Forums</span>
+          <span>Data sources: Twitter/X, YouTube, Reddit, Forums, News</span>
           <span>Powered by K-Means clustering + VADER sentiment analysis</span>
         </div>
       </template>

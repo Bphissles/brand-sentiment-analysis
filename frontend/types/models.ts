@@ -8,7 +8,7 @@
 // =============================================================================
 export interface Post {
   id: string;
-  source: 'twitter' | 'youtube' | 'forums';
+  source: 'twitter' | 'youtube' | 'reddit' | 'forums' | 'news';
   externalId: string;          // Original platform ID
   content: string;             // Raw text content
   author: string;              // Username or handle

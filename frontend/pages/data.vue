@@ -51,7 +51,7 @@ const handleScrapeAll = async () => {
 }
 
 // Scrape single source
-const handleScrapeSource = async (source: 'twitter' | 'youtube' | 'forums') => {
+const handleScrapeSource = async (source: 'twitter' | 'youtube' | 'reddit' | 'forums' | 'news') => {
   if (scraping.value) return
   
   scraping.value = true
@@ -183,15 +183,21 @@ const handleRunAnalysis = async () => {
             
             <div class="py-2 border-b border-slate-100 dark:border-slate-700">
               <span class="text-slate-600 dark:text-slate-400 block mb-2">Posts by Source</span>
-              <div class="flex gap-3">
+              <div class="flex flex-wrap gap-2">
                 <span class="px-2 py-1 bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 rounded text-sm">
                   Twitter: {{ status.sourceBreakdown?.twitter || 0 }}
                 </span>
                 <span class="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded text-sm">
                   YouTube: {{ status.sourceBreakdown?.youtube || 0 }}
                 </span>
+                <span class="px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-sm">
+                  Reddit: {{ status.sourceBreakdown?.reddit || 0 }}
+                </span>
                 <span class="px-2 py-1 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 rounded text-sm">
                   Forums: {{ status.sourceBreakdown?.forums || 0 }}
+                </span>
+                <span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded text-sm">
+                  News: {{ status.sourceBreakdown?.news || 0 }}
                 </span>
               </div>
             </div>
@@ -264,11 +270,25 @@ const handleRunAnalysis = async () => {
                 YouTube
               </button>
               <button
+                @click="handleScrapeSource('reddit')"
+                :disabled="scraping || !status?.geminiConfigured"
+                class="px-3 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Reddit
+              </button>
+              <button
                 @click="handleScrapeSource('forums')"
                 :disabled="scraping || !status?.geminiConfigured"
                 class="px-3 py-2 bg-violet-500 text-white text-sm font-medium rounded-lg hover:bg-violet-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Forums
+              </button>
+              <button
+                @click="handleScrapeSource('news')"
+                :disabled="scraping || !status?.geminiConfigured"
+                class="px-3 py-2 bg-emerald-500 text-white text-sm font-medium rounded-lg hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                News
               </button>
             </div>
           </div>
