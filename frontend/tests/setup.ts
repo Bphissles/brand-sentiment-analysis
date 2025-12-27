@@ -1,10 +1,11 @@
 import { vi } from 'vitest'
-import { ref, computed, readonly } from 'vue'
+import { ref, computed, readonly, watch } from 'vue'
 
 // Make Vue functions globally available
 vi.stubGlobal('ref', ref)
 vi.stubGlobal('computed', computed)
 vi.stubGlobal('readonly', readonly)
+vi.stubGlobal('watch', watch)
 
 // Mock Nuxt runtime config
 vi.stubGlobal('useRuntimeConfig', () => ({
@@ -52,3 +53,10 @@ const localStorageMock = (() => {
 Object.defineProperty(global, 'localStorage', {
   value: localStorageMock
 })
+
+// Mock process.client for Nuxt SSR checks without clobbering Node's process
+if (!(global as any).process) {
+  ;(global as any).process = { client: true }
+} else {
+  ;(global as any).process.client = true
+}
