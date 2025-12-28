@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import type { Cluster, DashboardSummary, InsightsResponse, Post } from '~/types/models'
+import type {
+  Cluster,
+  DashboardSummary,
+  InsightsResponse,
+  Post,
+  SourceFilter,
+  SentimentFilter,
+  SentimentSort
+} from '~/types/models'
 
 const api = useApi()
 const { initAuth, user } = useAuth()
@@ -15,18 +23,17 @@ const error = ref<string | null>(null)
 const selectedCluster = ref<Cluster | null>(null)
 const selectedClusterPosts = ref<Post[]>([])
 const showDetail = ref(false)
-const selectedSource = ref<string>('all')
-const lastAnalysis = ref<string | null>(null)
+const selectedSource = ref<SourceFilter>('all')
 
 // Cluster filter state
-const clusterSentimentFilter = ref<string>('all')
+const clusterSentimentFilter = ref<SentimentFilter>('all')
 
 // Sentiment posts modal state
 const showSentimentPosts = ref(false)
-const sentimentPostsFilter = ref<string>('positive')
+const sentimentPostsFilter = ref<'positive' | 'neutral' | 'negative'>('positive')
 const sentimentPosts = ref<Post[]>([])
 const loadingSentimentPosts = ref(false)
-const sentimentPostsSort = ref<string>('strongest')
+const sentimentPostsSort = ref<SentimentSort>('strongest')
 
 // AI Insights state
 const aiInsights = ref<InsightsResponse | null>(null)
@@ -138,18 +145,6 @@ const closeDetail = () => {
   selectedClusterPosts.value = []
 }
 
-const runAnalysis = async () => {
-  loading.value = true
-  try {
-    await api.triggerAnalysis()
-    await loadData()
-  } catch (e: any) {
-    error.value = e.message || 'Analysis failed'
-  } finally {
-    loading.value = false
-  }
-}
-
 const handleSourceChange = async () => {
   await loadData()
 }
@@ -163,6 +158,14 @@ const sentimentTrend = computed(() => {
   return 'neutral'
 })
 
+const positivePostsTrend = computed(() => {
+  if (!summary.value || !summary.value.sentimentDistribution) return 'neutral'
+  const { positive = 0, negative = 0 } = summary.value.sentimentDistribution
+  if (positive > negative) return 'up'
+  if (positive < negative) return 'down'
+  return 'neutral'
+})
+
 // Filtered clusters based on sentiment filter
 const filteredClusters = computed(() => {
   if (clusterSentimentFilter.value === 'all') {
@@ -172,7 +175,7 @@ const filteredClusters = computed(() => {
 })
 
 // View posts by sentiment
-const viewPostsBySentiment = async (sentiment: string) => {
+const viewPostsBySentiment = async (sentiment: 'positive' | 'neutral' | 'negative') => {
   sentimentPostsFilter.value = sentiment
   showSentimentPosts.value = true
   loadingSentimentPosts.value = true
@@ -367,7 +370,7 @@ onUnmounted(() => {
           <StatsCard 
             title="Positive Posts" 
             :value="summary?.sentimentDistribution?.positive || 0"
-            trend="up"
+            :trend="positivePostsTrend"
           />
         </div>
 

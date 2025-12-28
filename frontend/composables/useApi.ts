@@ -15,7 +15,8 @@ import type {
   IngestionStatusResponse,
   ScrapeResponse,
   ClearDataResponse,
-  InsightsResponse
+  InsightsResponse,
+  SourceFilter
 } from '~/types/models'
 
 export const useApi = () => {
@@ -26,7 +27,7 @@ export const useApi = () => {
   /**
    * Fetch dashboard summary with optional source filter
    */
-  const fetchSummary = async (source?: string): Promise<DashboardSummary> => {
+  const fetchSummary = async (source?: SourceFilter): Promise<DashboardSummary> => {
     const query = source && source !== 'all' ? `?source=${source}` : ''
     const response = await $fetch<DashboardSummary>(`${baseUrl}/api/clusters/summary${query}`, {
       headers: getAuthHeader()
@@ -37,7 +38,7 @@ export const useApi = () => {
   /**
    * Fetch all clusters with optional source filter
    */
-  const fetchClusters = async (source?: string): Promise<Cluster[]> => {
+  const fetchClusters = async (source?: SourceFilter): Promise<Cluster[]> => {
     const query = source && source !== 'all' ? `?source=${source}` : ''
     const response = await $fetch<ClustersResponse>(`${baseUrl}/api/clusters${query}`, {
       headers: getAuthHeader()
@@ -58,7 +59,7 @@ export const useApi = () => {
   /**
    * Fetch all posts with optional filters
    */
-  const fetchPosts = async (params?: { source?: string; clusterId?: string; sentiment?: string }): Promise<Post[]> => {
+  const fetchPosts = async (params?: { source?: Exclude<SourceFilter, 'all'>; clusterId?: string; sentiment?: 'positive' | 'neutral' | 'negative' }): Promise<Post[]> => {
     const query = new URLSearchParams()
     if (params?.source) query.set('source', params.source)
     if (params?.clusterId) query.set('clusterId', params.clusterId)
@@ -157,7 +158,7 @@ export const useApi = () => {
   /**
    * Fetch AI insights (cached)
    */
-  const fetchInsights = async (source?: string): Promise<InsightsResponse> => {
+  const fetchInsights = async (source?: SourceFilter): Promise<InsightsResponse> => {
     const query = source && source !== 'all' ? `?source=${source}` : ''
     const response = await $fetch<InsightsResponse>(`${baseUrl}/api/insights${query}`, {
       headers: getAuthHeader()
@@ -168,7 +169,7 @@ export const useApi = () => {
   /**
    * Generate new AI insights
    */
-  const generateInsights = async (source?: string): Promise<InsightsResponse> => {
+  const generateInsights = async (source?: SourceFilter): Promise<InsightsResponse> => {
     const query = source && source !== 'all' ? `?source=${source}` : ''
     const response = await $fetch<InsightsResponse>(`${baseUrl}/api/insights/generate${query}`, {
       method: 'POST',

@@ -155,6 +155,14 @@ export interface PaginatedResponse<T> {
   hasMore: boolean;
 }
 
+// Shared filters and view helpers
+export type SourceFilter = 'all' | 'twitter' | 'youtube' | 'reddit' | 'forums' | 'news';
+export type SentimentFilter = 'all' | 'positive' | 'neutral' | 'negative';
+export type SentimentSort = 'strongest' | 'newest' | 'oldest';
+
+export const SENTIMENT_POSITIVE_THRESHOLD = 0.3;
+export const SENTIMENT_NEGATIVE_THRESHOLD = -0.3;
+
 // Specific API response types for stronger typing
 export interface ClustersResponse {
   clusters: Cluster[];

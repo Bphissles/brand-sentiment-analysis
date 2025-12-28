@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Cluster, Post } from '~/types/models'
+import { SENTIMENT_NEGATIVE_THRESHOLD, SENTIMENT_POSITIVE_THRESHOLD } from '~/types/models'
 
 interface Props {
   cluster: Cluster
@@ -23,9 +24,9 @@ const emit = defineEmits<{
             <div 
               class="w-4 h-4 rounded-full"
               :class="{
-                'bg-emerald-500': cluster.sentiment >= 0.3,
-                'bg-rose-500': cluster.sentiment <= -0.3,
-                'bg-amber-500': cluster.sentiment > -0.3 && cluster.sentiment < 0.3
+                'bg-emerald-500': cluster.sentiment >= SENTIMENT_POSITIVE_THRESHOLD,
+                'bg-rose-500': cluster.sentiment <= SENTIMENT_NEGATIVE_THRESHOLD,
+                'bg-amber-500': cluster.sentiment > SENTIMENT_NEGATIVE_THRESHOLD && cluster.sentiment < SENTIMENT_POSITIVE_THRESHOLD
               }"
             ></div>
             <div>

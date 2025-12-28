@@ -58,3 +58,10 @@
 **Notes:**
 - Updated `tests/setup.ts` to set `process.client = true` on the existing Node `process` object (or create it if missing) instead of redefining `global.process`, preserving `process.env` and other standard APIs.
 - Updated `components/LoadingSpinner.vue` to import `computed` from `vue` so the size class computation works at build/runtime without `computed is not defined` errors.
+
+---
+
+## 2025-12-29 – Sentiment thresholds & filter typing
+
+- [ ] No Medium/Low issues identified in this review (`n/a`)
+- [ ] No additional test follow-ups identified (`n/a`)

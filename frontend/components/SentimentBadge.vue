@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SENTIMENT_NEGATIVE_THRESHOLD, SENTIMENT_POSITIVE_THRESHOLD } from '~/types/models'
 interface Props {
   sentiment: number
   label?: string
@@ -13,14 +14,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const sentimentLabel = computed(() => {
   if (props.label) return props.label
-  if (props.sentiment >= 0.3) return 'Positive'
-  if (props.sentiment <= -0.3) return 'Negative'
+  if (props.sentiment >= SENTIMENT_POSITIVE_THRESHOLD) return 'Positive'
+  if (props.sentiment <= SENTIMENT_NEGATIVE_THRESHOLD) return 'Negative'
   return 'Neutral'
 })
 
 const colorClasses = computed(() => {
-  if (props.sentiment >= 0.3) return 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
-  if (props.sentiment <= -0.3) return 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400'
+  if (props.sentiment >= SENTIMENT_POSITIVE_THRESHOLD) return 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
+  if (props.sentiment <= SENTIMENT_NEGATIVE_THRESHOLD) return 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400'
   return 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
 })
 
@@ -33,8 +34,8 @@ const sizeClasses = computed(() => {
 })
 
 const dotColor = computed(() => {
-  if (props.sentiment >= 0.3) return 'bg-emerald-500'
-  if (props.sentiment <= -0.3) return 'bg-rose-500'
+  if (props.sentiment >= SENTIMENT_POSITIVE_THRESHOLD) return 'bg-emerald-500'
+  if (props.sentiment <= SENTIMENT_NEGATIVE_THRESHOLD) return 'bg-rose-500'
   return 'bg-amber-500'
 })
 </script>
