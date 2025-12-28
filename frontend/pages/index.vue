@@ -606,7 +606,7 @@ onUnmounted(() => {
         <!-- Footer Info -->
         <div class="flex justify-between items-center text-xs text-slate-400 dark:text-slate-500 pt-4 border-t border-slate-200 dark:border-slate-700">
           <span>Data sources: Twitter/X, YouTube, Reddit, Forums, News</span>
-          <span>Powered by K-Means clustering + VADER sentiment analysis</span>
+          <span>Powered by K-Means clustering + Google Gemini sentiment analysis</span>
         </div>
       </template>
     </main>

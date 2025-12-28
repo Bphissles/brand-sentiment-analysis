@@ -383,7 +383,7 @@ const handleRunAnalysis = async () => {
           <ol class="space-y-3 text-slate-600 dark:text-slate-400">
             <li>
               <strong class="text-slate-800 dark:text-slate-200">Get a Gemini API Key:</strong>
-              Visit <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-cyan-600 dark:text-cyan-400 hover:underline">Google AI Studio</a> to create a free API key.
+              Visit <a href="https://aistudio.google.com/" target="_blank" class="text-cyan-600 dark:text-cyan-400 hover:underline">Google AI Studio</a> to create a free API key.
             </li>
             <li>
               <strong class="text-slate-800 dark:text-slate-200">Set Environment Variable:</strong>
@@ -395,7 +395,7 @@ const handleRunAnalysis = async () => {
             </li>
             <li>
               <strong class="text-slate-800 dark:text-slate-200">Scrape Data:</strong>
-              Click "Scrape All Sources" to fetch real posts from Twitter, YouTube, and forums.
+              Click "Search All Sources" to fetch real posts from Twitter/X, YouTube, Reddit, forums, and news.
             </li>
             <li>
               <strong class="text-slate-800 dark:text-slate-200">Run Analysis:</strong>

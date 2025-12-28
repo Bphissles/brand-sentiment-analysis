@@ -73,7 +73,7 @@ const toggleMode = () => {
         <div class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
           <span class="text-white font-bold text-2xl">V</span>
         </div>
-        <h1 class="text-2xl font-bold text-white">Brand Sentiment Analyzer</h1>
+        <h1 class="text-2xl font-bold text-white">Voice of the Operator</h1>
         <p class="text-slate-400 mt-2">{{ isLoginMode ? 'Sign in to your account' : 'Create a new account' }}</p>
       </div>
 
