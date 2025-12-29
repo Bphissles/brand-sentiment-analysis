@@ -75,6 +75,24 @@ dataSource:
   password: ${SUPABASE_DB_PASSWORD}
   pooled: true
   jmxExport: true
+  # Connection pool validation - prevents stale connection errors
+  properties:
+    # Validate connections before borrowing from pool
+    testOnBorrow: true
+    # Validation query to check if connection is alive
+    validationQuery: SELECT 1
+    # Also validate idle connections periodically
+    testWhileIdle: true
+    # Run eviction every 30 seconds
+    timeBetweenEvictionRunsMillis: 30000
+    # Evict connections idle for more than 60 seconds
+    minEvictableIdleTimeMillis: 60000
+    # Remove abandoned connections after 300 seconds (5 min)
+    removeAbandoned: true
+    removeAbandonedTimeout: 300
+    logAbandoned: true
+    # Validation interval - don't validate more than once per 30 seconds per connection
+    validationInterval: 30000
 
 # H2 in-memory database (uncomment for local dev without Supabase)
 # dataSource:
